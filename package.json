@@ -1,0 +1,26 @@
+{
+  "name": "motionwiki-git",
+  "version": "0.0.1",
+  "description": "motionwiki ==========",
+  "main": "motionwiki.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/taoeffect/motionwiki.git"
+  },
+  "author": "Team Wiki Wizards",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/taoeffect/motionwiki/issues"
+  },
+  "devDependencies": {
+    "grunt-text-replace": "~0.3.7",
+    "grunt": "~0.4.1",
+    "grunt-bowerful": "~0.3.0",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-shell": "~0.4.0"
+  }
+}

@@ -1,0 +1,1 @@
+- Setup https and mime-types (see src/common/extension_info.json)

@@ -6,9 +6,16 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.zip
+*.sublime-workspace
 
 pids
 logs
 results
 
 npm-debug.log
+
+extensions/kango
+extensions/certificates/*
+node_modules
+src/components
