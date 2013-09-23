@@ -1,17 +1,16 @@
-motionwiki
-==========
+# MotionWiki
 
-## First
+## Installation
 
-1. Install `npm`
-2. Install `bower`
-3. Install `grunt-cli`
+### Required Tools
 
-## Then Install Libraries & Frameworks
+Install [npm](https://npmjs.org/), [bower](http://bower.io/), and [grunt](http://gruntjs.com/).
 
-    npm install
-    grunt bowerful
+### Install Libraries & Frameworks
 
-## Finally, build the project
+    [prompt]$ npm install
+    [prompt]$ grunt bowerful
 
-    grunt
+### Build the project
+
+    [prompt]$ grunt
