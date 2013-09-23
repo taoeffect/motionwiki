@@ -15,7 +15,8 @@ results
 
 npm-debug.log
 
-extensions/kango
-extensions/certificates/*
-node_modules
+src/extensions/output
+src/extensions/certificates/chrome.real.pem
 src/components
+node_modules
+dist

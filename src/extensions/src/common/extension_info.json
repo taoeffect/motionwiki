@@ -1,0 +1,14 @@
+{
+  "content_scripts": ["main.js"],
+  "description": "Extension description", 
+  "creator": "MotionWiki", 
+  "homepage_url": "http://www.motionwiki.com/", 
+  "version": "0.0.1", 
+  "browser_button": {
+    "caption": "MotionWiki", 
+    "icon": "icons/button.png", 
+    "tooltipText": "MotionWiki"
+  }, 
+  "update_path_url": "https://www.motionwiki.com/extensions/",
+  "name": "MotionWiki"
+}
