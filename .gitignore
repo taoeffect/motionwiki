@@ -20,3 +20,4 @@ src/extensions/certificates/chrome.real.pem
 src/components
 node_modules
 dist
+tmp
