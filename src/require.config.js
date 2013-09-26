@@ -1,12 +1,9 @@
 // nice example: https://github.com/tnajdek/angular-requirejs-seed/blob/master/app/js/main.js
 
 requirejs.config({
-    baseUrl: "<%= G.mode.baseURL %>",
+    baseUrl: "<%= G.mode().baseURL %>",
     paths: {
         // to be inlined
-        // Since "require" is a reserved dependency name, create a
-        // "requireLib" dependency and map it to the require.js file.
-        requireLib: "requirejs/require",
         domReady: "requirejs-domready/domReady",
         html5shiv: "html5shiv-dist/html5shiv",
         // CDN
@@ -36,4 +33,4 @@ requirejs.config({
 // these wil be inlined! do not inline anything that depends on
 // anything that loads from a CDN (e.g. jquery, etc.)!
 // http://requirejs.org/docs/api.html#config
-require(["requireLib", "domReady", "html5shiv"]);
+require(["domReady", "html5shiv"]);

@@ -117,7 +117,7 @@ module.exports = (grunt) ->
                     join: true
                     # sourceMap: true # not much point if we're later minifying?
                 files:
-                    'build/motionwiki.js': 'src/motionwiki/**/*.coffee'
+                    '<%= G.dir.build %>/motionwiki.js': '<%= G.dir.src %>/motionwiki/**/*.coffee'
         }
 
         watch:
@@ -126,7 +126,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:playground', 'execute:playground']
             coffee:
                 files: ['src/motionwiki/**/*.coffee']
-                tasks: ['coffee:src']
+                tasks: ['build']
 
         clean: ["<%= G.dir.dist %>/*", "<%= G.dir.build %>/*"]
 
@@ -139,23 +139,29 @@ module.exports = (grunt) ->
         requirejs: {
             compile:
                 options:
-                    # 'out' will contain optimized contents of:
+                    # 'dir' will contain optimized contents of:
                     # - name (code in require.config.js), but will not inline its 'paths'
                     #   however, it will inline the modules specified in the call to 'require' at the end
                     # - the modules specified in 'include' here. these will be inlined too.
-                    out: "<%= G.dir.out %>/required.js"
+                    dir: G.dir.out
                     baseUrl: G.dir.js.libs # where modules are located in
-                    mainConfigFile: "src/require.config.js" # relative to build file
+                    mainConfigFile: "<%= G.dir.src %>/require.config.js" # relative to build file
 
                     # modules to optimize (as well as its dependencies)
                     modules: [
                         # modules are relative to baseUrl
-                        {name: "../require.config"}
-                        {name: "../build/"}
+                        {
+                            name: "../require.config"
+                            # Since "require" is a reserved dependency name, create a
+                            # "requireLib" dependency and map it to the require.js file.
+                            include: ['requireLib']
+                        }
+                        {name: "../../<%= G.dir.build %>/motionwiki"}
                     ]
-
-                    # runtime ajax paths, do not include these in the optimized output
+                        
                     paths:
+                        requireLib: "requirejs/require"
+                        # runtime ajax paths, do not include these in the optimized output
                         jquery: "empty:"
                         angular: "empty:"
                         bootstrap: "empty:"
@@ -214,19 +220,21 @@ module.exports = (grunt) ->
         grunt.verbose.or.ok()
     
     grunt.registerTask 'build', 'Debug build for local serving', ->
-        grunt.task.run 'requirejs'
+        grunt.task.run 'coffee', 'requirejs'
     
     grunt.registerTask 'build:release', 'Release build for local serving', ->
         G.mode "release"
-        grunt.task.run 'requirejs'
+        grunt.task.run 'build'
     
     grunt.registerTask 'build:deploy', 'Deploy build for remote serving. Builds extension too.', ->
         G.mode "deploy"
         G.cert 'real' # we call symlink twice to prevent linking real cert
-        grunt.task.run 'symlink','shell:kango','symlink','requirejs'
+        grunt.task.run 'symlink','shell:kango','symlink','build'
     
     grunt.registerTask 'server', ['connect:server']
     grunt.registerTask 'homepage', ['connect:homepage']
     grunt.registerTask 'release', ['build:release']
-    grunt.registerTask 'deploy', ['build:deploy']
-    grunt.registerTask 'default', ['build']
+    grunt.registerTask 'deploy', ['clean', 'build:deploy']
+    grunt.registerTask 'dev', ['build','watch']
+    # TODO: run server task too! (with keepalive false)
+    grunt.registerTask 'default', ['dev']
