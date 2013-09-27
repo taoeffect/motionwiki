@@ -47,7 +47,7 @@ module.exports = (grunt) ->
     # initConfig!
     # ===========
 
-    grunt.initConfig {
+    gConfig = {
         G: G
         _: grunt.util._
         pkg: pkg
@@ -216,9 +216,12 @@ module.exports = (grunt) ->
     } # end config  
     
     # process templates in requirejs paths keys:
-    rpaths = 'requirejs.compile.options.paths'
-    for k,v of grunt.config(rpaths) when k.indexOf('<%=') is 0
-        grunt.config(rpaths+'.'+G.tpl(k),v)
+    rpaths = gConfig.requirejs.compile.options.paths
+    for k,v of rpaths when k.indexOf('<%=') is 0
+        delete rpaths[k]
+        rpaths[G.tpl(k,{data:gConfig})] = v
+
+    grunt.initConfig gConfig
 
     # https://github.com/gruntjs/grunt/wiki/Creating-tasks
     # http://chrisawren.com/posts/Advanced-Grunt-tooling
