@@ -251,18 +251,18 @@ module.exports = (grunt) ->
 
     grunt.registerTask 'build:release', 'Release build for local serving', ->
         G.mode "release"
-        grunt.task.run 'build'
+        grunt.task.run 'clean','kango','build'
 
     grunt.registerTask 'build:deploy', 'Deploy build for remote serving. Builds extension too.', ->
         G.mode "deploy"
         G.cert 'real' # we call symlink twice to prevent linking real cert
-        grunt.task.run 'symlink','kango','symlink','build'
+        grunt.task.run 'clean','symlink','kango','symlink','build'
 
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
     grunt.registerTask 'server', ['connect:server']
     grunt.registerTask 'homepage', ['connect:homepage']
-    grunt.registerTask 'release', ['clean', 'build:release']
-    grunt.registerTask 'deploy', ['clean', 'build:deploy']
+    grunt.registerTask 'release', ['build:release']
+    grunt.registerTask 'deploy', ['build:deploy']
     grunt.registerTask 'dev', ['build','watch']
     # TODO: run server task too! (with keepalive false)
     grunt.registerTask 'default', ['dev']
