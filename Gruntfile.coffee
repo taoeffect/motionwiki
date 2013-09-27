@@ -261,7 +261,7 @@ module.exports = (grunt) ->
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
     grunt.registerTask 'server', ['connect:server']
     grunt.registerTask 'homepage', ['connect:homepage']
-    grunt.registerTask 'release', ['build:release']
+    grunt.registerTask 'release', ['clean', 'build:release']
     grunt.registerTask 'deploy', ['clean', 'build:deploy']
     grunt.registerTask 'dev', ['build','watch']
     # TODO: run server task too! (with keepalive false)
