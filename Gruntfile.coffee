@@ -1,36 +1,59 @@
+# Author: Greg Slepak - https://github.com/taoeffect
+# 
 # https://github.com/gruntjs/grunt/wiki/Getting-started
-
+# 
 # == CoffeeScript Style Guidelines ==
 # 
 # 1. Long object definitions should have a top-level
 #    surrounding bace! This helps code that follows "know where it is"
+#    
+# TODO: Link the kango extensions "main.js" to "scout.js"
 
 module.exports = (grunt) ->
+    _    = require 'lodash' # grunt's lodash is really outdated and doesn't have zipObject
     fs   = require 'fs'
     path = require 'path'
     util = require 'util'
     pkg  = grunt.file.readJSON 'package.json'
+    tpl  = grunt.template.process
+    str  = grunt.util._.str
+    deps =
+        grunt:
+            f: (dep for dep of pkg.devDependencies)
+            d: 'node_modules'
+            t: 'shell:npm_install' # task
+        bower:
+            f: ['requirejs/require.js', "requirejs-domready/domReady.js", "html5shiv-dist/html5shiv.js"]
+            d: '<%= G.in.d.libs %>'
+            t: 'bowerful'
+            rjs: (f)->
+                p = path.join G.out.d.build, path.basename(_.find(deps.bower.f,(p)->str.include p, f))
+                # grunt.log.writeln "!!!-> #{p.cyan}"
+                "<%= modulePath('#{p}') %>"
 
     G = # this newline is necessary to make the whole thing an object... :-\
-        mode: ((_)-> (t)-> G[_ = t || _])('debug')
-        cert: ((_)-> (t)-> return 'chrome.pem' if t is 'link'; "chrome.#{_= t || _}.pem")('fake')
+        cert: do (_='fake')-> (t)-> return 'chrome.pem' if t is 'link'; "chrome.#{_= t || _}.pem"
+        mode: (t)-> G[G.modeName = t ? G.modeName]
+        # default values
+        modeName:       'debug'
         debug:
-            baseURL: "/includes/js"
-            outDir: "<%= G.out.d.dist %>/debug"
+            baseURL:    '/includes/js/mw'
+            outDir:     '<%= G.out.d.dist %>/debug'
         release:
-            baseURL: "/includes/js"
-            outDir: "<%= G.out.d.dist %>/release"
+            baseURL:    '<%= G.debug.baseURL %>' # same as debug! (for symlink:www)
+            outDir:     '<%= G.out.d.dist %>/release'
         deploy:
-            baseURL: "https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js"
-            outDir: "<%= G.out.d.dist %>/deploy"
+            baseURL:    'https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js/mw'
+            outDir:     '<%= G.out.d.dist %>/deploy'
         name:
-            scout:  'scout'
-            config: 'config'
-            app:    'motionwiki'
+            scout:      'scout'
+            config:     'config'
+            app:        'motionwiki'
         out:
             d:
                 build:  'build'
                 dist:   'dist'
+                www:    'public'
                 ext:    '<%= G.out.d.dist %>/extensions'
             f:
                 scout:  '<%= G.out.d.build %>/<%= G.name.scout %>.js'
@@ -42,55 +65,65 @@ module.exports = (grunt) ->
                 ext:    '<%= G.in.d.src %>/extensions'
                 app:    '<%= G.in.d.src %>/<%= G.name.app %>/app'
                 scout:  '<%= G.in.d.src %>/<%= G.name.app %>/scout'
-        tpl: grunt.template.process
 
     # initConfig!
     # ===========
 
     gConfig = {
         G: G
-        _: grunt.util._
+        _: _
         pkg: pkg
+        path: path
         modulePath: (p)->
-            path.relative(G.tpl('<%= requirejs.compile.options.baseUrl %>'),
+            path.relative(tpl('<%= requirejs.compile.options.baseUrl %>'),
                 path.join(path.dirname(p),path.basename(p,'.js')))
 
         # https://github.com/gyllstromk/grunt-bowerful
         bowerful:
             dist:
-                packages:
-                    requirejs: "" # unspecified versions indicate most recent
-                    "requirejs-domready": ""
-                    "html5shiv-dist": ""
-                store: '<%= G.in.d.libs %>'
+                packages: _.object([path.dirname(f),""] for f in deps.bower.f)
+                store: deps.bower.d
 
         shell:
+            options: stdout: true, stderr: true, failOnError: true
             kango:
                 command: '<%= G.in.d.ext %>/kango/kango.py <%= G.out.d.build %> <%= G.in.d.ext %>'
                 options:
-                    stdout: true, stderr: true, failOnError: true
                     # https://github.com/sindresorhus/grunt-shell
                     callback: (err, stdout, stderr, cb) ->
                         G.cert "fake"
                         if (err)
                             grunt.log.error(err) # Safe, doesn't exit Grunt.
                             grunt.task.clearQueue() # Allows exit with cleanup
-                            grunt.task.run('symlink') # re-add symlink task to queue
+                            grunt.task.run('symlink:kango') # re-add symlink task to queue
                          else
                             grunt.task.run('rename:kango')
                         cb() # must be called at end
+            npm_install:
+                command: 'npm install'
                     
+        copy:
+            components:
+                files: [{
+                    expand:  true
+                    flatten: true
+                    cwd:     deps.bower.d
+                    src:     deps.bower.f
+                    dest:    '<%= G.out.d.build %>/'
+                    }]
+
         rename:
             kango:
                 src: '<%= G.in.d.ext %>/output'
                 dest: '<%= G.out.d.ext %>'
 
         symlink:
-            cert: options:
-                # relativeTo: '<%= G.in.d.ext %>/certificates'
-                # link: '<%= G.cert 'link' %>'
+            kango: options:
                 link: '<%= G.in.d.ext %>/certificates/<%= G.cert("link") %>'
-                target: '<%= G.cert() %>'
+                target: '<%= G.in.d.ext %>/certificates/<%= G.cert() %>'
+            www: options:
+                link: '<%= path.join(G.out.d.www, G.debug.baseURL) %>'
+                target: '<%= G.mode().outDir %>'
 
         replace:
             version:
@@ -128,7 +161,7 @@ module.exports = (grunt) ->
                     join: true
                     # sourceMap: true # not much point if we're later minifying?
                 files:
-                    '<%= G.out.f.app %>':   '<%= G.in.d.app %>/**/*.coffee'
+                    '<%= G.out.f.app   %>': '<%= G.in.d.app %>/**/*.coffee'
                     '<%= G.out.f.scout %>': '<%= G.in.d.scout %>/**/*.coffee'
         }
 
@@ -138,17 +171,21 @@ module.exports = (grunt) ->
                 tasks: ['coffee:playground', 'execute:playground']
             coffee:
                 files: ['<%= G.in.d.src %>/**/*.coffee']
-                tasks: ['build']
+                tasks: ['coffee:motionwiki', 'requirejs']
 
         clean:
-            dist:  ["<%= G.out.d.dist %>/*"]
+            dist:  ["<%= G.out.d.dist  %>/*"]
             build: ["<%= G.out.d.build %>/*"]
-            ext:   ['<%= G.out.d.ext %>']
+            ext:   ['<%= G.out.d.ext   %>']
 
         connect: # this actually would work w/o braces, but it'd be confusing
-            server: {options: {base: '<%= G.mode().outDir %>'} }
-            homepage: {options: {base: 'public'} }
-            options: {port: 8000, keepalive: true}
+            options:
+                port: 8000
+                base: ['.','<%= G.out.d.www %>'] # last one acts as "directory:"
+            server:
+                options:
+                    keepalive: true
+            dev: {}
 
         # https://github.com/gruntjs/grunt-contrib-requirejs
         requirejs: {
@@ -159,59 +196,82 @@ module.exports = (grunt) ->
                     #   however, it will inline the modules specified in the call to 'require' at the end
                     # - the modules specified in 'include' here. these will be inlined too.
                     dir: '<%= G.mode().outDir %>'
-                    baseUrl: '<%= G.in.d.libs %>' # where modules are located in
+                    baseUrl: '<%= G.out.d.build %>' # where modules are located in
                     mainConfigFile: "<%= G.out.f.scout %>" # relative to build file
 
                     # modules to optimize (as well as its dependencies)
-                    # !! Avoid optimization names that are outside the baseUrl !!
+                    # Avoid optimization names that are outside the baseUrl !!
                     # http://requirejs.org/docs/optimization.html#pitfalls
                     modules: [
                         # modules are relative to baseUrl
                         {
-                            name: "<%= G.name.scout %>"
+                            name: '<%= G.name.scout %>'
                             # Since "require" is a reserved dependency name, create a
                             # "requireLib" dependency and map it to the require.js file.
-                            include: ['requireLib']
+                            include: ['requireLib', 'domReady', 'html5shiv']
+                            # unfortunately, we have to override this value because if we don't,
+                            # the extension banner that's added by onModuleBundleComplete won't be at the top
+                            override:
+                                preserveLicenseComments: false
+                            # create: true # creates the js file for this module if it doesn't exist
                         }
-                        {name: "<%= G.name.app %>"}
+                        {name: '<%= G.name.app %>'}
                     ]
+
                     paths:
-                        # we'll convert the template keys immediately after config definition
-                        "<%= G.name.scout %>": "<%= modulePath(G.out.f.scout) %>"
-                        "<%= G.name.app %>":   "<%= modulePath(G.out.f.app) %>"
-                        requireLib: "requirejs/require"
-                        # runtime ajax paths, do not include these in the optimized output
-                        jquery: "empty:"
-                        angular: "empty:"
-                        bootstrap: "empty:"
-                        underscore: "empty:"
-         
-                    #A function that if defined will be called for every file read in the
-                    #build that is done to trace JS dependencies.
+                        # the requirejs task doesn't support templates in keys, so we'll
+                        # evaluate and replace the template keys immediately after config definition
+                        '<%= G.name.scout %>': '<%= modulePath(G.out.f.scout) %>'
+                        '<%= G.name.app   %>': '<%= modulePath(G.out.f.app) %>'
+                        requireLib:            deps.bower.rjs('require')
+                        domReady:              deps.bower.rjs('domReady')
+                        html5shiv:             deps.bower.rjs('html5shiv')
+                        jquery:                'empty:'
+                        angular:               'empty:'
+                        bootstrap:             'empty:'
+                        lodash:                'empty:'
+
+                    keepBuildDir: false
+
+                    # remove files that were combined into a build bundle from the output folder
+                    removeCombined: true # just removes that *one* file, not the directory. :(
+
+                    # A function that if defined will be called for every file read in the
+                    # build that is done to trace JS dependencies.
                     onBuildRead: (moduleName, path, contents) ->
-                        contents.replace(/<%=.+?%>/g, G.tpl)
-         
-                    #Introduced in 2.1.2: If using "dir" for an output directory, normally the
-                    #optimize setting is used to optimize the build bundles (the "modules"
-                    #section of the config) and any other JS file in the directory. However, if
-                    #the non-build bundle JS files will not be loaded after a build, you can
-                    #skip the optimization of those files, to speed up builds. Set this value
-                    #to true if you want to skip optimizing those other non-build bundle JS
-                    #files.
-                    skipDirOptimize: true # the only other js file(s) in the output dir should
-                                           # already be optimized by cljsbuild
-                    #How to optimize all the JS files in the build output directory.
-                    #Right now only the following values
-                    #are supported:
-                    #- "uglify": (default) uses UglifyJS to minify the code.
-                    #- "uglify2": in version 2.1.2+. Uses UglifyJS2.
-                    #- "closure": uses Google's Closure Compiler in simple optimization
-                    #mode to minify the code. Only available if running the optimizer using
-                    #Java.
-                    #- "closure.keepLines": Same as closure option, but keeps line returns
-                    #in the minified files.
-                    #- "none": no minification will be done.
-                    optimize: "uglify2"
+                        contents.replace(/<%=.+?%>/g, tpl)
+                    
+                    onModuleBundleComplete: ({name: bundlename, path: filepath})->
+                        if bundlename == tpl(G.name.scout)
+                            filepath = path.join(tpl('<%= requirejs.compile.options.dir %>'), filepath)
+                            # grunt.log.writeln "bundle: #{bundlename}: #{filepath.cyan}"
+                            contents = fs.readFileSync(filepath)
+                            fs.writeFileSync filepath, """
+                            // ==UserScript==
+                            // @name MotionWiki
+                            // @include http://*.wikipedia.org
+                            // @include https://*.wikipedia.org
+                            // ==/UserScript==
+
+                            #{contents}
+                            """
+
+                    # generateSourceMaps:true
+                    # More info: http://requirejs.org/docs/faq-advanced.html#rename
+                    namespace: '<%= G.name.app %>Req'
+                    preserveLicenseComments:false
+                    skipDirOptimize: true
+                    optimize: 'uglify2'
+                    uglify2:                   # for an example see example.build.js
+                        output:                # http://lisperator.net/uglifyjs/codegen
+                            beautify: false    # <- this...
+                            comments: /(UserScript|@(include|name))/
+                        compress:              # http://lisperator.net/uglifyjs/compress
+                            global_defs:
+                                DEBUG: false   # <- ...this,
+                        mangle: false          # <- and this, will be updated in the 'debug' task
+                    
+
         } # end requirejs
     } # end config  
     
@@ -219,50 +279,67 @@ module.exports = (grunt) ->
     rpaths = gConfig.requirejs.compile.options.paths
     for k,v of rpaths when k.indexOf('<%=') is 0
         delete rpaths[k]
-        rpaths[G.tpl(k,{data:gConfig})] = v
+        rpaths[tpl(k,{data:gConfig})] = v
 
     grunt.initConfig gConfig
 
     # https://github.com/gruntjs/grunt/wiki/Creating-tasks
     # http://chrisawren.com/posts/Advanced-Grunt-tooling
     # require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
-    for dep of pkg.devDependencies when dep.indexOf('grunt-') is 0
+    for dep in deps.grunt.f when dep.indexOf('grunt-') is 0
         # grunt.log.writeln "#{dep} : dep.indexOf: #{dep.indexOf 'grunt-'}"
         grunt.loadNpmTasks dep
 
     # all three grunt symlink plugins i could find sucked ass, so i made my own task.
     grunt.registerMultiTask 'symlink', ->
         opts   = @options(relativeTo: null)
-        base   = opts.relativeTo ? path.dirname(opts.link)
-        link   = path.join(base, path.basename(opts.link))
-        target = path.relative(base, path.join(base, opts.target))
-        type   = if grunt.file.isDir(target) then 'dir' else 'file'
+        link   = opts.link
+        base   = path.dirname(opts.link)
+        target = path.relative(base, path.join(path.dirname(opts.target),path.basename(opts.target)))
+        if grunt.file.isDir(opts.target) then type = 'dir' else type = 'file'
 
-        if grunt.file.exists(link) && !grunt.file.isLink(link)
-            grunt.log.error "File exists already in place of link: #{link.cyan}"
-            return false
-        fs.unlinkSync(link)
-        grunt.verbose.or.write "Creating symlink to #{target.cyan} at #{link.cyan} ..."
+        if grunt.file.exists(link)
+            if grunt.file.isLink(link)
+                fs.unlinkSync(link)
+            else
+                grunt.log.error "File exists already in place of link: #{link.cyan}"
+                return false                
+
+        grunt.log.writeln "Creating #{type} symlink to #{target.cyan} at #{link.cyan} ..."
         fs.symlinkSync(target, link, type)
         grunt.verbose.or.ok()
  
-    grunt.registerTask 'build', 'Debug build for local serving', ->
-        grunt.task.run 'coffee', 'requirejs'
+    grunt.registerTask 'build:debug', 'Debug build for local serving', ->
+        grunt.log.writeln "G.#{tpl(G.modeName).cyan}.outDir = #{tpl(G.mode().outDir)}"
+        if G.modeName is 'debug'
+            grunt.config('requirejs.compile.options.uglify2.compress.global_defs.DEBUG', true)
+            grunt.config('requirejs.compile.options.uglify2.output.beautify', true)
+        else if G.modeName is 'deploy'
+            grunt.config('requirejs.compile.options.uglify2.mangle', true)
+        grunt.task.run 'coffee', 'compile'
 
     grunt.registerTask 'build:release', 'Release build for local serving', ->
         G.mode "release"
-        grunt.task.run 'clean','kango','build'
+        grunt.task.run 'kango','build:debug'
 
     grunt.registerTask 'build:deploy', 'Deploy build for remote serving. Builds extension too.', ->
         G.mode "deploy"
         G.cert 'real' # we call symlink twice to prevent linking real cert
-        grunt.task.run 'clean','symlink','kango','symlink','build'
+        grunt.task.run 'clean','symlink:kango','kango','symlink:kango','build:debug'
 
+    grunt.registerTask 'checkdeps', 'checks to make sure dependencies are installed', ->
+        for k,v of deps
+            d = tpl(v.d); j = _.compose(_.partial(path.join, d), path.dirname)
+            if missing = (j(f) for f in v.f when not grunt.file.exists j(f))?.toString()
+                grunt.log.error "will attempt to install #{d}: #{missing}"
+                grunt.task.run v.t
+
+    grunt.registerTask 'compile', ['copy:components', 'requirejs', 'symlink:www']
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
     grunt.registerTask 'server', ['connect:server']
-    grunt.registerTask 'homepage', ['connect:homepage']
-    grunt.registerTask 'release', ['build:release']
-    grunt.registerTask 'deploy', ['build:deploy']
-    grunt.registerTask 'dev', ['build','watch']
-    # TODO: run server task too! (with keepalive false)
+    grunt.registerTask 'release', ['checkdeps', 'build:release']
+    grunt.registerTask 'deploy', ['checkdeps', 'build:deploy']
+    grunt.registerTask 'debug', ['checkdeps', 'build:debug']
+    grunt.registerTask 'build', ['debug']
+    grunt.registerTask 'dev', ['checkdeps','build:debug','connect:dev','watch']
     grunt.registerTask 'default', ['dev']

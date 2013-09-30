@@ -4,17 +4,15 @@ requirejs.config {
     baseUrl: "<%= G.mode().baseURL %>"
     enforceDefine: true
     paths: 
-        # to be inlined
-        domReady: "requirejs-domready/domReady"
-        html5shiv: "html5shiv-dist/html5shiv"
         # CDN
         jquery: "//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min"
         angular: "//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular.min"
-        bootstrap: "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min.js"
-        underscore: "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min"
+        bootstrap: "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min"
+        lodash: "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.1.0/lodash.min"
     
     # http://requirejs.org/docs/api.html#config-shim
     shim: 
+        jquery: exports: "jQuery"
         html5shiv: exports: "html5"
         angular: 
             # angular doesn't have to depend on jquery, but it's best
@@ -26,10 +24,11 @@ requirejs.config {
         
         # http://stackoverflow.com/questions/13377373/shim-twitter-bootstrap-for-requirejs
         bootstrap: { deps: ["jquery"], exports: "$.fn.popover"}
-        underscore: { exports: "_" }
+        lodash: { exports: "_" }
 } # end config
 
 # these wil be inlined! do not inline anything that depends on
 # anything that loads from a CDN (e.g. jquery, etc.)!
 # http://requirejs.org/docs/api.html#config
-require ["domReady", "html5shiv"]
+# require ["domReady", "html5shiv"]
+# require ['requirejs/require.js', 'requirejs-domready/domReady.js', 'html5shiv-dist/html5shiv.js']
