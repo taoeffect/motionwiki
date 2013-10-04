@@ -19,6 +19,7 @@ module.exports = (grunt) ->
     str  = grunt.util._.str
     hook = grunt.util.hooker.hook
     ovrd = grunt.util.hooker.override
+    hflt = grunt.util.hooker.filter
 
     # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
     if path.sep is '\\'
@@ -28,9 +29,9 @@ module.exports = (grunt) ->
         String::bs = String::valueOf
 
     for p,o of {join: path, relative: path, process: grunt.template}
-        hook o, p,
-            # pre: (a...) -> console.log "args: #{typeof x for x in a}: '#{util.inspect a}'"
-            post: (s) -> ovrd s.bs() if typeof s is 'string' #template might return a function
+        hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
+    for p,o of {openSync: fs}
+        hook o, p, pre: (s, args...)-> hflt @, s.bs(), args...
 
     # just in case, do this after hooking the function...
     tpl  = grunt.template.process
