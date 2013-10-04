@@ -8,6 +8,7 @@
 #    surrounding bace! This helps code that follows "know where it is"
 #    
 # TODO: Link the kango extensions "main.js" to "scout.js"
+# TODO: automatically create "empty:" paths from scout.js for requirejs paths
 
 module.exports = (grunt) ->
     _    = require 'lodash' # grunt's lodash is really outdated and doesn't have zipObject
@@ -121,25 +122,25 @@ module.exports = (grunt) ->
                     
         copy:
             components:
-                files: [{
+                files: [
                     expand:  true
                     flatten: true
                     cwd:     deps.bower.d
                     src:     deps.bower.f
                     dest:    '<%= G.out.d.build %>/'
-                    }]
+                ]
 
         rename:
             kango:
-                src: '<%= G.in.d.ext %>/output'
+                src : '<%= G.in.d.ext %>/output'
                 dest: '<%= G.out.d.ext %>'
 
         symlink:
             kango: options:
-                link: '<%= G.in.d.ext %>/certificates/<%= G.cert("link") %>'
+                link  : '<%= G.in.d.ext %>/certificates/<%= G.cert("link") %>'
                 target: '<%= G.in.d.ext %>/certificates/<%= G.cert() %>'
             www: options:
-                link: '<%= path.join(G.out.d.www, G.debug.baseURL) %>'
+                link  : '<%= path.join(G.out.d.www, G.debug.baseURL) %>'
                 target: '<%= G.mode().outDir %>'
 
         replace:
@@ -167,19 +168,25 @@ module.exports = (grunt) ->
             playground:
                 files: [
                     expand: true
-                    cwd: 'private/playground'
-                    src: ['**/*.coffee']
-                    dest: 'private/playground'
-                    ext: '.js'
+                    cwd   : 'private/playground'
+                    src   : ['**/*.coffee']
+                    dest  : 'private/playground'
+                    ext   : '.js'
                 ]
-
+            # anon objs in array: http://bit.ly/122g17v
             motionwiki:
                 options:
-                    join: true
+                    join: true # concat before compiling (instead of after)
                     # sourceMap: true # not much point if we're later minifying?
-                files:
-                    '<%= G.out.f.app   %>': '<%= G.in.d.app %>/**/*.coffee'
-                    '<%= G.out.f.scout %>': '<%= G.in.d.scout %>/**/*.coffee'
+                files: [
+                    dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee'
+                   ,
+                    expand: true
+                    src   : ['**/*.coffee']
+                    cwd   : '<%= G.in.d.app %>'
+                    dest  : '<%= G.out.d.build %>'
+                    ext   : '.js'
+                ]
         }
 
         watch:
@@ -199,7 +206,7 @@ module.exports = (grunt) ->
             options:
                 port: 8000
                 base: ['.','<%= G.out.d.www %>'] # last one acts as "directory:"
-            server:
+            keepalive:
                 options:
                     keepalive: true
             dev: {}
@@ -219,20 +226,17 @@ module.exports = (grunt) ->
                     # modules to optimize (as well as its dependencies)
                     # Avoid optimization names that are outside the baseUrl !!
                     # http://requirejs.org/docs/optimization.html#pitfalls
-                    modules: [
-                        # modules are relative to baseUrl
-                        {
-                            name: '<%= G.name.scout %>'
-                            # Since "require" is a reserved dependency name, create a
-                            # "requireLib" dependency and map it to the require.js file.
-                            include: ['requireLib', 'domReady', 'html5shiv']
-                            # unfortunately, we have to override this value because if we don't,
-                            # the extension banner that's added by onModuleBundleComplete won't be at the top
-                            override:
-                                preserveLicenseComments: false
-                            # create: true # creates the js file for this module if it doesn't exist
-                        }
-                        {name: '<%= G.name.app %>'}
+                    modules: [ # modules are relative to baseUrl
+                        name: '<%= G.name.scout %>'
+                        # Since "require" is a reserved dependency name, create a
+                        # "requireLib" dependency and map it to the require.js file.
+                        include: ['requireLib', 'domReady', 'html5shiv']
+                        # unfortunately, we have to override this value because if we don't,
+                        # the extension banner that's added by onModuleBundleComplete won't be at the top
+                        override: preserveLicenseComments: false
+                        # create: true # creates the js file for this module if it doesn't exist
+                       ,                         
+                        name: '<%= G.name.app %>'
                     ]
 
                     paths:
@@ -240,13 +244,14 @@ module.exports = (grunt) ->
                         # evaluate and replace the template keys immediately after config definition
                         '<%= G.name.scout %>': '<%= modulePath(G.out.f.scout) %>'
                         '<%= G.name.app   %>': '<%= modulePath(G.out.f.app) %>'
-                        requireLib:            deps.bower.rjs('require')
-                        domReady:              deps.bower.rjs('domReady')
-                        html5shiv:             deps.bower.rjs('html5shiv')
-                        jquery:                'empty:'
-                        angular:               'empty:'
-                        bootstrap:             'empty:'
-                        lodash:                'empty:'
+                        requireLib           : deps.bower.rjs('require')
+                        domReady             : deps.bower.rjs('domReady')
+                        html5shiv            : deps.bower.rjs('html5shiv')
+                        jquery               : 'empty:'
+                        angular              : 'empty:'
+                        bootstrap            : 'empty:'
+                        lodash               : 'empty:'
+                        JSON                 : 'empty:'
 
                     keepBuildDir: false
 
@@ -276,7 +281,6 @@ module.exports = (grunt) ->
                     # generateSourceMaps:true
                     # More info: http://requirejs.org/docs/faq-advanced.html#rename
                     namespace: '<%= G.name.app %>Req'
-                    preserveLicenseComments:false
                     skipDirOptimize: true
                     optimize: 'uglify2'
                     uglify2:                   # for an example see example.build.js
@@ -296,7 +300,7 @@ module.exports = (grunt) ->
     rpaths = gConfig.requirejs.compile.options.paths
     for k,v of rpaths when k.indexOf('<%=') is 0
         delete rpaths[k]
-        rpaths[tpl(k,{data:gConfig})] = v
+        rpaths[tpl(k,data:gConfig)] = v
 
     grunt.initConfig gConfig
 
@@ -353,7 +357,7 @@ module.exports = (grunt) ->
 
     grunt.registerTask 'compile', ['copy:components', 'requirejs', 'symlink:www']
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
-    grunt.registerTask 'server', ['connect:server']
+    grunt.registerTask 'server', ['connect:keepalive']
     grunt.registerTask 'release', ['checkdeps', 'build:release']
     grunt.registerTask 'deploy', ['checkdeps', 'build:deploy']
     grunt.registerTask 'debug', ['checkdeps', 'build:debug']
