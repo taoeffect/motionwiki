@@ -15,8 +15,25 @@ module.exports = (grunt) ->
     path = require 'path'
     util = require 'util'
     pkg  = grunt.file.readJSON 'package.json'
-    tpl  = grunt.template.process
     str  = grunt.util._.str
+    hook = grunt.util.hooker.hook
+    ovrd = grunt.util.hooker.override
+
+    # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
+    if path.sep is '\\'
+        isURL = (s) -> s.indexOf('://') >= 0 || s.indexOf('/') == 0
+        String::bs = -> if isURL(@) then @valueOf() else @replace(/\//g, '\\\\')
+    else
+        String::bs = String::valueOf
+
+    for p,o of {join: path, relative: path, process: grunt.template}
+        hook o, p,
+            # pre: (a...) -> console.log "args: #{typeof x for x in a}: '#{util.inspect a}'"
+            post: (s) -> ovrd s.bs() if typeof s is 'string' #template might return a function
+
+    # just in case, do this after hooking the function...
+    tpl  = grunt.template.process
+
     deps =
         grunt:
             f: (dep for dep of pkg.devDependencies)
@@ -298,14 +315,14 @@ module.exports = (grunt) ->
         target = path.relative(base, path.join(path.dirname(opts.target),path.basename(opts.target)))
         if grunt.file.isDir(opts.target) then type = 'dir' else type = 'file'
 
-        if grunt.file.exists(link)
-            if grunt.file.isLink(link)
-                fs.unlinkSync(link)
-            else
+        # grunt.file.exists and fs.existsSync don't work when the link is there! :-O
+        if fs.existsSync(link) && stats = fs.lstatSync(link)
+            if not stats.isSymbolicLink() # grunt.file.isLink doesn't work
                 grunt.log.error "File exists already in place of link: #{link.cyan}"
-                return false                
+                return false
+            fs.unlinkSync(link)
 
-        grunt.log.writeln "Creating #{type} symlink to #{target.cyan} at #{link.cyan} ..."
+        grunt.log.writeln "Creating #{type.cyan} symlink to #{target.cyan} at #{link.cyan} ..."
         fs.symlinkSync(target, link, type)
         grunt.verbose.or.ok()
  
