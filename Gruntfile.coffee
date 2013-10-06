@@ -30,8 +30,10 @@ module.exports = (grunt) ->
 
     # for p,o of {join: path, relative: path, process: grunt.template}
     #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
-    for p,o of {openSync: fs}
-        hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
+    for p,o of {resolve: path}
+        hook o, p, post: (s) -> ovrd s.bs()
+    # for p,o of {openSync: fs}
+    #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
 
     # just in case, do this after hooking the function...
     tpl  = grunt.template.process
