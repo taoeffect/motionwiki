@@ -26,7 +26,8 @@ module.exports = (grunt) ->
     if path.sep is '\\'
         # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
         # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
-        String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
+        # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
+        String::bs = -> @replace(/[\\/]r/g, '\\\\r')
 
     # for p,o of {join: path, relative: path, process: grunt.template}
     #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
