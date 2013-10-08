@@ -354,10 +354,10 @@ module.exports = (grunt) ->
     grunt.registerTask 'checkdeps', 'checks to make sure dependencies are installed', ->
         for k,v of deps
             d = tpl(v.d)
-            wincompat = path.dirname
-            # on windows, dirname returns "." for node_modules :-(
-            wincompat = _.identity if path.sep is '\\' and d is 'node_modules'
-            j = _.compose(_.partial(path.join, d), wincompat)
+            dirname = (f)-> if f.split(/[\\/]/).length is 1 then f else path.dirname(f)
+            j = _.compose(_.partial(path.join, d), dirname)
+            missing = (j(f) for f in v.f when not grunt.file.exists j(f))
+            # console.log "missing: #{util.inspect missing}"
             if missing = (j(f) for f in v.f when not grunt.file.exists j(f))?.toString()
                 grunt.log.error "will attempt to install #{d}: #{missing}"
                 grunt.task.run v.t
