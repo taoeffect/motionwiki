@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 
     # for p,o of {join: path, relative: path, process: grunt.template}
     #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
-    for p,o of {resolve: path}
+    for p,o of {join: path, relative: path, resolve: path}
         hook o, p, post: (s) -> ovrd s.bs()
     # for p,o of {openSync: fs}
     #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
@@ -354,6 +354,7 @@ module.exports = (grunt) ->
     grunt.registerTask 'checkdeps', 'checks to make sure dependencies are installed', ->
         for k,v of deps
             d = tpl(v.d)
+            # path.dirname returns '.' for path with one path component
             dirname = (f)-> if f.split(/[\\/]/).length is 1 then f else path.dirname(f)
             j = _.compose(_.partial(path.join, d), dirname)
             missing = (j(f) for f in v.f when not grunt.file.exists j(f))
