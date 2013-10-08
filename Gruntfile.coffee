@@ -352,6 +352,7 @@ module.exports = (grunt) ->
     grunt.registerTask 'rjs_postfight', 'Fix Windows path requirejs \\r bullshit', ->
         String::bs = String::valueOf
 
+    # NOTE: this doens't work! we tried hard! many hours wasted! :-(
     grunt.registerTask 'rjs_prefight', 'Fix Windows path requirejs \\r bullshit', ->
         # String::bs = String::valueOf
         # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
@@ -362,11 +363,15 @@ module.exports = (grunt) ->
             String::bs = -> @replace(/[\\/]r/g, '\\\\r')
             # for p,o of {join: path, relative: path, process: grunt.template}
             #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
+            # TODO: only do this once!
             for p,o of {resolve: path}
                 hook o, p, post: (s) -> ovrd s.bs()
             # for p,o of {openSync: fs}
             #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
-        grunt.task.run 'requirejs','rjs_postfight'
+        if false # turn this to true if we ever figure out windows. :(
+            grunt.task.run 'requirejs','rjs_postfight'
+        else
+            grunt.task.run 'requirejs'
 
     grunt.registerTask 'compile', ['copy:components', 'rjs_prefight', 'symlink:www']
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
