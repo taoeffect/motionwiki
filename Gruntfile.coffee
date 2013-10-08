@@ -21,18 +21,18 @@ module.exports = (grunt) ->
     ovrd = grunt.util.hooker.override
     hflt = grunt.util.hooker.filter
 
-    # String::bs = String::valueOf
-    # # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
-    # if path.sep is '\\'
-    #     # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
-    #     # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
-    #     # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
-    #     # String::bs = -> @replace(/[\\/]r/g, '\\\\r')
+    String::bs = String::valueOf
+    # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
+    if path.sep is '\\'
+        # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
+        # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
+        # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
+        String::bs = -> @replace(/[\\/]r/g, '\\\\r')
 
-    # # for p,o of {join: path, relative: path, process: grunt.template}
-    # #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
-    # for p,o of {join: path, relative: path, resolve: path}
-    #     hook o, p, post: (s) -> ovrd s.bs()
+    # for p,o of {join: path, relative: path, process: grunt.template}
+    #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
+    for p,o of {resolve: path}
+        hook o, p, post: (s) -> ovrd s.bs()
     # for p,o of {openSync: fs}
     #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
 
