@@ -21,21 +21,6 @@ module.exports = (grunt) ->
     ovrd = grunt.util.hooker.override
     hflt = grunt.util.hooker.filter
 
-    String::bs = String::valueOf
-    # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
-    if path.sep is '\\'
-        # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
-        # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
-        # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
-        String::bs = -> @replace(/[\\/]r/g, '\\\\r')
-
-    # for p,o of {join: path, relative: path, process: grunt.template}
-    #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
-    for p,o of {resolve: path}
-        hook o, p, post: (s) -> ovrd s.bs()
-    # for p,o of {openSync: fs}
-    #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
-
     # just in case, do this after hooking the function...
     tpl  = grunt.template.process
 
@@ -199,7 +184,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:playground', 'execute:playground']
             coffee:
                 files: ['<%= G.in.d.src %>/**/*.coffee']
-                tasks: ['coffee:motionwiki', 'requirejs']
+                tasks: ['coffee:motionwiki', 'rjs_prefight']
 
         clean:
             dist:  ["<%= G.out.d.dist  %>/*"]
@@ -364,7 +349,26 @@ module.exports = (grunt) ->
                 grunt.log.error "will attempt to install #{d}: #{missing}"
                 grunt.task.run v.t
 
-    grunt.registerTask 'compile', ['copy:components', 'requirejs', 'symlink:www']
+    grunt.registerTask 'rjs_postfight', 'Fix Windows path requirejs \\r bullshit', ->
+        String::bs = String::valueOf
+
+    grunt.registerTask 'rjs_prefight', 'Fix Windows path requirejs \\r bullshit', ->
+        # String::bs = String::valueOf
+        # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
+        if path.sep is '\\'
+            # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
+            # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
+            # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
+            String::bs = -> @replace(/[\\/]r/g, '\\\\r')
+            # for p,o of {join: path, relative: path, process: grunt.template}
+            #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
+            for p,o of {resolve: path}
+                hook o, p, post: (s) -> ovrd s.bs()
+            # for p,o of {openSync: fs}
+            #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
+        grunt.task.run 'requirejs','rjs_postfight'
+
+    grunt.registerTask 'compile', ['copy:components', 'rjs_prefight', 'symlink:www']
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
     grunt.registerTask 'server', ['connect:keepalive']
     grunt.registerTask 'release', ['checkdeps', 'build:release']
