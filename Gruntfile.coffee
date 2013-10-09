@@ -233,7 +233,7 @@ module.exports = (grunt) ->
                         # evaluate and replace the template keys immediately after config definition
                         '<%= G.name.scout %>': '<%= modulePath(G.out.f.scout) %>'
                         '<%= G.name.app   %>': '<%= modulePath(G.out.f.app) %>'
-                        requireLib           : deps.bower.rjs('require')
+                        requireLib           : deps.bower.rjs('requirejs')
                         domReady             : deps.bower.rjs('domReady')
                         html5shiv            : deps.bower.rjs('html5shiv')
                         jquery               : 'empty:'
