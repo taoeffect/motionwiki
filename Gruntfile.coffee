@@ -88,7 +88,7 @@ module.exports = (grunt) ->
         # https://github.com/gyllstromk/grunt-bowerful
         bowerful:
             dist:
-                packages: _.object([path.dirname(f),""] for f in deps.bower.f)
+                packages: _.object([f.split('/')[0],""] for f in deps.bower.f)
                 store: deps.bower.d
 
         shell:
@@ -340,9 +340,7 @@ module.exports = (grunt) ->
     grunt.registerTask 'checkdeps', 'checks to make sure dependencies are installed', ->
         for k,v of deps
             d = tpl(v.d)
-            # path.dirname returns '.' for path with one path component
-            dirname = (f)-> if f.split(/[\\/]/).length is 1 then f else path.dirname(f)
-            j = _.compose(_.partial(path.join, d), dirname)
+            j = _.compose(_.partial(path.join, d), (f)->f.split('/')[0])
             missing = (j(f) for f in v.f when not grunt.file.exists j(f))
             # console.log "missing: #{util.inspect missing}"
             if missing = (j(f) for f in v.f when not grunt.file.exists j(f))?.toString()
@@ -353,22 +351,23 @@ module.exports = (grunt) ->
         String::bs = String::valueOf
 
     # NOTE: this doens't work! we tried hard! many hours wasted! :-(
+    WINHACK = false  # turn this to true if we ever figure out windows. :(
     grunt.registerTask 'rjs_prefight', 'Fix Windows path requirejs \\r bullshit', ->
         # String::bs = String::valueOf
         # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
-        if path.sep is '\\'
+        if WINHACK and path.sep is '\\'
             # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
             # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
             # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
             String::bs = -> @replace(/[\\/]r/g, '\\\\r')
             # for p,o of {join: path, relative: path, process: grunt.template}
             #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
-            # TODO: only do this once!
+            # TODO: only do this once! because of watch this might be done multiple times
             for p,o of {resolve: path}
                 hook o, p, post: (s) -> ovrd s.bs()
             # for p,o of {openSync: fs}
             #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
-        if false # turn this to true if we ever figure out windows. :(
+        if WINHACK
             grunt.task.run 'requirejs','rjs_postfight'
         else
             grunt.task.run 'requirejs'
