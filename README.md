@@ -1,6 +1,6 @@
 # MotionWiki
 
-A browser bookmarklet and extension for bringing the history of a Wikipedia page to life. See [about MotionWiki](#about) below
+A browser bookmarklet and extension for bringing the history of a Wikipedia page to life.
 
 <!-- 
 Regex to create anchors for headings:
