@@ -1,5 +1,7 @@
-require ['require', 'jquery'], (require, $)->
-    console.log "hello world - scout!"
-    $('<button id="load">').text('Load!')
-        .appendTo('body > div')
-        .click(-> require ['motionwiki'])
+require ['require', 'jquery', 'angular'], (require, $, angular)->
+    ##console.log "hello world - scout!"
+
+	$('<button id="load">').text('Load!')
+		.appendTo('body > div')
+		.click(-> require ['motionwiki'])
+
