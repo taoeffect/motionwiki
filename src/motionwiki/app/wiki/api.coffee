@@ -18,12 +18,12 @@ define ['jquery', 'lodash'], ($,_) ->
             fromtitle: title
             fromrev  : 1
             torev    : 2
-    query: (titleOrTitles, [options]..., cb) =>
+    query: (titleOrTitles, prop, [options]..., cb) =>
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
         options = @merge(options)
         $.ajax @merge options.ajax, complete: cb, data:
             action           : 'query'
-            prop             : 'revisions'
+            prop             :  prop
             format           : 'json'
             rvprop           : 'ids|timestamp'
             rvlimit          : options.num

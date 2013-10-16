@@ -56,6 +56,7 @@ module.exports = (grunt) ->
             scout:      'scout'
             config:     'config'
             app:        'motionwiki'
+            parseManager: 'parseManager'
         out:
             d:
                 build:  'build'
@@ -164,6 +165,20 @@ module.exports = (grunt) ->
                 ]
             # anon objs in array: http://bit.ly/122g17v
             motionwiki:
+                options:
+                    join: true # concat before compiling (instead of after)
+                    # sourceMap: true # not much point if we're later minifying?
+                files: [
+                    dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee'
+                   ,
+                    expand: true
+                    src   : ['**/*.coffee']
+                    cwd   : '<%= G.in.d.app %>'
+                    dest  : '<%= G.out.d.build %>'
+                    ext   : '.js'
+                ]
+
+            parseManager:
                 options:
                     join: true # concat before compiling (instead of after)
                     # sourceMap: true # not much point if we're later minifying?
