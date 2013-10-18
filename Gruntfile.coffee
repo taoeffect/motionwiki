@@ -327,7 +327,7 @@ module.exports = (grunt) ->
  
     grunt.registerTask 'build:debug', 'Debug build for local serving', ->
         grunt.log.writeln "G.#{tpl(G.modeName).cyan}.outDir = #{tpl(G.mode().outDir)}"
-        if G.modeName is 'debug'
+        if G.modeName is 'debug' # TODO: move this to rjs_prefile like in 'ifs'
             grunt.config('requirejs.compile.options.uglify2.compress.global_defs.DEBUG', true)
             grunt.config('requirejs.compile.options.uglify2.output.beautify', true)
         else if G.modeName is 'deploy'
