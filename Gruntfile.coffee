@@ -75,6 +75,7 @@ module.exports = (grunt) ->
                 ext:    '<%= G.in.d.src %>/extensions'
                 app:    '<%= G.in.d.src %>/<%= G.name.app %>/app'
                 scout:  '<%= G.in.d.src %>/<%= G.name.app %>/scout'
+                styles: '<%= G.in.d.src %>/styles'
 
     # initConfig!
     # ===========
@@ -181,6 +182,13 @@ module.exports = (grunt) ->
                     ext   : '.js'
                 ]
         }
+        less: {
+            development: 
+                options: 
+                    paths: ['src/styles']
+                files: 
+                    "<%= G.out.d.www %>/includes/css/motionwiki.css": "<%= G.in.d.styles %>/motionwiki.less"
+        }
 
         watch:
             playground:
@@ -189,6 +197,9 @@ module.exports = (grunt) ->
             coffee:
                 files: ['<%= G.in.d.src %>/**/*.coffee']
                 tasks: ['coffee:motionwiki', 'requirejs']
+            less:
+                files: ['<%= G.in.d.styles %>/**/*.less']
+                tasks: ['less:development']
 
         clean:
             dist:  ["<%= G.out.d.dist  %>/*"]
