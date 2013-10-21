@@ -9,6 +9,8 @@
 #    
 # TODO: Link the kango extensions "main.js" to "scout.js"
 # TODO: automatically create "empty:" paths from scout.js for requirejs paths
+# TODO: Handle the fact that scout.js could change, and that CloudFront will cache the file!!!!
+#       Even deleting the file won't reset the cache!!!
 
 module.exports = (grunt) ->
     _    = require 'lodash' # grunt's lodash is really outdated and doesn't have zipObject
@@ -20,18 +22,6 @@ module.exports = (grunt) ->
     hook = grunt.util.hooker.hook
     ovrd = grunt.util.hooker.override
     hflt = grunt.util.hooker.filter
-
-    String::bs = String::valueOf
-    # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
-    if path.sep is '\\'
-        # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
-        # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
-        String::bs = -> @replace(/[\\]+/g,'/').replace(/\//g, '\\\\')
-
-    # for p,o of {join: path, relative: path, process: grunt.template}
-    #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
-    for p,o of {openSync: fs}
-        hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
 
     # just in case, do this after hooking the function...
     tpl  = grunt.template.process
@@ -62,7 +52,8 @@ module.exports = (grunt) ->
             baseURL:    '<%= G.debug.baseURL %>' # same as debug! (for symlink:www)
             outDir:     '<%= G.out.d.dist %>/release'
         deploy:
-            baseURL:    'https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js/mw'
+            # baseURL:    'https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js/mw'
+            baseURL:    'https://taoeffect.s3.amazonaws.com/js' # TODO: Update AWS to add above dirs and remove this!
             outDir:     '<%= G.out.d.dist %>/deploy'
         name:
             scout:      'scout'
@@ -100,7 +91,7 @@ module.exports = (grunt) ->
         # https://github.com/gyllstromk/grunt-bowerful
         bowerful:
             dist:
-                packages: _.object([path.dirname(f),""] for f in deps.bower.f)
+                packages: _.object([f.split('/')[0],""] for f in deps.bower.f)
                 store: deps.bower.d
 
         shell:
@@ -147,6 +138,7 @@ module.exports = (grunt) ->
         replace:
             version:
                 src: [# 'src/extensions/src/common/*.{js,json}'
+                      '<%= G.out.d.www %>/index.html'
                       '<%= G.in.d.ext %>/src/common/*.json'
                       '*.json']
                 dest: 'tmp/' if not grunt.option('overwrite')
@@ -245,7 +237,7 @@ module.exports = (grunt) ->
                         # evaluate and replace the template keys immediately after config definition
                         '<%= G.name.scout %>': '<%= modulePath(G.out.f.scout) %>'
                         '<%= G.name.app   %>': '<%= modulePath(G.out.f.app) %>'
-                        requireLib           : deps.bower.rjs('require')
+                        requireLib           : deps.bower.rjs('requirejs')
                         domReady             : deps.bower.rjs('domReady')
                         html5shiv            : deps.bower.rjs('html5shiv')
                         jquery               : 'empty:'
@@ -321,7 +313,9 @@ module.exports = (grunt) ->
         if grunt.file.isDir(opts.target) then type = 'dir' else type = 'file'
 
         # grunt.file.exists and fs.existsSync don't work when the link is there! :-O
-        if fs.existsSync(link) && stats = fs.lstatSync(link)
+        # console.log "existsSync? #{fs.existsSync(link)} lstat? #{fs.lstatSync(link)}"
+        if stats = fs.lstatSync(link) || fs.existsSync(link)
+            grunt.log.writeln "Unliking #{link.cyan}..."
             if not stats.isSymbolicLink() # grunt.file.isLink doesn't work
                 grunt.log.error "File exists already in place of link: #{link.cyan}"
                 return false
@@ -351,10 +345,38 @@ module.exports = (grunt) ->
 
     grunt.registerTask 'checkdeps', 'checks to make sure dependencies are installed', ->
         for k,v of deps
-            d = tpl(v.d); j = _.compose(_.partial(path.join, d), path.dirname)
+            d = tpl(v.d)
+            j = _.compose(_.partial(path.join, d), (f)->f.split('/')[0])
+            missing = (j(f) for f in v.f when not grunt.file.exists j(f))
+            # console.log "missing: #{util.inspect missing}"
             if missing = (j(f) for f in v.f when not grunt.file.exists j(f))?.toString()
                 grunt.log.error "will attempt to install #{d}: #{missing}"
                 grunt.task.run v.t
+
+    grunt.registerTask 'rjs_postfight', 'Fix Windows path requirejs \\r bullshit', ->
+        String::bs = String::valueOf
+
+    # NOTE: this doens't work! we tried hard! many hours wasted! :-(
+    WINHACK = false  # turn this to true if we ever figure out windows. :(
+    grunt.registerTask 'rjs_prefight', 'Fix Windows path requirejs \\r bullshit', ->
+        # String::bs = String::valueOf
+        # support paths on M$ Windows. '\\' isn't good enough bc \\r -> \r
+        if WINHACK and path.sep is '\\'
+            # isURL = (s) -> s.indexOf('://') >= 0 # || s.indexOf('/') == 0
+            # String::bs = -> if isURL(@) then @valueOf() else @replace(rgx,'/').replace(/\//g, '\\\\')
+            # String::bs = -> @replace(/[\\]+/g,'/').replace(/\/r/g, '\\\\r')
+            String::bs = -> @replace(/[\\/]r/g, '\\\\r')
+            # for p,o of {join: path, relative: path, process: grunt.template}
+            #     hook o, p, post: (s) -> ovrd s.bs() if s.bs? #template might return a function
+            # TODO: only do this once! because of watch this might be done multiple times
+            for p,o of {resolve: path}
+                hook o, p, post: (s) -> ovrd s.bs()
+            # for p,o of {openSync: fs}
+            #     hook o, p, pre: (s, args...)-> hflt @, [].concat(s.bs(), args)
+        if WINHACK
+            grunt.task.run 'requirejs','rjs_postfight'
+        else
+            grunt.task.run 'requirejs'
 
     grunt.registerTask 'compile', ['copy:components', 'requirejs', 'symlink:www']
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
