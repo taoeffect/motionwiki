@@ -3,8 +3,4 @@
 
 angular.module('mw_directives',[])
 
-require ['directives/timeline']
-require ['directives/historyGrapher']
-require ['directives/pageScroller']
-require ['directives/playControls']
-	
+require ['directives/timeline', 'directives/historyGrapher', 'directives/pageScroller','directives/playControls']

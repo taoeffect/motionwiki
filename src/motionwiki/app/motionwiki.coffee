@@ -1,4 +1,4 @@
-define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (require, $, JSON, api, directives, controllers)->
+define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (require, $, JSON, api)->
   
   $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" >').appendTo('body > div')
   $('<mw-timeline>').appendTo('div#motionwiki')

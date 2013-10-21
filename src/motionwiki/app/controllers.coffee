@@ -1,5 +1,5 @@
 ## Controllers File
-## To add additional controllers, add to file: require['/path/to/controller']
+## To add additional controllers, add to require[... , 'path/to/controller']
 
 angular.module('mw_controllers',[])
 
