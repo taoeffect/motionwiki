@@ -314,9 +314,9 @@ module.exports = (grunt) ->
 
         # grunt.file.exists and fs.existsSync don't work when the link is there! :-O
         # console.log "existsSync? #{fs.existsSync(link)} lstat? #{fs.lstatSync(link)}"
-        if stats = fs.lstatSync(link) || fs.existsSync(link)
+        if fs.existsSync(link)
             grunt.log.writeln "Unliking #{link.cyan}..."
-            if not stats.isSymbolicLink() # grunt.file.isLink doesn't work
+            if not fs.lstatSync(link).isSymbolicLink() # grunt.file.isLink doesn't work
                 grunt.log.error "File exists already in place of link: #{link.cyan}"
                 return false
             fs.unlinkSync(link)
