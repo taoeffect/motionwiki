@@ -185,7 +185,7 @@ module.exports = (grunt) ->
         less: {
             development: 
                 options: 
-                    paths: ['src/styles']
+                    paths: ['<%= G.in.d.styles %>']
                 files: 
                     "<%= G.out.d.www %>/includes/css/motionwiki.css": "<%= G.in.d.styles %>/motionwiki.less"
         }
