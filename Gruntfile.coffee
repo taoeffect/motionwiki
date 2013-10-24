@@ -325,9 +325,9 @@ module.exports = (grunt) ->
 
         # grunt.file.exists and fs.existsSync don't work when the link is there! :-O
         # console.log "existsSync? #{fs.existsSync(link)} lstat? #{fs.lstatSync(link)}"
-        if stats = fs.lstatSync(link) || fs.existsSync(link)
+        if fs.existsSync(link)
             grunt.log.writeln "Unliking #{link.cyan}..."
-            if not stats.isSymbolicLink() # grunt.file.isLink doesn't work
+            if not fs.lstatSync(link).isSymbolicLink() # grunt.file.isLink doesn't work
                 grunt.log.error "File exists already in place of link: #{link.cyan}"
                 return false
             fs.unlinkSync(link)
@@ -338,7 +338,7 @@ module.exports = (grunt) ->
  
     grunt.registerTask 'build:debug', 'Debug build for local serving', ->
         grunt.log.writeln "G.#{tpl(G.modeName).cyan}.outDir = #{tpl(G.mode().outDir)}"
-        if G.modeName is 'debug'
+        if G.modeName is 'debug' # TODO: move this to rjs_prefile like in 'ifs'
             grunt.config('requirejs.compile.options.uglify2.compress.global_defs.DEBUG', true)
             grunt.config('requirejs.compile.options.uglify2.output.beautify', true)
         else if G.modeName is 'deploy'
