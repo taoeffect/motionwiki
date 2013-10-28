@@ -8,6 +8,7 @@ lib-cov
 *.gz
 *.zip
 *.sublime-workspace
+*.pyc
 
 pids
 logs

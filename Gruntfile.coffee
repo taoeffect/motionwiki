@@ -9,6 +9,8 @@
 #    
 # TODO: Link the kango extensions "main.js" to "scout.js"
 # TODO: automatically create "empty:" paths from scout.js for requirejs paths
+# TODO: Handle the fact that scout.js could change, and that CloudFront will cache the file!!!!
+#       Even deleting the file won't reset the cache!!!
 
 module.exports = (grunt) ->
     _    = require 'lodash' # grunt's lodash is really outdated and doesn't have zipObject
@@ -50,7 +52,8 @@ module.exports = (grunt) ->
             baseURL:    '<%= G.debug.baseURL %>' # same as debug! (for symlink:www)
             outDir:     '<%= G.out.d.dist %>/release'
         deploy:
-            baseURL:    'https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js/mw'
+            # baseURL:    'https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js/mw'
+            baseURL:    'https://taoeffect.s3.amazonaws.com/js' # TODO: Update AWS to add above dirs and remove this!
             outDir:     '<%= G.out.d.dist %>/deploy'
         name:
             scout:      'scout'
@@ -136,6 +139,7 @@ module.exports = (grunt) ->
         replace:
             version:
                 src: [# 'src/extensions/src/common/*.{js,json}'
+                      '<%= G.out.d.www %>/index.html'
                       '<%= G.in.d.ext %>/src/common/*.json'
                       '*.json']
                 dest: 'tmp/' if not grunt.option('overwrite')
@@ -199,7 +203,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:playground', 'execute:playground']
             coffee:
                 files: ['<%= G.in.d.src %>/**/*.coffee']
-                tasks: ['coffee:motionwiki', 'rjs_prefight']
+                tasks: ['coffee:motionwiki', 'requirejs']
 
         clean:
             dist:  ["<%= G.out.d.dist  %>/*"]
@@ -324,8 +328,10 @@ module.exports = (grunt) ->
         if grunt.file.isDir(opts.target) then type = 'dir' else type = 'file'
 
         # grunt.file.exists and fs.existsSync don't work when the link is there! :-O
-        if fs.existsSync(link) && stats = fs.lstatSync(link)
-            if not stats.isSymbolicLink() # grunt.file.isLink doesn't work
+        # console.log "existsSync? #{fs.existsSync(link)} lstat? #{fs.lstatSync(link)}"
+        if fs.existsSync(link)
+            grunt.log.writeln "Unliking #{link.cyan}..."
+            if not fs.lstatSync(link).isSymbolicLink() # grunt.file.isLink doesn't work
                 grunt.log.error "File exists already in place of link: #{link.cyan}"
                 return false
             fs.unlinkSync(link)
@@ -336,7 +342,7 @@ module.exports = (grunt) ->
  
     grunt.registerTask 'build:debug', 'Debug build for local serving', ->
         grunt.log.writeln "G.#{tpl(G.modeName).cyan}.outDir = #{tpl(G.mode().outDir)}"
-        if G.modeName is 'debug'
+        if G.modeName is 'debug' # TODO: move this to rjs_prefile like in 'ifs'
             grunt.config('requirejs.compile.options.uglify2.compress.global_defs.DEBUG', true)
             grunt.config('requirejs.compile.options.uglify2.output.beautify', true)
         else if G.modeName is 'deploy'
@@ -387,7 +393,7 @@ module.exports = (grunt) ->
         else
             grunt.task.run 'requirejs'
 
-    grunt.registerTask 'compile', ['copy:components', 'rjs_prefight', 'symlink:www']
+    grunt.registerTask 'compile', ['copy:components', 'requirejs', 'symlink:www']
     grunt.registerTask 'kango', ['clean:ext', 'shell:kango']
     grunt.registerTask 'server', ['connect:keepalive']
     grunt.registerTask 'release', ['checkdeps', 'build:release']
