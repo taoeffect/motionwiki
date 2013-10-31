@@ -4,7 +4,6 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
   $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main" >').appendTo('.mw_wrapper')
   $('<mw-timeline>').appendTo('div#motionwiki')
   $('<mw-history-grapher>').appendTo('div#motionwiki')
-  $('<mw-page-scroller>').appendTo('div#motionwiki')
   $('<mw-play-controls>').appendTo('div#motionwiki')
   $('<link rel="stylesheet" href="../public/includes/css/motionwiki.css">').appendTo('body')
   

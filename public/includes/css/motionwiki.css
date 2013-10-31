@@ -256,7 +256,7 @@ body {
 .mw_playcontrols {
   float: left;
   background: rgba(0, 0, 0, 0.5);
-  padding: 20px;
+  padding: 20px 35px;
 }
 .playcontrols-buttons--group {
   font-size: 2em;
