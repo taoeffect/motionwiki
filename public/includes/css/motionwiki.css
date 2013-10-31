@@ -1,3 +1,889 @@
 body {
   background: #FF00000;
 }
+.mw_wrapper #motionwiki,
+.mw_wrapper #motionwiki * {
+  /*! normalize.css v2.1.3 | MIT License | git.io/normalize */
+
+}
+.mw_wrapper #motionwiki article,
+.mw_wrapper #motionwiki * article,
+.mw_wrapper #motionwiki aside,
+.mw_wrapper #motionwiki * aside,
+.mw_wrapper #motionwiki details,
+.mw_wrapper #motionwiki * details,
+.mw_wrapper #motionwiki figcaption,
+.mw_wrapper #motionwiki * figcaption,
+.mw_wrapper #motionwiki figure,
+.mw_wrapper #motionwiki * figure,
+.mw_wrapper #motionwiki footer,
+.mw_wrapper #motionwiki * footer,
+.mw_wrapper #motionwiki header,
+.mw_wrapper #motionwiki * header,
+.mw_wrapper #motionwiki hgroup,
+.mw_wrapper #motionwiki * hgroup,
+.mw_wrapper #motionwiki main,
+.mw_wrapper #motionwiki * main,
+.mw_wrapper #motionwiki nav,
+.mw_wrapper #motionwiki * nav,
+.mw_wrapper #motionwiki section,
+.mw_wrapper #motionwiki * section,
+.mw_wrapper #motionwiki summary,
+.mw_wrapper #motionwiki * summary {
+  display: block;
+}
+.mw_wrapper #motionwiki audio,
+.mw_wrapper #motionwiki * audio,
+.mw_wrapper #motionwiki canvas,
+.mw_wrapper #motionwiki * canvas,
+.mw_wrapper #motionwiki video,
+.mw_wrapper #motionwiki * video {
+  display: inline-block;
+}
+.mw_wrapper #motionwiki audio:not([controls]),
+.mw_wrapper #motionwiki * audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+.mw_wrapper #motionwiki [hidden],
+.mw_wrapper #motionwiki * [hidden],
+.mw_wrapper #motionwiki template,
+.mw_wrapper #motionwiki * template {
+  display: none;
+}
+.mw_wrapper #motionwiki html,
+.mw_wrapper #motionwiki * html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+.mw_wrapper #motionwiki body,
+.mw_wrapper #motionwiki * body {
+  margin: 0;
+}
+.mw_wrapper #motionwiki a,
+.mw_wrapper #motionwiki * a {
+  background: transparent;
+}
+.mw_wrapper #motionwiki a:focus,
+.mw_wrapper #motionwiki * a:focus {
+  outline: thin dotted;
+}
+.mw_wrapper #motionwiki a:active,
+.mw_wrapper #motionwiki * a:active,
+.mw_wrapper #motionwiki a:hover,
+.mw_wrapper #motionwiki * a:hover {
+  outline: 0;
+}
+.mw_wrapper #motionwiki h1,
+.mw_wrapper #motionwiki * h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+.mw_wrapper #motionwiki abbr[title],
+.mw_wrapper #motionwiki * abbr[title] {
+  border-bottom: 1px dotted;
+}
+.mw_wrapper #motionwiki b,
+.mw_wrapper #motionwiki * b,
+.mw_wrapper #motionwiki strong,
+.mw_wrapper #motionwiki * strong {
+  font-weight: bold;
+}
+.mw_wrapper #motionwiki dfn,
+.mw_wrapper #motionwiki * dfn {
+  font-style: italic;
+}
+.mw_wrapper #motionwiki hr,
+.mw_wrapper #motionwiki * hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+.mw_wrapper #motionwiki mark,
+.mw_wrapper #motionwiki * mark {
+  background: #ff0;
+  color: #000;
+}
+.mw_wrapper #motionwiki code,
+.mw_wrapper #motionwiki * code,
+.mw_wrapper #motionwiki kbd,
+.mw_wrapper #motionwiki * kbd,
+.mw_wrapper #motionwiki pre,
+.mw_wrapper #motionwiki * pre,
+.mw_wrapper #motionwiki samp,
+.mw_wrapper #motionwiki * samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+.mw_wrapper #motionwiki pre,
+.mw_wrapper #motionwiki * pre {
+  white-space: pre-wrap;
+}
+.mw_wrapper #motionwiki q,
+.mw_wrapper #motionwiki * q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+.mw_wrapper #motionwiki small,
+.mw_wrapper #motionwiki * small {
+  font-size: 80%;
+}
+.mw_wrapper #motionwiki sub,
+.mw_wrapper #motionwiki * sub,
+.mw_wrapper #motionwiki sup,
+.mw_wrapper #motionwiki * sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.mw_wrapper #motionwiki sup,
+.mw_wrapper #motionwiki * sup {
+  top: -0.5em;
+}
+.mw_wrapper #motionwiki sub,
+.mw_wrapper #motionwiki * sub {
+  bottom: -0.25em;
+}
+.mw_wrapper #motionwiki img,
+.mw_wrapper #motionwiki * img {
+  border: 0;
+}
+.mw_wrapper #motionwiki svg:not(:root),
+.mw_wrapper #motionwiki * svg:not(:root) {
+  overflow: hidden;
+}
+.mw_wrapper #motionwiki figure,
+.mw_wrapper #motionwiki * figure {
+  margin: 0;
+}
+.mw_wrapper #motionwiki fieldset,
+.mw_wrapper #motionwiki * fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+.mw_wrapper #motionwiki legend,
+.mw_wrapper #motionwiki * legend {
+  border: 0;
+  padding: 0;
+}
+.mw_wrapper #motionwiki button,
+.mw_wrapper #motionwiki * button,
+.mw_wrapper #motionwiki input,
+.mw_wrapper #motionwiki * input,
+.mw_wrapper #motionwiki select,
+.mw_wrapper #motionwiki * select,
+.mw_wrapper #motionwiki textarea,
+.mw_wrapper #motionwiki * textarea {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+}
+.mw_wrapper #motionwiki button,
+.mw_wrapper #motionwiki * button,
+.mw_wrapper #motionwiki input,
+.mw_wrapper #motionwiki * input {
+  line-height: normal;
+}
+.mw_wrapper #motionwiki button,
+.mw_wrapper #motionwiki * button,
+.mw_wrapper #motionwiki select,
+.mw_wrapper #motionwiki * select {
+  text-transform: none;
+}
+.mw_wrapper #motionwiki button,
+.mw_wrapper #motionwiki * button,
+.mw_wrapper #motionwiki html input[type="button"],
+.mw_wrapper #motionwiki * html input[type="button"],
+.mw_wrapper #motionwiki input[type="reset"],
+.mw_wrapper #motionwiki * input[type="reset"],
+.mw_wrapper #motionwiki input[type="submit"],
+.mw_wrapper #motionwiki * input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+.mw_wrapper #motionwiki button[disabled],
+.mw_wrapper #motionwiki * button[disabled],
+.mw_wrapper #motionwiki html input[disabled],
+.mw_wrapper #motionwiki * html input[disabled] {
+  cursor: default;
+}
+.mw_wrapper #motionwiki input[type="checkbox"],
+.mw_wrapper #motionwiki * input[type="checkbox"],
+.mw_wrapper #motionwiki input[type="radio"],
+.mw_wrapper #motionwiki * input[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+.mw_wrapper #motionwiki input[type="search"],
+.mw_wrapper #motionwiki * input[type="search"] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+.mw_wrapper #motionwiki input[type="search"]::-webkit-search-cancel-button,
+.mw_wrapper #motionwiki * input[type="search"]::-webkit-search-cancel-button,
+.mw_wrapper #motionwiki input[type="search"]::-webkit-search-decoration,
+.mw_wrapper #motionwiki * input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+.mw_wrapper #motionwiki button::-moz-focus-inner,
+.mw_wrapper #motionwiki * button::-moz-focus-inner,
+.mw_wrapper #motionwiki input::-moz-focus-inner,
+.mw_wrapper #motionwiki * input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+.mw_wrapper #motionwiki textarea,
+.mw_wrapper #motionwiki * textarea {
+  overflow: auto;
+  vertical-align: top;
+}
+.mw_wrapper #motionwiki table,
+.mw_wrapper #motionwiki * table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.mw_main {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+.mw_playcontrols {
+  float: left;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+.playcontrols-buttons--group {
+  font-size: 2em;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.5s linear;
+}
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+.playcontrols-buttons--group .glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.playcontrols-buttons--group .glyphicon:empty {
+  width: 1em;
+}
+.playcontrols-buttons--group .glyphicon-asterisk:before {
+  content: "\2a";
+}
+.playcontrols-buttons--group .glyphicon-plus:before {
+  content: "\2b";
+}
+.playcontrols-buttons--group .glyphicon-euro:before {
+  content: "\20ac";
+}
+.playcontrols-buttons--group .glyphicon-minus:before {
+  content: "\2212";
+}
+.playcontrols-buttons--group .glyphicon-cloud:before {
+  content: "\2601";
+}
+.playcontrols-buttons--group .glyphicon-envelope:before {
+  content: "\2709";
+}
+.playcontrols-buttons--group .glyphicon-pencil:before {
+  content: "\270f";
+}
+.playcontrols-buttons--group .glyphicon-glass:before {
+  content: "\e001";
+}
+.playcontrols-buttons--group .glyphicon-music:before {
+  content: "\e002";
+}
+.playcontrols-buttons--group .glyphicon-search:before {
+  content: "\e003";
+}
+.playcontrols-buttons--group .glyphicon-heart:before {
+  content: "\e005";
+}
+.playcontrols-buttons--group .glyphicon-star:before {
+  content: "\e006";
+}
+.playcontrols-buttons--group .glyphicon-star-empty:before {
+  content: "\e007";
+}
+.playcontrols-buttons--group .glyphicon-user:before {
+  content: "\e008";
+}
+.playcontrols-buttons--group .glyphicon-film:before {
+  content: "\e009";
+}
+.playcontrols-buttons--group .glyphicon-th-large:before {
+  content: "\e010";
+}
+.playcontrols-buttons--group .glyphicon-th:before {
+  content: "\e011";
+}
+.playcontrols-buttons--group .glyphicon-th-list:before {
+  content: "\e012";
+}
+.playcontrols-buttons--group .glyphicon-ok:before {
+  content: "\e013";
+}
+.playcontrols-buttons--group .glyphicon-remove:before {
+  content: "\e014";
+}
+.playcontrols-buttons--group .glyphicon-zoom-in:before {
+  content: "\e015";
+}
+.playcontrols-buttons--group .glyphicon-zoom-out:before {
+  content: "\e016";
+}
+.playcontrols-buttons--group .glyphicon-off:before {
+  content: "\e017";
+}
+.playcontrols-buttons--group .glyphicon-signal:before {
+  content: "\e018";
+}
+.playcontrols-buttons--group .glyphicon-cog:before {
+  content: "\e019";
+}
+.playcontrols-buttons--group .glyphicon-trash:before {
+  content: "\e020";
+}
+.playcontrols-buttons--group .glyphicon-home:before {
+  content: "\e021";
+}
+.playcontrols-buttons--group .glyphicon-file:before {
+  content: "\e022";
+}
+.playcontrols-buttons--group .glyphicon-time:before {
+  content: "\e023";
+}
+.playcontrols-buttons--group .glyphicon-road:before {
+  content: "\e024";
+}
+.playcontrols-buttons--group .glyphicon-download-alt:before {
+  content: "\e025";
+}
+.playcontrols-buttons--group .glyphicon-download:before {
+  content: "\e026";
+}
+.playcontrols-buttons--group .glyphicon-upload:before {
+  content: "\e027";
+}
+.playcontrols-buttons--group .glyphicon-inbox:before {
+  content: "\e028";
+}
+.playcontrols-buttons--group .glyphicon-play-circle:before {
+  content: "\e029";
+}
+.playcontrols-buttons--group .glyphicon-repeat:before {
+  content: "\e030";
+}
+.playcontrols-buttons--group .glyphicon-refresh:before {
+  content: "\e031";
+}
+.playcontrols-buttons--group .glyphicon-list-alt:before {
+  content: "\e032";
+}
+.playcontrols-buttons--group .glyphicon-lock:before {
+  content: "\e033";
+}
+.playcontrols-buttons--group .glyphicon-flag:before {
+  content: "\e034";
+}
+.playcontrols-buttons--group .glyphicon-headphones:before {
+  content: "\e035";
+}
+.playcontrols-buttons--group .glyphicon-volume-off:before {
+  content: "\e036";
+}
+.playcontrols-buttons--group .glyphicon-volume-down:before {
+  content: "\e037";
+}
+.playcontrols-buttons--group .glyphicon-volume-up:before {
+  content: "\e038";
+}
+.playcontrols-buttons--group .glyphicon-qrcode:before {
+  content: "\e039";
+}
+.playcontrols-buttons--group .glyphicon-barcode:before {
+  content: "\e040";
+}
+.playcontrols-buttons--group .glyphicon-tag:before {
+  content: "\e041";
+}
+.playcontrols-buttons--group .glyphicon-tags:before {
+  content: "\e042";
+}
+.playcontrols-buttons--group .glyphicon-book:before {
+  content: "\e043";
+}
+.playcontrols-buttons--group .glyphicon-bookmark:before {
+  content: "\e044";
+}
+.playcontrols-buttons--group .glyphicon-print:before {
+  content: "\e045";
+}
+.playcontrols-buttons--group .glyphicon-camera:before {
+  content: "\e046";
+}
+.playcontrols-buttons--group .glyphicon-font:before {
+  content: "\e047";
+}
+.playcontrols-buttons--group .glyphicon-bold:before {
+  content: "\e048";
+}
+.playcontrols-buttons--group .glyphicon-italic:before {
+  content: "\e049";
+}
+.playcontrols-buttons--group .glyphicon-text-height:before {
+  content: "\e050";
+}
+.playcontrols-buttons--group .glyphicon-text-width:before {
+  content: "\e051";
+}
+.playcontrols-buttons--group .glyphicon-align-left:before {
+  content: "\e052";
+}
+.playcontrols-buttons--group .glyphicon-align-center:before {
+  content: "\e053";
+}
+.playcontrols-buttons--group .glyphicon-align-right:before {
+  content: "\e054";
+}
+.playcontrols-buttons--group .glyphicon-align-justify:before {
+  content: "\e055";
+}
+.playcontrols-buttons--group .glyphicon-list:before {
+  content: "\e056";
+}
+.playcontrols-buttons--group .glyphicon-indent-left:before {
+  content: "\e057";
+}
+.playcontrols-buttons--group .glyphicon-indent-right:before {
+  content: "\e058";
+}
+.playcontrols-buttons--group .glyphicon-facetime-video:before {
+  content: "\e059";
+}
+.playcontrols-buttons--group .glyphicon-picture:before {
+  content: "\e060";
+}
+.playcontrols-buttons--group .glyphicon-map-marker:before {
+  content: "\e062";
+}
+.playcontrols-buttons--group .glyphicon-adjust:before {
+  content: "\e063";
+}
+.playcontrols-buttons--group .glyphicon-tint:before {
+  content: "\e064";
+}
+.playcontrols-buttons--group .glyphicon-edit:before {
+  content: "\e065";
+}
+.playcontrols-buttons--group .glyphicon-share:before {
+  content: "\e066";
+}
+.playcontrols-buttons--group .glyphicon-check:before {
+  content: "\e067";
+}
+.playcontrols-buttons--group .glyphicon-move:before {
+  content: "\e068";
+}
+.playcontrols-buttons--group .glyphicon-step-backward:before {
+  content: "\e069";
+}
+.playcontrols-buttons--group .glyphicon-fast-backward:before {
+  content: "\e070";
+}
+.playcontrols-buttons--group .glyphicon-backward:before {
+  content: "\e071";
+}
+.playcontrols-buttons--group .glyphicon-play:before {
+  content: "\e072";
+}
+.playcontrols-buttons--group .glyphicon-pause:before {
+  content: "\e073";
+}
+.playcontrols-buttons--group .glyphicon-stop:before {
+  content: "\e074";
+}
+.playcontrols-buttons--group .glyphicon-forward:before {
+  content: "\e075";
+}
+.playcontrols-buttons--group .glyphicon-fast-forward:before {
+  content: "\e076";
+}
+.playcontrols-buttons--group .glyphicon-step-forward:before {
+  content: "\e077";
+}
+.playcontrols-buttons--group .glyphicon-eject:before {
+  content: "\e078";
+}
+.playcontrols-buttons--group .glyphicon-chevron-left:before {
+  content: "\e079";
+}
+.playcontrols-buttons--group .glyphicon-chevron-right:before {
+  content: "\e080";
+}
+.playcontrols-buttons--group .glyphicon-plus-sign:before {
+  content: "\e081";
+}
+.playcontrols-buttons--group .glyphicon-minus-sign:before {
+  content: "\e082";
+}
+.playcontrols-buttons--group .glyphicon-remove-sign:before {
+  content: "\e083";
+}
+.playcontrols-buttons--group .glyphicon-ok-sign:before {
+  content: "\e084";
+}
+.playcontrols-buttons--group .glyphicon-question-sign:before {
+  content: "\e085";
+}
+.playcontrols-buttons--group .glyphicon-info-sign:before {
+  content: "\e086";
+}
+.playcontrols-buttons--group .glyphicon-screenshot:before {
+  content: "\e087";
+}
+.playcontrols-buttons--group .glyphicon-remove-circle:before {
+  content: "\e088";
+}
+.playcontrols-buttons--group .glyphicon-ok-circle:before {
+  content: "\e089";
+}
+.playcontrols-buttons--group .glyphicon-ban-circle:before {
+  content: "\e090";
+}
+.playcontrols-buttons--group .glyphicon-arrow-left:before {
+  content: "\e091";
+}
+.playcontrols-buttons--group .glyphicon-arrow-right:before {
+  content: "\e092";
+}
+.playcontrols-buttons--group .glyphicon-arrow-up:before {
+  content: "\e093";
+}
+.playcontrols-buttons--group .glyphicon-arrow-down:before {
+  content: "\e094";
+}
+.playcontrols-buttons--group .glyphicon-share-alt:before {
+  content: "\e095";
+}
+.playcontrols-buttons--group .glyphicon-resize-full:before {
+  content: "\e096";
+}
+.playcontrols-buttons--group .glyphicon-resize-small:before {
+  content: "\e097";
+}
+.playcontrols-buttons--group .glyphicon-exclamation-sign:before {
+  content: "\e101";
+}
+.playcontrols-buttons--group .glyphicon-gift:before {
+  content: "\e102";
+}
+.playcontrols-buttons--group .glyphicon-leaf:before {
+  content: "\e103";
+}
+.playcontrols-buttons--group .glyphicon-fire:before {
+  content: "\e104";
+}
+.playcontrols-buttons--group .glyphicon-eye-open:before {
+  content: "\e105";
+}
+.playcontrols-buttons--group .glyphicon-eye-close:before {
+  content: "\e106";
+}
+.playcontrols-buttons--group .glyphicon-warning-sign:before {
+  content: "\e107";
+}
+.playcontrols-buttons--group .glyphicon-plane:before {
+  content: "\e108";
+}
+.playcontrols-buttons--group .glyphicon-calendar:before {
+  content: "\e109";
+}
+.playcontrols-buttons--group .glyphicon-random:before {
+  content: "\e110";
+}
+.playcontrols-buttons--group .glyphicon-comment:before {
+  content: "\e111";
+}
+.playcontrols-buttons--group .glyphicon-magnet:before {
+  content: "\e112";
+}
+.playcontrols-buttons--group .glyphicon-chevron-up:before {
+  content: "\e113";
+}
+.playcontrols-buttons--group .glyphicon-chevron-down:before {
+  content: "\e114";
+}
+.playcontrols-buttons--group .glyphicon-retweet:before {
+  content: "\e115";
+}
+.playcontrols-buttons--group .glyphicon-shopping-cart:before {
+  content: "\e116";
+}
+.playcontrols-buttons--group .glyphicon-folder-close:before {
+  content: "\e117";
+}
+.playcontrols-buttons--group .glyphicon-folder-open:before {
+  content: "\e118";
+}
+.playcontrols-buttons--group .glyphicon-resize-vertical:before {
+  content: "\e119";
+}
+.playcontrols-buttons--group .glyphicon-resize-horizontal:before {
+  content: "\e120";
+}
+.playcontrols-buttons--group .glyphicon-hdd:before {
+  content: "\e121";
+}
+.playcontrols-buttons--group .glyphicon-bullhorn:before {
+  content: "\e122";
+}
+.playcontrols-buttons--group .glyphicon-bell:before {
+  content: "\e123";
+}
+.playcontrols-buttons--group .glyphicon-certificate:before {
+  content: "\e124";
+}
+.playcontrols-buttons--group .glyphicon-thumbs-up:before {
+  content: "\e125";
+}
+.playcontrols-buttons--group .glyphicon-thumbs-down:before {
+  content: "\e126";
+}
+.playcontrols-buttons--group .glyphicon-hand-right:before {
+  content: "\e127";
+}
+.playcontrols-buttons--group .glyphicon-hand-left:before {
+  content: "\e128";
+}
+.playcontrols-buttons--group .glyphicon-hand-up:before {
+  content: "\e129";
+}
+.playcontrols-buttons--group .glyphicon-hand-down:before {
+  content: "\e130";
+}
+.playcontrols-buttons--group .glyphicon-circle-arrow-right:before {
+  content: "\e131";
+}
+.playcontrols-buttons--group .glyphicon-circle-arrow-left:before {
+  content: "\e132";
+}
+.playcontrols-buttons--group .glyphicon-circle-arrow-up:before {
+  content: "\e133";
+}
+.playcontrols-buttons--group .glyphicon-circle-arrow-down:before {
+  content: "\e134";
+}
+.playcontrols-buttons--group .glyphicon-globe:before {
+  content: "\e135";
+}
+.playcontrols-buttons--group .glyphicon-wrench:before {
+  content: "\e136";
+}
+.playcontrols-buttons--group .glyphicon-tasks:before {
+  content: "\e137";
+}
+.playcontrols-buttons--group .glyphicon-filter:before {
+  content: "\e138";
+}
+.playcontrols-buttons--group .glyphicon-briefcase:before {
+  content: "\e139";
+}
+.playcontrols-buttons--group .glyphicon-fullscreen:before {
+  content: "\e140";
+}
+.playcontrols-buttons--group .glyphicon-dashboard:before {
+  content: "\e141";
+}
+.playcontrols-buttons--group .glyphicon-paperclip:before {
+  content: "\e142";
+}
+.playcontrols-buttons--group .glyphicon-heart-empty:before {
+  content: "\e143";
+}
+.playcontrols-buttons--group .glyphicon-link:before {
+  content: "\e144";
+}
+.playcontrols-buttons--group .glyphicon-phone:before {
+  content: "\e145";
+}
+.playcontrols-buttons--group .glyphicon-pushpin:before {
+  content: "\e146";
+}
+.playcontrols-buttons--group .glyphicon-usd:before {
+  content: "\e148";
+}
+.playcontrols-buttons--group .glyphicon-gbp:before {
+  content: "\e149";
+}
+.playcontrols-buttons--group .glyphicon-sort:before {
+  content: "\e150";
+}
+.playcontrols-buttons--group .glyphicon-sort-by-alphabet:before {
+  content: "\e151";
+}
+.playcontrols-buttons--group .glyphicon-sort-by-alphabet-alt:before {
+  content: "\e152";
+}
+.playcontrols-buttons--group .glyphicon-sort-by-order:before {
+  content: "\e153";
+}
+.playcontrols-buttons--group .glyphicon-sort-by-order-alt:before {
+  content: "\e154";
+}
+.playcontrols-buttons--group .glyphicon-sort-by-attributes:before {
+  content: "\e155";
+}
+.playcontrols-buttons--group .glyphicon-sort-by-attributes-alt:before {
+  content: "\e156";
+}
+.playcontrols-buttons--group .glyphicon-unchecked:before {
+  content: "\e157";
+}
+.playcontrols-buttons--group .glyphicon-expand:before {
+  content: "\e158";
+}
+.playcontrols-buttons--group .glyphicon-collapse-down:before {
+  content: "\e159";
+}
+.playcontrols-buttons--group .glyphicon-collapse-up:before {
+  content: "\e160";
+}
+.playcontrols-buttons--group .glyphicon-log-in:before {
+  content: "\e161";
+}
+.playcontrols-buttons--group .glyphicon-flash:before {
+  content: "\e162";
+}
+.playcontrols-buttons--group .glyphicon-log-out:before {
+  content: "\e163";
+}
+.playcontrols-buttons--group .glyphicon-new-window:before {
+  content: "\e164";
+}
+.playcontrols-buttons--group .glyphicon-record:before {
+  content: "\e165";
+}
+.playcontrols-buttons--group .glyphicon-save:before {
+  content: "\e166";
+}
+.playcontrols-buttons--group .glyphicon-open:before {
+  content: "\e167";
+}
+.playcontrols-buttons--group .glyphicon-saved:before {
+  content: "\e168";
+}
+.playcontrols-buttons--group .glyphicon-import:before {
+  content: "\e169";
+}
+.playcontrols-buttons--group .glyphicon-export:before {
+  content: "\e170";
+}
+.playcontrols-buttons--group .glyphicon-send:before {
+  content: "\e171";
+}
+.playcontrols-buttons--group .glyphicon-floppy-disk:before {
+  content: "\e172";
+}
+.playcontrols-buttons--group .glyphicon-floppy-saved:before {
+  content: "\e173";
+}
+.playcontrols-buttons--group .glyphicon-floppy-remove:before {
+  content: "\e174";
+}
+.playcontrols-buttons--group .glyphicon-floppy-save:before {
+  content: "\e175";
+}
+.playcontrols-buttons--group .glyphicon-floppy-open:before {
+  content: "\e176";
+}
+.playcontrols-buttons--group .glyphicon-credit-card:before {
+  content: "\e177";
+}
+.playcontrols-buttons--group .glyphicon-transfer:before {
+  content: "\e178";
+}
+.playcontrols-buttons--group .glyphicon-cutlery:before {
+  content: "\e179";
+}
+.playcontrols-buttons--group .glyphicon-header:before {
+  content: "\e180";
+}
+.playcontrols-buttons--group .glyphicon-compressed:before {
+  content: "\e181";
+}
+.playcontrols-buttons--group .glyphicon-earphone:before {
+  content: "\e182";
+}
+.playcontrols-buttons--group .glyphicon-phone-alt:before {
+  content: "\e183";
+}
+.playcontrols-buttons--group .glyphicon-tower:before {
+  content: "\e184";
+}
+.playcontrols-buttons--group .glyphicon-stats:before {
+  content: "\e185";
+}
+.playcontrols-buttons--group .glyphicon-sd-video:before {
+  content: "\e186";
+}
+.playcontrols-buttons--group .glyphicon-hd-video:before {
+  content: "\e187";
+}
+.playcontrols-buttons--group .glyphicon-subtitles:before {
+  content: "\e188";
+}
+.playcontrols-buttons--group .glyphicon-sound-stereo:before {
+  content: "\e189";
+}
+.playcontrols-buttons--group .glyphicon-sound-dolby:before {
+  content: "\e190";
+}
+.playcontrols-buttons--group .glyphicon-sound-5-1:before {
+  content: "\e191";
+}
+.playcontrols-buttons--group .glyphicon-sound-6-1:before {
+  content: "\e192";
+}
+.playcontrols-buttons--group .glyphicon-sound-7-1:before {
+  content: "\e193";
+}
+.playcontrols-buttons--group .glyphicon-copyright-mark:before {
+  content: "\e194";
+}
+.playcontrols-buttons--group .glyphicon-registration-mark:before {
+  content: "\e195";
+}
+.playcontrols-buttons--group .glyphicon-cloud-download:before {
+  content: "\e197";
+}
+.playcontrols-buttons--group .glyphicon-cloud-upload:before {
+  content: "\e198";
+}
+.playcontrols-buttons--group .glyphicon-tree-conifer:before {
+  content: "\e199";
+}
+.playcontrols-buttons--group .glyphicon-tree-deciduous:before {
+  content: "\e200";
+}
+.playcontrols-buttons--group span {
+  cursor: pointer;
+}
+.playcontrols-buttons--group span:hover {
+  color: #ffffff;
+}

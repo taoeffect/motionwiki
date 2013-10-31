@@ -7,5 +7,13 @@ define ['require', 'jquery'], (require, $)->
     restrict: 'E'
     link: (scope, element, attrs)->
       console.log "play controls directive"
+
+      scope.play = ->
+      	alert "Play!!"
+      scope.forward = ->
+      	alert "Forward!"
+      scope.backward = ->
+      	alert "backward!!"
+
   ]
 
