@@ -18,6 +18,7 @@ npm-debug.log
 lint.json
 
 private/playground/*
+private/reference
 public/includes/js/mw
 src/extensions/output
 src/extensions/certificates/chrome.real.pem
