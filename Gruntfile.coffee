@@ -312,7 +312,7 @@ module.exports = (grunt) ->
         target = path.relative(base, path.join(path.dirname(opts.target),path.basename(opts.target)))
         if grunt.file.isDir(opts.target) then type = 'dir' else type = 'file'
 
-        # grunt.file.exists and fs.existsSync don't work when the link is there! :-O
+        # grunt.file.exists don't work when the link is there! :-O
         # console.log "existsSync? #{fs.existsSync(link)} lstat? #{fs.lstatSync(link)}"
         if fs.existsSync(link)
             grunt.log.writeln "Unliking #{link.cyan}..."
