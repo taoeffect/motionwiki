@@ -22,7 +22,6 @@ requirejs.config {
             # http://docs.angularjs.org/api/angular.element
             deps: ["jquery"]
             exports: "angular"
-        
         # http://stackoverflow.com/questions/13377373/shim-twitter-bootstrap-for-requirejs
         bootstrap: deps: ["jquery"], exports: "$.fn.popover"
         lodash: exports: "_" 

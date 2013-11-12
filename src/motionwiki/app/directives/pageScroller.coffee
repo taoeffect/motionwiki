@@ -3,7 +3,7 @@
 define ['require', 'jquery'], (require, $)->
 
 	angular.module('mw_directives').directive 'mwPageScroller', [ ->
-		templateUrl: '../public/templates/directives/pageScroller.html'
+		templateUrl: '/includes/templates/directives/pageScroller.html'
 		restrict: 'E'
 		link: (scope, element, attrs)->
 			#this next part is where i made a test button. It will be commented out during integration
