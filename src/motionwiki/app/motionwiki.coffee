@@ -17,15 +17,55 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
     angular.bootstrap(document.getElementById('motionwiki'),['motion_wiki'])
 
     $('<div>').text('MotionWiki Loaded! Querying wiki...').appendTo('body > div')
+
+    ###
+    
     api.query 'Wikipedia', 'revisions', (jqXHR, textStatus)->
-        console.log "jqXHR: #{JSON.stringify(jqXHR)}"
 
         for pageNum,page of jqXHR.responseJSON.query.pages
             for revision in page.revisions
+                console.log "revision = #{JSON.stringify(revision, false, 100)}"
                 $ourXML = $('<div>').html revision.diff["*"]
-                $ourXML.find('.diff-context > div').each -> console.log "ctx: #{$(@).html()}"
+               # $ourXML.find('.diff-context > div').each -> console.log "ctx: #{$(@).html()}"
                 
                 $('<div>').css('color','blue').text("#{revision.diff.from} -> #{revision.diff.to}").appendTo('body > div')
                 $('<div>').css('color', if jqXHR.status < 300 then 'green' else 'red')
                         .html(revision.diff["*"])
                         .appendTo('body > div')
+
+    ###
+
+    wikiText = ""
+    parsedWikiText = []
+    parsedWikiText.push "0-based accessor fix, ignore"
+
+    api.queryWikiText 'San_Francisco', 'revisions', (jqXHR, textStatus)->
+        for pageNum, page of jqXHR.responseJSON.query.pages
+            for revision in page.revisions
+                $('<div>').html(revision["*"]).appendTo('body > div')
+                #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
+                wikiText = revision["*"]
+
+        #wikiText = JSON.stringify(revision["*"], false, 100)
+        position = 0
+        while position > -1
+            position = wikiText.indexOf("\n")
+            myStart = wikiText.substring(0, position)
+            parsedWikiText.push myStart
+            myEnd = wikiText.substring(position+1, wikiText.length)
+            wikiText = myEnd
+        
+        console.log "outputing parsedWikiText"
+        line = 0
+        _wordcount = 0
+        for textLine in parsedWikiText
+            console.log "line #{line}: #{textLine}"
+            _wordcount += textLine.split(" ").length
+            line++
+
+        console.log "wordcount = #{_wordcount}"
+
+        
+
+                
+        

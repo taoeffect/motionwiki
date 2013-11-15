@@ -40,3 +40,21 @@ define ['jquery', 'lodash'], ($,_) ->
                 rvdiffto         : 'prev'
                 titles           : titleOrTitles
         }
+
+    queryWikiText: (titleOrTitles, prop, [options]..., cb) =>
+        titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
+        options = @merge(options)
+        $.ajax @merge options.ajax, {
+            complete: (jqXHR, textStatus)->
+                # do our pre-processing (if any)
+                cb(jqXHR, textStatus)
+            data:
+                action           : 'query'
+                prop             : prop
+                format           : 'json'
+                rvprop           : 'content'
+                # rvexpandtemplates: true
+                # rvtoken          : 'rollback'
+                rvcontentformat  : 'text/x-wiki'
+                titles           : titleOrTitles
+        }
