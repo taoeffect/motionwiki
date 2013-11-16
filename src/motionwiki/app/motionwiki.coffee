@@ -39,7 +39,9 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
     parsedWikiText = []
     parsedWikiText.push "0-based accessor fix, ignore"
 
-    api.queryWikiText 'San_Francisco', 'revisions', (jqXHR, textStatus)->
+    # Need to change San_Francisco to whatever page user is on
+
+    api.queryWikiTextContent 'San_Francisco', 'revisions', (jqXHR, textStatus)->
         for pageNum, page of jqXHR.responseJSON.query.pages
             for revision in page.revisions
                 $('<div>').html(revision["*"]).appendTo('body > div')
@@ -47,6 +49,7 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
                 wikiText = revision["*"]
 
         #wikiText = JSON.stringify(revision["*"], false, 100)
+        wikiText = 
         position = 0
         while position > -1
             position = wikiText.indexOf("\n")
@@ -65,7 +68,17 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
 
         console.log "wordcount = #{_wordcount}"
 
-        
+    timeStampArray = []
 
-                
-        
+    # If user input is start date
+    api.queryRevisionsinDateRangeUsingStartDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
+        for pageNum, page of jqXHR.responseJSON.query.pages
+            for revision in page.revisions
+                timeStampArray.push revision["timestamp"]  
+
+    
+    # If user input is end date
+    api.queryRevisionsinDateRangeUsingEndDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
+        for pageNum, page of jqXHR.responseJSON.query.pages
+            for revision in page.revisions
+                timeStampArray.push revision["timestamp"]

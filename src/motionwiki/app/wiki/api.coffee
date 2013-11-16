@@ -85,7 +85,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 titles           : titleOrTitles
         }
 
-        queryRevisionsInDateRangeUsingEndingDate: (titleOrTitles,prop, [options]..., cb) =>
+    queryRevisionsInDateRangeUsingEndingDate: (titleOrTitles,prop, [options]..., cb) =>
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
         options = @merge(options)
         $.ajax @merge options.ajax, {
