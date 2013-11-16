@@ -59,42 +59,47 @@ define ['jquery', 'lodash'], ($,_) ->
                 titles           : titleOrTitles
         }
 
-    # Querying for timestamps is so fast we could make the
-    # query before the second date is selected?
-    queryRevisionsInDateRangeUsingStartDate: (titleOrTitles, prop, [options]..., cb) =>
+
+#    Querying for timestamps is so fast we could make the
+#    query before the second date is selected?
+#    Also, since 500 timestamps is the maximum, we could black 
+#    out dates on the calendar past the last timestamp in the range?
+    queryRevisionsInDateRangeUsingStartDate: (titleOrTitles,prop, [options]..., cb) =>
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
         options = @merge(options)
         $.ajax @merge options.ajax, {
-            complete: (jqXHR, textStatus)->
-                #do our pre-processing (if any)
-                cb(jqXHR,textStatus)
+            complete: (jqXHR, textStatus) ->
+                # do our pre-processing (if any)
+                cb(jqXHR, textStatus)
             data:
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
-                rvprop           : 'timestamp'
+                rvprop           : 'content'
                 rvlimit          : 500
-                rvstart          : datePickerStartDate
+                rvstart          : datePickerEarlierDate
+                rvdir            : 'newer'
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'text/x-wiki'
                 titles           : titleOrTitles
         }
 
-    queryRevisionsInDateRangeUsingEndDate: (titleOrTitles, prop, [options]..., cb) =>
+        queryRevisionsInDateRangeUsingEndingDate: (titleOrTitles,prop, [options]..., cb) =>
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
         options = @merge(options)
         $.ajax @merge options.ajax, {
-            complete: (jqXHR, textStatus)->
-                #do our pre-processing (if any)
-                cb(jqXHR,textStatus)
+            complete: (jqXHR, textStatus) ->
+                # do our pre-processing (if any)
+                cb(jqXHR, textStatus)
             data:
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
-                rvprop           : 'timestamp'
+                rvprop           : 'content'
                 rvlimit          : 500
-                rvstart          : datePickerStartDate
+                rvstart          : datePickerLaterDate
+                rvdir            : 'newer'
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'text/x-wiki'
