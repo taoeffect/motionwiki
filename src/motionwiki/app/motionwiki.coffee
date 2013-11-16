@@ -71,14 +71,38 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
     timeStampArray = []
 
     # If user input is start date
+    # Need actual variable name fpr datePickerLaterDate
     api.queryRevisionsinDateRangeUsingStartDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
         for pageNum, page of jqXHR.responseJSON.query.pages
             for revision in page.revisions
-                timeStampArray.push revision["timestamp"]  
+                timeStampArray.push revision["timestamp"]
 
-    
+        counter = 0
+
+        for timeStamp in timeStampArray
+            if timeStamp <= datePickerLaterDate
+                counter++
+            else
+                break
+
+        timeStampArray = timeStampArray[0...counter]
+
     # If user input is end date
+    # Need actual variable name fpr datePickerEarlierDate
     api.queryRevisionsinDateRangeUsingEndDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
         for pageNum, page of jqXHR.responseJSON.query.pages
             for revision in page.revisions
                 timeStampArray.push revision["timestamp"]
+
+        counter = 0
+
+        for timeStamp in timeStampArray
+            if timeStamp < datePickerEarlierDate
+                counter++
+            else
+                break
+
+        timeStampArray = timeStampArray[counter...timeStampArray.length]
+
+
+
