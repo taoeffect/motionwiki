@@ -59,7 +59,6 @@ define ['jquery', 'lodash'], ($,_) ->
                 titles           : titleOrTitles
         }
 
-
 #    Querying for timestamps is so fast we could make the
 #    query before the second date is selected?
 #    Also, since 500 timestamps is the maximum, we could black 
@@ -77,7 +76,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 format           : 'json'
                 rvprop           : 'content'
                 rvlimit          : 500
-                rvstart          : datePickerEarlierDate
+                rvstart          : datepicker1.date
                 rvdir            : 'newer'
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
@@ -98,7 +97,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 format           : 'json'
                 rvprop           : 'content'
                 rvlimit          : 500
-                rvstart          : datePickerLaterDate
+                rvstart          : datepicker2.date
                 rvdir            : 'newer'
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'

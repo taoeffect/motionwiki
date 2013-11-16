@@ -71,16 +71,16 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
     timeStampArray = []
 
     # If user input is start date
-    # Need actual variable name fpr datePickerLaterDate
+    # Gets timestamps and byte counts for 500 revisions after start date
     api.queryRevisionsinDateRangeUsingStartDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
         for pageNum, page of jqXHR.responseJSON.query.pages
             for revision in page.revisions
-                timeStampArray.push revision["timestamp"]
+                timeStampArray.push [revision["timestamp"], revision["size"]]
 
         counter = 0
 
         for timeStamp in timeStampArray
-            if timeStamp <= datePickerLaterDate
+            if timeStamp[0] <= datepicker2.date
                 counter++
             else
                 break
@@ -88,16 +88,16 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
         timeStampArray = timeStampArray[0...counter]
 
     # If user input is end date
-    # Need actual variable name fpr datePickerEarlierDate
+    # Gets timestamps and byte counts for 500 revisions before end date
     api.queryRevisionsinDateRangeUsingEndDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
         for pageNum, page of jqXHR.responseJSON.query.pages
             for revision in page.revisions
-                timeStampArray.push revision["timestamp"]
+                timeStampArray.push [revision["timestamp"], revision["size"]]
 
         counter = 0
 
         for timeStamp in timeStampArray
-            if timeStamp < datePickerEarlierDate
+            if timeStamp[0] < datepicker1.date
                 counter++
             else
                 break
