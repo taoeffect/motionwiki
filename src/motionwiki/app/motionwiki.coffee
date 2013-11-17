@@ -49,7 +49,6 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
                 wikiText = revision["*"]
 
         #wikiText = JSON.stringify(revision["*"], false, 100)
-        wikiText = 
         position = 0
         while position > -1
             position = wikiText.indexOf("\n")
