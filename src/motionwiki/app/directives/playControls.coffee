@@ -1,19 +1,21 @@
 ## Play controls directive
 
 define ['require', 'jquery'], (require, $)->
-  
+
   angular.module('mw_directives').directive 'mwPlayControls', [ ->
     templateUrl: '/includes/templates/directives/playControls.html'
     restrict: 'E'
     link: (scope, element, attrs)->
       console.log "play controls directive"
+      scope.active = false
 
       scope.play = ->
-      	alert "Play!!"
+        alert "Play!!"
+        scope.active = !scope.active
       scope.forward = ->
-      	alert "Forward!"
+        alert "Forward!"
       scope.backward = ->
-      	alert "backward!!"
+        alert "backward!!"
 
   ]
 

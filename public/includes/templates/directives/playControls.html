@@ -1,9 +1,9 @@
-<div class="mw_playcontrols">
+<div class="mw_playcontrols motionwiki">
 	<img src="/includes/img/motionwiki_logo.png"/> <!--Logo-->
-	<div class="playcontrols-buttons--group">
-		<span ng-click="backward()"class="glyphicon glyphicon-fast-backward"></span>
-		<span ng-click="play()" class="glyphicon glyphicon-play"></span>
-		<span ng-click="forward()"class="glyphicon glyphicon-fast-forward"></span>
+	<div class="playcontrols-buttons--group motionwiki">
+		<span ng-click="backward()"class="glyphicon glyphicon-fast-backward motionwiki"></span>
+		<span ng-click="play()" class="glyphicon motionwiki" ng-class="{'glyphicon-play': !active, 'glyphicon-pause': active}"></span>
+		<span ng-click="forward()"class="glyphicon glyphicon-fast-forward motionwiki"></span>
 	</div>
-	<mw-page-scroller></mw-page-scroller>
+	<mw-page-scroller class="motionwiki"></mw-page-scroller>
 </div>

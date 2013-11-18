@@ -1,10 +1,10 @@
 define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (require, $, JSON, api)->
   
-  $('<div class="mw_wrapper">').appendTo('body > div')
-  $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main" >').appendTo('.mw_wrapper')
-  $('<mw-timeline>').appendTo('div#motionwiki')
-  $('<mw-history-grapher>').appendTo('div#motionwiki')
-  $('<mw-play-controls>').appendTo('div#motionwiki')
+  $('<div class="mw_wrapper motionwiki">').appendTo('body > div')
+  $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main motionwiki" >').appendTo('.mw_wrapper')
+  $('<mw-timeline class="motionwiki">').appendTo('div#motionwiki')
+  $('<mw-history-grapher class="motionwiki">').appendTo('div#motionwiki')
+  $('<mw-play-controls class="motionwiki">').appendTo('div#motionwiki')
   
   angular.module('motion_wiki', ['mw_directives','mw_controllers']).run [ '$rootScope' , ($rootScope)->
   	console.log $rootScope
