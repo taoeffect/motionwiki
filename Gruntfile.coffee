@@ -266,6 +266,7 @@ module.exports = (grunt) ->
                         bootstrap            : 'empty:'
                         lodash               : 'empty:'
                         JSON                 : 'empty:'
+                        angular_strap        : 'empty:'
 
                     keepBuildDir: false
 

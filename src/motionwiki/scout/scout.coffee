@@ -3,5 +3,5 @@ require ['require', 'jquery', 'angular'], (require, $, angular)->
 
 	$('<button id="load">').text('Load!')
 		.appendTo('body > div')
-		.click(-> require ['motionwiki', 'css!motionwiki'])
+		.click(-> require ['motionwiki', 'bootstrap', 'css!motionwiki'])
 
