@@ -1,5 +1,6 @@
-define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (require, $, JSON, api)->
+define ['require', 'jquery', 'JSON', 'wiki/api', 'wiki/data', this], (require, $, JSON, api, data, _this)->
     $('<div class="mw_wrapper">').appendTo('body > div')
+    ###
     $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main" >').appendTo('.mw_wrapper')
     $('<mw-timeline>').appendTo('div#motionwiki')
     $('<mw-history-grapher>').appendTo('div#motionwiki')
@@ -15,57 +16,63 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
     	console.log $rootScope
     ]
     angular.bootstrap(document.getElementById('motionwiki'),['motion_wiki'])
-
-    $('<div>').text('MotionWiki Loaded! Querying wiki...').appendTo('body > div')
-
     ###
+
     
-    api.query 'Wikipedia', 'revisions', (jqXHR, textStatus)->
-
-        for pageNum,page of jqXHR.responseJSON.query.pages
-            for revision in page.revisions
-                console.log "revision = #{JSON.stringify(revision, false, 100)}"
-                $ourXML = $('<div>').html revision.diff["*"]
-               # $ourXML.find('.diff-context > div').each -> console.log "ctx: #{$(@).html()}"
-                
-                $('<div>').css('color','blue').text("#{revision.diff.from} -> #{revision.diff.to}").appendTo('body > div')
-                $('<div>').css('color', if jqXHR.status < 300 then 'green' else 'red')
-                        .html(revision.diff["*"])
-                        .appendTo('body > div')
-
-    ###
-
-    wikiText = ""
-    parsedWikiText = []
-    parsedWikiText.push "0-based accessor fix, ignore"
 
     # Need to change San_Francisco to whatever page user is on
+    
 
-    api.queryWikiTextContent 'San_Francisco', 'revisions', (jqXHR, textStatus)->
+
+    api.query 'San_Francisco', 'revisions', (jqXHR, textStatus) ->
+            # get Data and do stuff
+        wikiText = "success"
+        data.setDiffTextReturnToTrue()
+        console.log "api.query callback complete"
+    
+    console.log "api.query complete"
+
+    
+
+    parsedRevisions = []
+    
+    api.getWikiTextContent 'San_Francisco', 'revisions', (jqXHR, textStatus) ->
+        console.log "api.queryWikiTextContent"
         for pageNum, page of jqXHR.responseJSON.query.pages
+            counter = 0
             for revision in page.revisions
-                $('<div>').html(revision["*"]).appendTo('body > div')
-                #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
-                wikiText = revision["*"]
+                console.log "counter = #{counter}"
+                if counter == 1
+                    parsedWikiText = []
+                    parsedWikiText.push "0-based accessor fix, ignore"
+                    $('<div>').html(revision["*"]).appendTo('body > div')
+                    #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
+                    wikiText = revision["*"]
 
-        #wikiText = JSON.stringify(revision["*"], false, 100)
-        position = 0
-        while position > -1
-            position = wikiText.indexOf("\n")
-            myStart = wikiText.substring(0, position)
-            parsedWikiText.push myStart
-            myEnd = wikiText.substring(position+1, wikiText.length)
-            wikiText = myEnd
-        
-        console.log "outputing parsedWikiText"
-        line = 0
-        _wordcount = 0
-        for textLine in parsedWikiText
-            console.log "line #{line}: #{textLine}"
-            _wordcount += textLine.split(" ").length
-            line++
+                #wikiText = JSON.stringify(revision["*"], false, 100)
+                    position = 0
+                    while position > -1
+                        position = wikiText.indexOf("\n")
+                        myStart = wikiText.substring(0, position)
+                        parsedWikiText.push myStart
+                        myEnd = wikiText.substring(position+1, wikiText.length)
+                        wikiText = myEnd
+                    parsedRevisions.push parsedWikiText
+                counter++
+                console.log "counter = #{counter}"
 
-        console.log "wordcount = #{_wordcount}"
+        for revision in parsedRevisions
+            line = 0
+            _wordcount = 0
+            for textLine in revision
+                console.log "line #{line}: #{textLine}"
+                _wordcount += textLine.split(" ").length
+                line++
+        data.setParsedWikiTextReturnToTrue()
+            
+    ###
+    
+    
 
     timeStampArray = []
 
@@ -103,5 +110,5 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (
 
         timeStampArray = timeStampArray[counter...timeStampArray.length]
 
-
+    ###
 

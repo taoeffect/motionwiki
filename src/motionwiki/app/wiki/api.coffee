@@ -2,6 +2,16 @@
 
 define ['jquery', 'lodash'], ($,_) ->
     # just an example. this will return an object.
+    # TEST FLAGS AND WRAPPERS TO PREVENT MULTIPLE AJAX CALLBACKS
+
+    newQueryCall = true
+
+    setNewQueryCallFalse: ->
+        newQueryCall = false
+
+    setNewQueryCallTrue: ->
+        newQueryCall = true
+
     defaults =
         num : 5
         ajax: 
@@ -21,12 +31,13 @@ define ['jquery', 'lodash'], ($,_) ->
                 toid     : revid2
         }
     query: (titleOrTitles, prop, [options]..., cb) =>
-        titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-        options = @merge(options)
-        $.ajax @merge options.ajax, {
-            complete: (jqXHR, textStatus)->
-                # do our pre-processing (if any)
-                cb(jqXHR, textStatus)
+            titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
+            options = @merge(options)
+            $.ajax @merge options.ajax, {
+                complete: (jqXHR, textStatus)->
+                    # do our pre-processing (if any)
+                    console.log "ajax complete"
+                    cb(jqXHR, textStatus)
             data:
                 action           : 'query'
                 prop             :  prop
@@ -39,25 +50,29 @@ define ['jquery', 'lodash'], ($,_) ->
                 rvcontentformat  : 'application/json'
                 rvdiffto         : 'prev'
                 titles           : titleOrTitles
-        }
+            }
 
-    queryWikiTextContent: (titleOrTitles, prop, [options]..., cb) =>
+    getWikiTextContent: (titleOrTitles, prop, [options]..., cb) =>
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
         options = @merge(options)
         $.ajax @merge options.ajax, {
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
+                console.log "ajax complete"
                 cb(jqXHR, textStatus)
             data:
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
                 rvprop           : 'content'
+                rvlimit          : '2'
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'text/x-wiki'
                 titles           : titleOrTitles
         }
+
+
 
 #    Querying for timestamps is so fast we could make the
 #    query before the second date is selected?
@@ -74,7 +89,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
-                rvprop           : 'content'
+                rvprop           : 'timestamp|size'
                 rvlimit          : 500
                 rvstart          : datepicker1.date
                 rvdir            : 'newer'
@@ -95,7 +110,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
-                rvprop           : 'content'
+                rvprop           : 'timestamp|size'
                 rvlimit          : 500
                 rvstart          : datepicker2.date
                 rvdir            : 'newer'
