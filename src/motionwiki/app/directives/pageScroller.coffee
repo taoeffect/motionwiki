@@ -16,12 +16,15 @@ define ['require', 'jquery'], (require, $)->
 					$("#MyScript").append $mapSource
 					$("body").wrapInner $("<div id=\"MOVEIT\"/>").css(
     					  "margin-left": 180
-      				   	   
+    				)
+    				$("#MOVEIT").css(
+      				   	  "margin-top": 180
     				)
 					$(this).val "OFF"
 				else
     				$(this).val "ON"
     				$("#MOVEIT").css "margin-left": 0
+    				$("#MOVEIT").css "margin-top": 0
     				$("#MAP").slideUp "slow",->
 				
 
