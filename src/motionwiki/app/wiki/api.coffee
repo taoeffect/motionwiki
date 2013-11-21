@@ -31,13 +31,13 @@ define ['jquery', 'lodash'], ($,_) ->
                 toid     : revid2
         }
     query: (titleOrTitles, prop, [options]..., cb) =>
-            titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-            options = @merge(options)
-            $.ajax @merge options.ajax, {
-                complete: (jqXHR, textStatus)->
-                    # do our pre-processing (if any)
-                    console.log "ajax complete"
-                    cb(jqXHR, textStatus)
+        titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
+        options = @merge(options)
+        $.ajax @merge options.ajax, {
+            complete: (jqXHR, textStatus)->
+                # do our pre-processing (if any)
+                console.log "ajax complete"
+                cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
                 prop             :  prop
@@ -50,7 +50,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 rvcontentformat  : 'application/json'
                 rvdiffto         : 'prev'
                 titles           : titleOrTitles
-            }
+        }
 
     getWikiTextContent: (titleOrTitles, prop, [options]..., cb) =>
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
@@ -59,7 +59,7 @@ define ['jquery', 'lodash'], ($,_) ->
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
                 console.log "ajax complete"
-                cb(jqXHR, textStatus)
+                cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
                 prop             : prop
