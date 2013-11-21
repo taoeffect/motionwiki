@@ -6,6 +6,8 @@ define ['jquery', 'lodash'], ($,_) ->
 
     newQueryCall = true
 
+    # randInt = (min=10, max=10000000) -> Math.floor(Math.random() * (max - min + 1) + min)
+
     setNewQueryCallFalse: ->
         newQueryCall = false
 
@@ -17,26 +19,26 @@ define ['jquery', 'lodash'], ($,_) ->
         ajax: 
             url: 'https://en.wikipedia.org/w/api.php'
             dataType: 'jsonp'
-
-    @merge = (o={}, def=defaults, rest...)-> _.defaults o, def, rest...
+            # cache: true
 
     # haven't tested 'compare'... it probably doesn't work
-    compare: (revid1, revid2, [options]..., cb) =>
-        options = @merge(options)
-        $.ajax @merge options.ajax, {
+    compare: (revid1, revid2, [options]..., cb) ->
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
             complete: cb
             data:
                 action   : 'compare'
                 fromid   : revid1
                 toid     : revid2
         }
-    query: (titleOrTitles, prop, [options]..., cb) =>
+    query: (titleOrTitles, prop, [options]..., cb) ->
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-        options = @merge(options)
-        $.ajax @merge options.ajax, {
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
-                console.log "ajax complete"
+                # console.log "ajax complete"
+                console.log "api.query: #{_(jqXHR).toJSON()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
@@ -50,15 +52,17 @@ define ['jquery', 'lodash'], ($,_) ->
                 rvcontentformat  : 'application/json'
                 rvdiffto         : 'prev'
                 titles           : titleOrTitles
+                # "_"              : randInt()
         }
 
-    getWikiTextContent: (titleOrTitles, prop, [options]..., cb) =>
+    getWikiTextContent: (titleOrTitles, prop, [options]..., cb) ->
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-        options = @merge(options)
-        $.ajax @merge options.ajax, {
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
-                console.log "ajax complete"
+                # console.log "ajax complete"
+                console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
@@ -70,6 +74,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'text/x-wiki'
                 titles           : titleOrTitles
+                # "_"              : randInt()
         }
 
 
@@ -78,10 +83,10 @@ define ['jquery', 'lodash'], ($,_) ->
 #    query before the second date is selected?
 #    Also, since 500 timestamps is the maximum, we could black 
 #    out dates on the calendar past the last timestamp in the range?
-    queryRevisionsInDateRangeUsingStartDate: (titleOrTitles,prop, [options]..., cb) =>
+    queryRevisionsInDateRangeUsingStartDate: (titleOrTitles,prop, [options]..., cb) ->
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-        options = @merge(options)
-        $.ajax @merge options.ajax, {
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
             complete: (jqXHR, textStatus) ->
                 # do our pre-processing (if any)
                 cb(jqXHR, textStatus)
@@ -90,7 +95,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 prop             : prop
                 format           : 'json'
                 rvprop           : 'timestamp|size'
-                rvlimit          : 500
+                rvlimit          : "500"
                 rvstart          : datepicker1.date
                 rvdir            : 'newer'
                 # rvexpandtemplates: true
@@ -99,10 +104,10 @@ define ['jquery', 'lodash'], ($,_) ->
                 titles           : titleOrTitles
         }
 
-    queryRevisionsInDateRangeUsingEndingDate: (titleOrTitles,prop, [options]..., cb) =>
+    queryRevisionsInDateRangeUsingEndingDate: (titleOrTitles,prop, [options]..., cb) ->
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-        options = @merge(options)
-        $.ajax @merge options.ajax, {
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
             complete: (jqXHR, textStatus) ->
                 # do our pre-processing (if any)
                 cb(jqXHR, textStatus)
@@ -111,7 +116,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 prop             : prop
                 format           : 'json'
                 rvprop           : 'timestamp|size'
-                rvlimit          : 500
+                rvlimit          : "500"
                 rvstart          : datepicker2.date
                 rvdir            : 'newer'
                 # rvexpandtemplates: true
