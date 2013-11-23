@@ -33,49 +33,49 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
         #   a1 and a2 are arguments resolved for the page1 and page2 ajax requests, respectively.
         # Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         console.log "DONE!"
-
+###
         do ([data, textStatus, jqXHR]=r1) ->
             # get Data and do stuff
-            wikiText = "success"
+            # wikiText = "success"
             # data.setDiffTextReturnToTrue()
-            console.log "api.query callback complete!"
+            console.log "api.query: #{_(jqXHR).toJSON()}"
         
         do ([data, textStatus, jqXHR]=r2) ->
             console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
-            for pageNum, page of jqXHR.responseJSON.query.pages
-                console.log "page: #{_(page).toJSON()}"
+            # for pageNum, page of jqXHR.responseJSON.query.pages
+            #     console.log "page: #{_(page).toJSON()}"
 
-                counter = 0
-                for revision in page.revisions
-                    console.log "counter = #{counter}"
-                    if counter == 1
-                        parsedWikiText = []
-                        parsedWikiText.push "0-based accessor fix, ignore"
-                        $('<div>').html(revision["*"]).appendTo('body > div')
-                        #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
-                        wikiText = revision["*"]
+            #     counter = 0
+            #     for revision in page.revisions
+            #         console.log "counter = #{counter}"
+            #         if counter == 1
+            #             parsedWikiText = []
+            #             parsedWikiText.push "0-based accessor fix, ignore"
+            #             $('<div>').html(revision["*"]).appendTo('body > div')
+            #             #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
+            #             wikiText = revision["*"]
 
-                    #wikiText = JSON.stringify(revision["*"], false, 100)
-                        position = 0
-                        while position > -1
-                            position = wikiText.indexOf("\n")
-                            myStart = wikiText.substring(0, position)
-                            parsedWikiText.push myStart
-                            myEnd = wikiText.substring(position+1, wikiText.length)
-                            wikiText = myEnd
-                        parsedRevisions.push parsedWikiText
-                    counter++
-                    console.log "counter = #{counter}"
+            #         #wikiText = JSON.stringify(revision["*"], false, 100)
+            #             position = 0
+            #             while position > -1
+            #                 position = wikiText.indexOf("\n")
+            #                 myStart = wikiText.substring(0, position)
+            #                 parsedWikiText.push myStart
+            #                 myEnd = wikiText.substring(position+1, wikiText.length)
+            #                 wikiText = myEnd
+            #             parsedRevisions.push parsedWikiText
+            #         counter++
+            #         console.log "counter = #{counter}"
 
-            for revision in parsedRevisions
-                line = 0
-                _wordcount = 0
-                for textLine in revision
-                    console.log "line #{line}: #{textLine}"
-                    _wordcount += textLine.split(" ").length
-                    line++
-            data.setParsedWikiTextReturnToTrue()
-
+            # for revision in parsedRevisions
+            #     line = 0
+            #     _wordcount = 0
+            #     for textLine in revision
+            #         console.log "line #{line}: #{textLine}"
+            #         _wordcount += textLine.split(" ").length
+            #         line++
+            # data.setParsedWikiTextReturnToTrue()
+###
 ###
     
     
