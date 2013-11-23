@@ -4,7 +4,7 @@ define ['require', 'jquery'], (require, $)->
 
   angular.module('mw_directives').directive 'mwPlayControls', [ ->
     templateUrl: '/includes/templates/directives/playControls.html'
-    restrict: 'E'
+    restrict: 'A'
     link: (scope, element, attrs)->
       console.log "play controls directive"
       scope.active = false

@@ -1,12 +1,6 @@
-<script src="https://mgcrea.github.com/angular-strap/vendor/bootstrap-datepicker.js"></script>    
-<div class="control-group input-daterange motionwiki_datepicker">
-<div class="motion_wiki--calendar-button" style='display:inline'>
-	<!--<input id="inputDatepicker1" class="input-small" type="text" ng-model="datepicker1.date" data-date-format="mm/dd/yyyy" bs-datepicker>-->
-    <button id="inputDatepicker1" ng-model="datepicker1.date" data-date-format="mm/dd/yyyy" type="button" class="btn" data-toggle="datepicker" bs-datepicker><span class = "glyphicon glyphicon-calendar"></span></button>
-</div>
-<span class='add-on'>--------------------------------------------------------------------------</span>
-<div class="motion_wiki--calendar-button" style='display:inline'>
-    <!--<input id="inputDatepicker2" class="input-small" type="text" ng-model="datepicker2.date" data-date-format="mm/dd/yyyy" bs-datepicker>-->
-    <button id="inputDatepicker2" ng-model="datepicker2.date" data-date-format="mm/dd/yyyy" type="button" class="btn" data-toggle="datepicker" bs-datepicker><span class = "glyphicon glyphicon-calendar"></span></button>
-</div>
+<div mw-play-controls class="mw_playcontrols motionwiki"></div>
+<div class="control-group input-daterange motionwiki_timeline">
+	<div mw-datepicker class="datepicker-container" id="datepicker1"></div mw-datepicker>
+	<div class="timeline-temporary"></div>
+	<div mw-datepicker class="datepicker-container" id="datepicker2"></div mw-datepicker>
 </div>

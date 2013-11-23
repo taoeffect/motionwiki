@@ -267,6 +267,7 @@ module.exports = (grunt) ->
                         lodash               : 'empty:'
                         JSON                 : 'empty:'
                         angular_strap        : 'empty:'
+                        bootstrap_datepicker : 'empty:'
 
                     keepBuildDir: false
 

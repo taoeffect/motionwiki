@@ -11,6 +11,7 @@ requirejs.config {
         lodash: "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.1.0/lodash.min"
         JSON: "//cdnjs.cloudflare.com/ajax/libs/json3/3.2.5/json3.min"
         angular_strap: "//cdnjs.cloudflare.com/ajax/libs/angular-strap/0.7.4/angular-strap.min"
+        bootstrap_datepicker: "//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min"
     
     # http://requirejs.org/docs/api.html#config-shim
     shim: 
@@ -25,9 +26,10 @@ requirejs.config {
             exports: "angular"
         # http://stackoverflow.com/questions/13377373/shim-twitter-bootstrap-for-requirejs
         bootstrap: deps: ["jquery"], exports: "$.fn.popover"
+        bootstrap_datepicker: deps:["jquery"], exports: "$.fn.datepicker"
         lodash: exports: "_" 
         JSON: exports: "JSON"
-        angular_strap: exports: '$strap'
+        #angular_strap: exports: "$strap"
 } # end config
 
 # these wil be inlined! do not inline anything that depends on
