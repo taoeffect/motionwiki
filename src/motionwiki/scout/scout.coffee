@@ -3,5 +3,13 @@ require ['require', 'jquery', 'angular'], (require, $, angular)->
 
 	$('<button id="load">').text('Load!')
 		.appendTo('body > div')
-		.click(-> require ['motionwiki'])
+		.click(-> require ['motionwiki'],
+			$("body").wrapInner $("<div id=\"MOVEIT\"/>").css(
+    					  "margin-left": 185
+    					  "margin-top": 175
+    	 	)
+   			#$mapSource = $("<script>")
+			# $mapSource.attr "src", "/includes/js/miniPageNav.js"
+			# $("body").append $mapSource
+		)
 
