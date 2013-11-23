@@ -38,7 +38,7 @@ define ['jquery', 'lodash'], ($,_) ->
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
                 # console.log "ajax complete"
-                console.log "api.query: #{_(jqXHR).toJSON()}"
+                #console.log "api.query: #{_(jqXHR).toJSON()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
@@ -50,7 +50,7 @@ define ['jquery', 'lodash'], ($,_) ->
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'application/json'
-                rvdiffto         : 'prev'
+                rvdiffto         : 'next'
                 titles           : titleOrTitles
                 # "_"              : randInt()
         }
@@ -62,7 +62,7 @@ define ['jquery', 'lodash'], ($,_) ->
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
                 # console.log "ajax complete"
-                console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+                #console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
