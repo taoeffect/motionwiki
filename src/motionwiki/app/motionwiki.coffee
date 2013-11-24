@@ -22,7 +22,9 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
     ###
 
     parsedRevisions = []
-
+    diffsForRevisions = [[]]
+    recreatedPages = []
+    counter = 0
     # Need to change San_Francisco to whatever page user is on
     
     $.when(
@@ -38,7 +40,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
             for pageNum, page of jqXHR.responseJSON.query.pages
                 console.log "query page"
                 for revision in page.revisions
-
+                    counter = 0
                     console.log "query.revision"
                     diffHTML = revision.diff["*"]
                     $('<div>').html(revision.diff["*"]).appendTo('body > div')
@@ -48,10 +50,16 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
 
                     #console.log "jQuery = #{$(diffHTML).find(".diff-context")}"
 
-                    $($(diffHTML).find(".diffchange, .diff-deletedline, .diff-addedline, .diff-context")).each (index) -> 
-                        console.log  "#{index} :  #{$(@).prop('class')}, #{$(@).text()}"
-                    
+                    $($(diffHTML).find(" .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
+                        diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
+                        #console.log "#{index} :  #{$(@).prop('class')}, #{$(@).text()}"
+                    counter++
 
+                    for counter in diffsForRevisions
+                        for index in counter
+                            console.log index[0] + index[1]
+
+                    #diffsForRevisions.push $($(diffHTML).find(" .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-marker, .diffchange diffchange-inline"))
                     #diffMarker = $(diffHTML).find(".diff-context, .diff-marker").text()
                     #diffContext = $(diffHTML).find(".diff-context").text()
 
@@ -93,14 +101,14 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                     #console.log "counter = #{counter}"
 
 
-             # for revision in parsedRevisions
-             #     line = 0
-             #     _wordcount = 0
-             #     for textLine in revision
-             #         console.log "line #{line}: #{textLine}"
-             #         _wordcount += textLine.split(" ").length
-             #         line++
-             #data.setParsedWikiTextReturnToTrue()
+            for revision in parsedRevisions
+                line = 0
+                _wordcount = 0
+                for textLine in revision
+                    console.log "line #{line}: #{textLine}"
+                    _wordcount += textLine.split(" ").length
+                    line++
+            #data.setParsedWikiTextReturnToTrue()
 
 ###
     
