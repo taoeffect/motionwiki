@@ -2950,7 +2950,7 @@ function extendJQuery($){
                 position: 'fixed',
 				zIndex : 9999,
                 left: '0px',
-                top: '140px',
+                top: '180px',
                 bottom: '0px',
 				borderRadius: '2px',
 				border: '4px solid rgba(0,0,0,0.3)',

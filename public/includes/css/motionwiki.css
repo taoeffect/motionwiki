@@ -7115,14 +7115,16 @@
 }
 .motionwiki_timeline {
   width: 85%;
+  padding: 70px 0;
   float: left;
 }
 .motionwiki_timeline .datepicker-container {
-  width: 25%;
+  width: 10%;
   float: left;
+  text-align: center;
 }
 .motionwiki_timeline .timeline-temporary {
-  width: 50%;
+  width: 80%;
   float: left;
   height: 10px;
   text-align: center;
