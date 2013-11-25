@@ -51,20 +51,13 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                     #console.log "jQuery = #{$(diffHTML).find(".diff-context")}"             
 
                     $($(diffHTML).find("tr, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
-                        if $(@).prop('tagName') == "TR"
-                            diffsForRevisions[counter][index] = $(@).prop('tagName')
-                        else 
-                            diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
-
-                        #console.log "#{index} :  #{$(@).prop('tagName')}#{$(@).prop('class')}#{$(@).text()}"
+                        diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
+                        console.log "#{index} :  #{$(@).prop('tagName')}#{$(@).prop('class')}#{$(@).text()}"
                     counter++
 
                     for counter in diffsForRevisions
                         for index in counter
-                            if (index = "TR")
-                                console.log "TR"
-                            else
-                                console.log index[0] + index[1]
+                            console.log index[0] + index[1]
 
                     #diffsForRevisions.push $($(diffHTML).find(" .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-marker, .diffchange diffchange-inline"))
                     #diffMarker = $(diffHTML).find(".diff-context, .diff-marker").text()
