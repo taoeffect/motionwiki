@@ -792,6 +792,7 @@ _html2canvas.Parse = function ( images, options ) {
     fontData = {},
     doc = element.ownerDocument,
     ignoreElementsRegExp = new RegExp("(" + options.ignoreElements + ")"),
+    ignoreClassRegExp= new RegExp("(" + options.ignoreClass + ")"),
     body = doc.body,
     r,
     testElement,
@@ -1951,13 +1952,13 @@ _html2canvas.Parse = function ( images, options ) {
     function parseElement (el, stack) {
 
         // skip hidden elements and their children
-        if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden") {
+        if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden" && el.className !== "mw_wrapper" ) {
 
             stack = renderElement(el, stack) || stack;
 
             ctx = stack.ctx;
 
-            if ( !ignoreElementsRegExp.test( el.nodeName ) ) {
+            if ( !ignoreElementsRegExp.test( el.nodeName )  ) {//&& !(el.nodeName).class === "blah")
                 var elementChildren = _html2canvas.Util.Children( el ),
                 i,
                 node,
@@ -2575,6 +2576,7 @@ html2canvas = function( elements, opts ) {
         svgRendering: false, // use svg powered rendering where available (FF11+)
         iframeDefault: "default",
         ignoreElements: "IFRAME|OBJECT|PARAM",
+        ignoreClass: "mw_wrapper",        
         useOverflow: true,
         letterRendering: false,
 

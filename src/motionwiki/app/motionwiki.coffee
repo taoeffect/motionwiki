@@ -1,9 +1,9 @@
-define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (require, _, $, JSON, api, data)->
+define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (require, _, $, JSON, api)->
 
     _.mixin toJSON: JSON.stringify
 
     $('<div class="mw_wrapper">').appendTo('body > div')
-    ###
+    
     $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main" >').appendTo('.mw_wrapper')
     $('<mw-timeline>').appendTo('div#motionwiki')
     $('<mw-history-grapher>').appendTo('div#motionwiki')
@@ -19,7 +19,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
     	console.log $rootScope
     ]
     angular.bootstrap(document.getElementById('motionwiki'),['motion_wiki'])
-    ###
+    
 
     parsedRevisions = []
     diffsForRevisions = [[]]
@@ -28,8 +28,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
     # Need to change San_Francisco to whatever page user is on
     
     $.when(
-        api.query('San_Francisco', 'revisions'),
-        api.getWikiTextContent('San_Francisco', 'revisions')
+        api.query('Wikipedia', 'revisions'),
+        api.getWikiTextContent('Wikipedia', 'revisions')
     ).done (r1, r2) ->
         # http://api.jquery.com/jQuery.when/
         #   a1 and a2 are arguments resolved for the page1 and page2 ajax requests, respectively.
@@ -43,21 +43,22 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                     counter = 0
                     console.log "query.revision"
                     diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
-                    $('<div>').html(revision.diff["*"]).appendTo('body > div')
+                    #$('<div>').html(revision.diff["*"]).appendTo('body > div')
                     position = 0
                     workingstring = ""
                     numTR = 0
                     table = $("diffTable")
-                    #console.log "jQuery = #{$(diffHTML).find(".diff-context")}"             
-
+                    #console.log "jQuery = #{$(diffHTML).find(".diff-context")}"
+                    #$.proxy(-> $("tr"), diffHTML)          
+                    #list = $(diffHTML).getElementsByTagName ("tr") ->
                     $($(diffHTML).find("tr, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
-                        diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
-                        console.log "#{index} :  #{$(@).prop('tagName')}#{$(@).prop('class')}#{$(@).text()}"
+                       diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
+                    #  console.log "#{index} :  #{$(@).prop('tagName')}#{$(@).prop('class')}#{$(@).text()}"
                     counter++
-
-                    for counter in diffsForRevisions
-                        for index in counter
-                            console.log index[0] + index[1]
+                    #console.log list
+                    #for counter in diffsForRevisions
+                    #    for index in counter
+                    #        console.log index[0] + index[1]
 
                     #diffsForRevisions.push $($(diffHTML).find(" .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-marker, .diffchange diffchange-inline"))
                     #diffMarker = $(diffHTML).find(".diff-context, .diff-marker").text()
@@ -99,16 +100,16 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                         parsedRevisions.push parsedWikiText
                     counter++
                     #console.log "counter = #{counter}"
+            console.log "parsedRevisions.length = #{parsedRevisions[0].length}"
 
-
-            for revision in parsedRevisions
-                line = 0
-                _wordcount = 0
-                for textLine in revision
-                    console.log "line #{line}: #{textLine}"
-                    _wordcount += textLine.split(" ").length
-                    line++
-            #data.setParsedWikiTextReturnToTrue()
+            # for revision in parsedRevisions
+            #     line = 0
+            #     _wordcount = 0
+            #     for textLine in revision
+            #         #console.log "line = #{line}"
+            #         #$('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
+            #         _wordcount += textLine.split(" ").length
+            #         line++
         
         line = 0
         diffType = ""
@@ -117,7 +118,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
         diffAddedLine = ""
 
         for counter in diffsForRevisions
+            diffMarkerMod = 0
+            deletedAddLineToggle = false
+            diffContextToggle = 0
             for index in counter
+                
                 if index[0] == 'diff-lineno'
                     index[1] = index[1].substring(5, index[1].indexOf(':'))
                     postition = 0
@@ -131,23 +136,50 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                 if index[0] == 'diff-marker'
                     if index[1] == '&#160' 
                         diffType = 'Context'
-                        line++
                         continue
                     else if index[1] = '+'
                         diffType = 'Add'
-                        line++
                         continue
                     else 
                         diffType = '\\u2212'
-                        line++
                         continue
                 if index[0] == 'diff-context'
                     diffContextLine = index[1]
-                    line++
+                    #console.log "context line #{line}: #{diffContextLine}"
+                    if diffContextToggle%2 == 0
+                        line++
+                    diffContextToggle++
                 if index[0] == 'diff-deletedline'
                     diffDeletedLine = index[1]
-                    line++
+                    #console.log "deleted line #{line}: #{diffDeletedLine}"
+                    newline = parsedRevisions[0][line]
+                    newline = "<font color='red'>" + newline + "</font>"
+                    parsedRevisions[0][line] = newline
+                    if deletedAddLineToggle is false
+                        line++
+                        deletedAddLineToggle = true
+                    else
+                        deletedAddLineToggle = false
 
+                if index[0] == 'diff-addedline'
+                    diffAddedLine = index[1]
+                    newline = parsedRevisions[0][line]
+                    newline = "<font color='green'>" + diffAddedLine + "</font>"
+                    parsedRevisions[0][line] = newline
+                    console.log "added line at #{line}"
+                    if deletedAddLineToggle is false
+                        line++
+                        deletedAddLineToggle = true
+                    else
+                        deletedAddLineToggle = false
+                        line++
+
+        for revision in parsedRevisions
+                line = 0
+                for textLine in revision
+                    #console.log "line = #{line}"
+                    $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
+                    line++
 
 
 
