@@ -9,6 +9,7 @@ lib-cov
 *.zip
 *.sublime-workspace
 *.pyc
+*.DS_Store
 
 pids
 logs
