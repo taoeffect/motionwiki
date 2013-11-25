@@ -42,22 +42,29 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                 for revision in page.revisions
                     counter = 0
                     console.log "query.revision"
-                    diffHTML = revision.diff["*"]
+                    diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
                     $('<div>').html(revision.diff["*"]).appendTo('body > div')
                     position = 0
                     workingstring = ""
-                    numDiffContext = 0
+                    numTR = 0
+                    table = $("diffTable")
+                    #console.log "jQuery = #{$(diffHTML).find(".diff-context")}"             
 
-                    #console.log "jQuery = #{$(diffHTML).find(".diff-context")}"
+                    $($(diffHTML).find("tr, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
+                        if $(@).prop('tagName') == "TR"
+                            diffsForRevisions[counter][index] = $(@).prop('tagName')
+                        else 
+                            diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
 
-                    $($(diffHTML).find(" .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
-                        diffsForRevisions[counter][index] = [$(@).prop('class'), $(@).text()]  
-                        #console.log "#{index} :  #{$(@).prop('class')}, #{$(@).text()}"
+                        #console.log "#{index} :  #{$(@).prop('tagName')}#{$(@).prop('class')}#{$(@).text()}"
                     counter++
 
                     for counter in diffsForRevisions
                         for index in counter
-                            console.log index[0] + index[1]
+                            if (index = "TR")
+                                console.log "TR"
+                            else
+                                console.log index[0] + index[1]
 
                     #diffsForRevisions.push $($(diffHTML).find(" .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-marker, .diffchange diffchange-inline"))
                     #diffMarker = $(diffHTML).find(".diff-context, .diff-marker").text()
@@ -109,11 +116,50 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'wiki/data'], (requir
                     _wordcount += textLine.split(" ").length
                     line++
             #data.setParsedWikiTextReturnToTrue()
+        
+        line = 0
+        diffType = ""
+        diffContextLine = ""
+        diffDeletedLine = ""
+        diffAddedLine = ""
+
+        for counter in diffsForRevisions
+            for index in counter
+                if index[0] == 'diff-lineno'
+                    index[1] = index[1].substring(5, index[1].indexOf(':'))
+                    postition = 0
+                    while position > -1
+                        position = index[1].indexOf(",")
+                        myStart = index[1].substring(0, position)
+                        myEnd = index[1].substring(position+1, index[0].length)
+                        index[1] = myStart + myEnd
+                    line = parseInt(index[1], 10)
+                    continue
+                if index[0] == 'diff-marker'
+                    if index[1] == '&#160' 
+                        diffType = 'Context'
+                        line++
+                        continue
+                    else if index[1] = '+'
+                        diffType = 'Add'
+                        line++
+                        continue
+                    else 
+                        diffType = '\\u2212'
+                        line++
+                        continue
+                if index[0] == 'diff-context'
+                    diffContextLine = index[1]
+                    line++
+                if index[0] == 'diff-deletedline'
+                    diffDeletedLine = index[1]
+                    line++
+
+
+
+
 
 ###
-    
-    
-
     timeStampArray = []
 
     # If user input is start date
