@@ -1,12 +1,13 @@
 ## Play controls directive
 
 define ['require', 'jquery'], (require, $)->
-  
+
   angular.module('mw_directives').directive 'mwPlayControls', [ ->
-    templateUrl: '/templates/directives/playControls.html'
-    restrict: 'E'
+    templateUrl: '/includes/templates/directives/playControls.html'
+    restrict: 'A'
     link: (scope, element, attrs)->
       console.log "play controls directive"
+      scope.active = false
 
       $('body').keyup (e) ->
           alert "Play!!" if e.keyCode is 80     #p for pause/play
@@ -14,11 +15,12 @@ define ['require', 'jquery'], (require, $)->
           alert "backward!!" if e.keyCode is 39 #right arrow
 
       scope.play = ->
-      	alert "Play!!"
+        alert "Play!!"
+        scope.active = !scope.active
       scope.forward = ->
-      	alert "Forward!"
+        alert "Forward!"
       scope.backward = ->
-      	alert "backward!!"
+        alert "backward!!"
 
   ]
 
