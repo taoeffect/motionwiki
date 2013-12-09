@@ -27,9 +27,10 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     counter = 0
     # Need to change San_Francisco to whatever page user is on
     
+    page = 'Florida'
     $.when(
-        api.query('Wikipedia', 'revisions'),
-        api.getWikiTextContent('Wikipedia', 'revisions')
+        api.query(page, 'revisions'),
+        api.getWikiTextContent(page, 'revisions')
     ).done (r1, r2) ->
         # http://api.jquery.com/jQuery.when/
         #   a1 and a2 are arguments resolved for the page1 and page2 ajax requests, respectively.
@@ -42,6 +43,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 for revision in page.revisions
                     counter = 0
                     console.log "query.revision"
+                    console.log "timestamp: #{revision.timestamp}"
                     diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
                     #$('<div>').html(revision.diff["*"]).appendTo('body > div')
                     position = 0
@@ -116,6 +118,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         diffContextLine = ""
         diffDeletedLine = ""
         diffAddedLine = ""
+        lastModifiedLine = 0
 
         for counter in diffsForRevisions
             diffMarkerMod = 0
@@ -146,33 +149,43 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 if index[0] == 'diff-context'
                     diffContextLine = index[1]
                     #console.log "context line #{line}: #{diffContextLine}"
-                    if diffContextToggle%2 == 0
-                        line++
-                    diffContextToggle++
+
                 if index[0] == 'diff-deletedline'
                     diffDeletedLine = index[1]
                     #console.log "deleted line #{line}: #{diffDeletedLine}"
                     newline = parsedRevisions[0][line]
                     newline = "<font color='red'>" + newline + "</font>"
+                    
                     parsedRevisions[0][line] = newline
                     if deletedAddLineToggle is false
-                        line++
+                        lastModifiedLine = line
                         deletedAddLineToggle = true
-                    else
+                    else if lastModifiedLine = line
+                        console.log "modified line at #{lastModifiedLine}"
                         deletedAddLineToggle = false
+                        #line++
+                    else
+                        console.log "deleted line at #{lastModifiedLine}"
+                        deletedAddLineToggle = false
+                        #line++
 
                 if index[0] == 'diff-addedline'
                     diffAddedLine = index[1]
                     newline = parsedRevisions[0][line]
                     newline = "<font color='green'>" + diffAddedLine + "</font>"
                     parsedRevisions[0][line] = newline
-                    console.log "added line at #{line}"
+                    lastModifiedLine = line
                     if deletedAddLineToggle is false
-                        line++
+                        lastModifiedLine = line
                         deletedAddLineToggle = true
-                    else
+                    else if lastModifiedLine = line
+                        console.log "modified line at #{lastModifiedLine}"
                         deletedAddLineToggle = false
-                        line++
+                        #line++
+                    else
+                        console.log "added line at #{lastModifiedLine}"
+                        deletedAddLineToggle = false
+                        #line++
 
         for revision in parsedRevisions
                 line = 0
