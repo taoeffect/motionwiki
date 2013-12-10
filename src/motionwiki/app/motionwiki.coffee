@@ -26,7 +26,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     recreatedPages = []
     counter = 0
     console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
-    baseRevision = 4
+    baseRevision = 3
     # Need to change San_Francisco to whatever page user is on
     
     page = 'Florida'
@@ -58,16 +58,42 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     diffArray = []
                     if counter is baseRevision
                         $('<div>').html(diffHTML).appendTo('body > div')
-                    $($(diffHTML).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
+                        lastClass = ""
+                        lastindex = 0
+                        index = -1
+                        $($(diffHTML).find("tr, span, div, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange.diffchange-inline")).each (index) ->
                         
-                        if $(@).prop('tagName') == "SPAN"
-                           console.log "#{$(@).text()}"
-                           
-                           #myDiff.push
-                        else
+
+                            if $(@).prop('tagName') == "SPAN"
+                                if lastClass == "diff-deletedline"
+                                   # console.log "adding text to #{diffArray[lastindex][0]}: #{$(@).text()}"
+                                    diffArray[lastindex].push $(@).text()
+                                else if lastClass == "diffchange diffchange-inline"
+                                    diffArray[lastindex].push $(@).text()
+                                    #"adding text to #{diffArray[lastindex][0]}: #{$(@).text()}"
+                               
+                               #myDiff.push
+                            
                             myDiff = [$(@).prop('class'), $(@).text(), revision.timestamp]
+                            _class = myDiff[0]    
                             myDiff[0] = [$(@).prop('tagName')] + ":"  + myDiff[0]
+                            
+                            
+                            #console.log "class: #{myDiff[0]}"
+                            if _class == "diff-deletedline"
+                                lastindex = index
+                                lastClass = _class
+                                #console.log "diff-deletedLine, index: #{index}"
+                            else if _class == "diff-addedline"
+                                lastClass = "diff-addedline"
+                                #console.log "addedline, index #{index}"
+                            else if _class == "diffchange diffchange-inline"
+                                lastclass = "diffchange diffchange-inline"
+
                             diffArray.push myDiff
+                            index++
+
+
                         #console.log "diffsForREvisions.length = #{diffsForRevisions.length}"
                         
                         #diffsForRevisions[counter].push myDiff
@@ -99,12 +125,15 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
                 #wikiText = JSON.stringify(revision["*"], false, 100)
                     position = 0
+                    _line = 1
                     while position > -1
                         position = wikiText.indexOf("\n")
                         myStart = wikiText.substring(0, position)
                         parsedWikiText.push myStart
                         myEnd = wikiText.substring(position+1, wikiText.length)
                         wikiText = myEnd
+                        console.log "line #{_line}: #{myStart}"
+                        _line++
                     parsedRevisions.push parsedWikiText
                 counter++
                 #console.log "counter = #{counter}"
@@ -131,6 +160,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         revisionNumber = -1
         revIndex = -1
         modifyToggle = false
+        lastindex = 0
 
         for revision in diffsForRevisions
             diffMarkerMod = 0
@@ -142,10 +172,15 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             console.log "!revision.length = #{revision.length}"
             console.log "parsedRevisions[#{revIndex}].length = #{parsedRevisions[revIndex].length}"
             numTimesDeleted = 0
+            pureDelete = false
+            oldDeleteLineNum = 0
+
             if revIndex is baseRevision
                 console.log "nextRev timestamp: #{revision[0][2]}"
+                myIndex = 0
+                modifies = 0
                 for index in revision
-                    
+                    #console.log "index.length = #{index.length}"
                     tagIndex = 0
                     tagIndex = index[0].indexOf(':')
                     tag = index[0].substring(0, tagIndex)
@@ -181,13 +216,23 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         #console.log "context line #{line}: #{diffContextLine}"
                     if index[0] == 'diff-deletedline'
                         if modifyToggle is true
+                            if pureDelete is true
+                                pureDelete = false
+                                numTimesDeleted++
+                                parsedRevisions[revIndex].splice(oldDeleteLineNum - numTimesDeleted, 1)
+                                
                             #odifyToggle = false
                             console.log "Deleting line at #{line + numLinesToAdd}"
                             numTimesDeleted++
+                            parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
                         else
+                            lastindex = index
+                            #console.log "lastindex = #{lastindex} at line: #{myIndex}, size: #{index.length}"
                             modifyToggle = true
+                            pureDelete = true
+                            oldDeleteLineNum = line + numLinesToAdd
                         
-                        parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
+                        
                         
                         #parsedRevisions[revIndex][line +  numLinesToAdd] = "DELETED"
                     if index[0] == 'diff-addedline'
@@ -196,13 +241,26 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             console.log "Adding line at #{line + numLinesToAdd}"
                             text = '<font color="green">' + index[1] + "</font>"
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                            modifies++
                         else
-                            console.log "Modifying line at #{line + numLinesToAdd}"
+                            console.log "line = #{line}, Modifying line at line #{line + numLinesToAdd}"
                             
-                            text = '<font color="orange">' + index[1] + "</font>"
-                            parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
-                            modifyToggle = false
+                            if lastindex.length > 3
+                                changes = lastindex.slice(3, lastindex.length)
+                                text = parsedRevisions[revIndex][line +  numLinesToAdd]
+                                console.log "text to modify: #{text}"
+                                for change in changes
+                                    console.log "change = #{change}"
+                                    text = text.replace(change, '<font color="orange">' + change + "</font>")
+                                parsedRevisions[revIndex][line + numLinesToAdd + modifies] = text
+                                #modifies++
+                                modifyToggle = false
+                            else    
+                                text = '<font color="orange">' + index[1] + "</font>"
+                                parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                                modifyToggle = false
                             #parsedRevisions[revIndex][line +  numLinesToAdd] = text
+                    myIndex++
 
 
 
