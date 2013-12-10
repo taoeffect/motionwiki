@@ -26,7 +26,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     recreatedPages = []
     counter = 0
     console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
-    baseRevision = 3
+    baseRevision = 4
     # Need to change San_Francisco to whatever page user is on
     
     page = 'Florida'
@@ -132,7 +132,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         parsedWikiText.push myStart
                         myEnd = wikiText.substring(position+1, wikiText.length)
                         wikiText = myEnd
-                        console.log "line #{_line}: #{myStart}"
+                        #console.log "line #{_line}: #{myStart}"
                         _line++
                     parsedRevisions.push parsedWikiText
                 counter++
@@ -245,19 +245,148 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         else
                             console.log "line = #{line}, Modifying line at line #{line + numLinesToAdd}"
                             
+                            newdiff = ""
+                            newDiffIndex = 0
+
+                            ###MAGIC TIME###
+                            myDiffArray = []
+
                             if lastindex.length > 3
                                 changes = lastindex.slice(3, lastindex.length)
                                 text = parsedRevisions[revIndex][line +  numLinesToAdd]
+                                oldtext = text
                                 console.log "text to modify: #{text}"
+                                changeNum = 0
+                                lastChange = ""
                                 for change in changes
+                                    if changeNum > 0
+                                        newDiffIndex = oldtext.indexOf(lastChange) + lastChange.length
                                     console.log "change = #{change}"
-                                    text = text.replace(change, '<font color="orange">' + change + "</font>")
-                                parsedRevisions[revIndex][line + numLinesToAdd + modifies] = text
+                                    newdiff = newdiff + oldtext.substring(newDiffIndex, oldtext.indexOf(change))
+                                    console.log "substring = #{oldtext.substring(newDiffIndex, oldtext.indexOf(change))}"
+                                    myDiffArray.push [change, oldtext.substring(newDiffIndex, oldtext.indexOf(change))]
+                                    lastChange = change
+                                    changeNum++
+
+                                    #text = text.replace(change, '<font color="red">' + change + "</font>")
+                                newDiffIndex = oldtext.indexOf(lastChange) + lastChange.length
+                                newdiff = newdiff + oldtext.substring(newDiffIndex, oldtext.length)
+                                console.log "newdiff = #{newdiff}"
+
+                                #text = parsedRevisions[revIndex][line + numLinesToAdd]
+                                text = newdiff
+                                console.log "text: #{text}"
+                                match = index[1]
+                                console.log "match: #{match}"
+                                lastMatchIndex = 0
+                                diffString = ""
+                                offset = 0
+                                colorToggle = false
+
+                                while lastMatchIndex < text.length + 1
+                                    matchedChar = match.charAt(lastMatchIndex + offset)
+                                    matchedText = text.charAt(lastMatchIndex)
+                                    #console.log "matchedChar : #{matchedChar}, matchedText: #{matchedText}"
+                                    if matchedChar != matchedText
+                                        if colorToggle is false
+                                            diffString = diffString + "<font color='purple'>"
+                                        colorToggle = true
+                                        diffString += matchedChar
+                                        offset++
+                                    else
+                                        if colorToggle is true
+                                            diffString = diffString + "</font>"
+                                            #fix for wikipedia bug for now
+                                        colorToggle = false
+                                        diffString += matchedChar
+                                        lastMatchIndex++
+                                    if offset > 150
+                                        break
+                                console.log "diffstring: #{diffString}"
+
+                                text = diffString
+                                finalstring = ""
+                                lastChangeIndex = 0
+                                lastChangeSubstring = []
+                                initialized = false
+
+                                for change in myDiffArray
+                                    if initialized is true
+                                        finalstring += text.substring(lastChangeIndex + lastChangeSubstring.length, text.indexOf(change[1]))
+                                        console.log "finalstring = #{finalstring}"
+                                    initialized = true
+                                    console.log "change[0] = #{change[0]}, change[1] = #{change[1]}"
+                                    changeIndex = text.indexOf(change[1])
+                                    finalstring = finalstring + text.substring(changeIndex, changeIndex + change[1].length) + "<font color='red'>" + change[0] + "</font>"
+                                    console.log "finalstring = #{finalstring}"
+                                    lastChangeIndex = changeIndex
+                                    lastChangeSubstring = change[1]
+                                    #text = text.replace(change, '<font color="red">' + change + "</font>")
+
+                                finalstring += text.substring(lastChangeIndex + lastChangeSubstring.length, text.length)
+                                console.log "finalstring = #{finalstring}"
+                                parsedRevisions[revIndex][line +  numLinesToAdd] = finalstring
+
+                                ###END MAGIC TIME###
+
+
+
+
+
+
+
+
+
+
+
+
+                                #parsedRevisions[revIndex][line + numLinesToAdd] = text
                                 #modifies++
                                 modifyToggle = false
                             else    
-                                text = '<font color="orange">' + index[1] + "</font>"
-                                parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                                #text = '<font color="orange">' + index[1] + "</font>"
+                                
+                                ###
+                                    DOING MY MAGIC, BITHCES
+                                ###
+                                text = parsedRevisions[revIndex][line + numLinesToAdd]
+                                console.log "text: #{text}"
+                                match = index[1]
+                                console.log "match: #{match}"
+                                lastMatchIndex = 0
+                                diffString = ""
+                                offset = 0
+                                colorToggle = false
+
+                                while lastMatchIndex < text.length + 1
+                                    matchedChar = match.charAt(lastMatchIndex + offset)
+                                    matchedText = text.charAt(lastMatchIndex)
+                                    #console.log "matchedChar : #{matchedChar}, matchedText: #{matchedText}"
+                                    if matchedChar != matchedText
+                                        if colorToggle is false
+                                            diffString = diffString + "<font color='purple'>"
+                                        colorToggle = true
+                                        diffString += matchedChar
+                                        offset++
+                                    else
+                                        if colorToggle is true
+                                            diffString = diffString + "</font>"
+                                            #fix for wikipedia bug for now
+                                        colorToggle = false
+                                        diffString += matchedChar
+                                        lastMatchIndex++
+                                    if offset > 150
+                                        break
+                                console.log "diffstring: #{diffString}"
+
+
+
+
+                                ###
+                                    END MAGIC
+                                ###
+                                #parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                                parsedRevisions[revIndex][line + numLinesToAdd] = diffString
                                 modifyToggle = false
                             #parsedRevisions[revIndex][line +  numLinesToAdd] = text
                     myIndex++
