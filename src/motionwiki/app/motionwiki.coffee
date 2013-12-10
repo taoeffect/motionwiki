@@ -22,9 +22,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     
 
     parsedRevisions = []
-    diffsForRevisions = [[]]
+    diffsForRevisions = []
     recreatedPages = []
     counter = 0
+    console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
+    baseRevision = 4
     # Need to change San_Francisco to whatever page user is on
     
     page = 'Florida'
@@ -39,10 +41,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
         do ([data, textStatus, jqXHR]=r1) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
-                console.log "query page"
+                console.log "page.revisions.length = #{page.revisions.length}"
+                counter = 0
                 for revision in page.revisions
-                    counter = 0
-                    console.log "timestamp: #{revision.timestamp}"
+                    
+                    #console.log "timestamp: #{revision.timestamp}, counter = #{counter}"
                     #$('<div>').html(revision.diff["*"]).appendTo('body > div')
                     diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
                     
@@ -50,14 +53,31 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     workingstring = ""
                     numTR = 0
                     table = $("diffTable")
-                    $($(diffHTML).find("tr, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
-                        myDiff = [$(@).prop('class'), $(@).text()]
-                        #myDiff = [$(@).prop('tagName'), $(@).text()]
-                        myDiff[0] = [$(@).prop('tagName')] + ":"  + myDiff[0]
-                        diffsForRevisions[counter][index] = myDiff
+                    #console.log "ok"
+
+                    diffArray = []
+                    if counter is baseRevision
+                        $('<div>').html(diffHTML).appendTo('body > div')
+                    $($(diffHTML).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
+                        
+                        if $(@).prop('tagName') == "SPAN"
+                           console.log "#{$(@).text()}"
+                           
+                           #myDiff.push
+                        else
+                            myDiff = [$(@).prop('class'), $(@).text(), revision.timestamp]
+                            myDiff[0] = [$(@).prop('tagName')] + ":"  + myDiff[0]
+                            diffArray.push myDiff
+                        #console.log "diffsForREvisions.length = #{diffsForRevisions.length}"
+                        
+                        #diffsForRevisions[counter].push myDiff
+
+                        
                         #console.log "myDiff = #{myDiff}"
                         
                         #Gives us the diff for every revision being evaluated in DESCENDING TIME ORDER
+                    diffsForRevisions.push diffArray
+                    #console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
                     counter++
         
         do ([data, textStatus, jqXHR]=r2) ->
@@ -68,25 +88,27 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 counter = 0
                 for revision in page.revisions
                     console.log "counter = #{counter}"
-                    if counter == 1
-                        parsedWikiText = []
-                        parsedWikiText.push "0-based accessor fix, ignore"
-                        #$('<div>').html(revision["*"]).appendTo('body > div')
-                        #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
-                        wikiText = revision["*"]
+                    #console.log "jqXHR: #{JSON.stringify(revision, 100, false)}"
+                    
+                    console.log "timestamp = #{revision.timestamp}"
+                    parsedWikiText = []
+                    parsedWikiText.push "0-based accessor fix, ignore"
+                    #$('<div>').html(revision["*"]).appendTo('body > div')
+                    #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
+                    wikiText = revision["*"]
 
-                    #wikiText = JSON.stringify(revision["*"], false, 100)
-                        position = 0
-                        while position > -1
-                            position = wikiText.indexOf("\n")
-                            myStart = wikiText.substring(0, position)
-                            parsedWikiText.push myStart
-                            myEnd = wikiText.substring(position+1, wikiText.length)
-                            wikiText = myEnd
-                        parsedRevisions.push parsedWikiText
-                    counter++
-                    #console.log "counter = #{counter}"
-            console.log "parsedRevisions.length = #{parsedRevisions[0].length}"
+                #wikiText = JSON.stringify(revision["*"], false, 100)
+                    position = 0
+                    while position > -1
+                        position = wikiText.indexOf("\n")
+                        myStart = wikiText.substring(0, position)
+                        parsedWikiText.push myStart
+                        myEnd = wikiText.substring(position+1, wikiText.length)
+                        wikiText = myEnd
+                    parsedRevisions.push parsedWikiText
+                counter++
+                #console.log "counter = #{counter}"
+            console.log "parsedRevisions.length = #{parsedRevisions.length}"
 
             # for revision in parsedRevisions
             #     line = 0
@@ -106,6 +128,9 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         lastLine = 0
         newline = ""
         wasDeleted = false
+        revisionNumber = -1
+        revIndex = -1
+        modifyToggle = false
 
         for revision in diffsForRevisions
             diffMarkerMod = 0
@@ -113,73 +138,87 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             diffContextToggle = 0
             getDiffLineNo = false
             numLinesToAdd = -1
+            revIndex++
+            console.log "!revision.length = #{revision.length}"
+            console.log "parsedRevisions[#{revIndex}].length = #{parsedRevisions[revIndex].length}"
+            numTimesDeleted = 0
+            if revIndex is baseRevision
+                console.log "nextRev timestamp: #{revision[0][2]}"
+                for index in revision
+                    
+                    tagIndex = 0
+                    tagIndex = index[0].indexOf(':')
+                    tag = index[0].substring(0, tagIndex)
+                    index[0] = index[0].substring(tagIndex+1, index[0].length)
 
-            for index in revision
-                
-                tagIndex = 0
-                tagIndex = index[0].indexOf(':')
-                tag = index[0].substring(0, tagIndex)
-                index[0] = index[0].substring(tagIndex+1, index[0].length)
+                    if getDiffLineNo is true
+                        if tag is 'TR'
+                            numLinesToAdd++
 
-                if getDiffLineNo is true
-                    if tag is 'TR'
-                        numLinesToAdd++
-
-                if index[0] == 'diff-lineno'
-                    getDiffLineNo = true
-                    index[1] = index[1].substring(5, index[1].indexOf(':'))
-                    postition = 0
-                    numLinesToAdd = -1
-                    while position > -1
-                        position = index[1].indexOf(",")
-                        myStart = index[1].substring(0, position)
-                        myEnd = index[1].substring(position+1, index[0].length)
-                        index[1] = myStart + myEnd
-                    line = parseInt(index[1], 10)
-                    continue
-                if index[0] == 'diff-marker'
-                    if index[1] == '&#160' 
-                        diffType = 'Context'
-                        continue
-                    else if index[1] = '+'
-                        diffType = 'Add'
-                        continue
-                    else 
-                        diffType = '\\u2212'
-                        continue
-                if index[0] == 'diff-context'
-                    diffContextLine = index[1]
-                    #console.log "context line #{line}: #{diffContextLine}"
-                if index[0] == 'diff-deletedline'
-                    wasDeleted = true
-                    #console.log "Deleting line at #{line + numLinesToAdd}"
-                    #parsedRevisions.splice(line + numLinesToAdd, 1)
-                if index[0] == 'diff-addedline'
-                    if wasDeleted is true
-                        wasDeleted = false
-                        console.log "Modifying line at #{line + numLinesToAdd}" 
-                        text = "<font color='yellow'>" + index[1] + "</font>"
-                        parsedRevisions[line + numLinesToAdd] = text
-                    else
-                        text = "<font color='green'>" + index[1] + "</font>"
-                        console.log "Adding line at #{line + numLinesToAdd}"
-                        parsedRevisions.splice(line + numLinesToAdd, 0, text)
-
-                if wasDeleted is true
-                    console.log "Deleting line at #{line + numLinesToAdd}"
-                    parsedRevisions.splice(line + numLinesToAdd, 1)
-                    wasDeleted = false
+                    if index[0] == 'diff-lineno'
+                        getDiffLineNo = true
+                        index[1] = index[1].substring(5, index[1].indexOf(':'))
+                        position = 0
+                        numLinesToAdd = -1
+                        while position > -1
+                            position = index[1].indexOf(",")
+                            myStart = index[1].substring(0, position)
+                            myEnd = index[1].substring(position+1, index[1].length)
+                            index[1] = myStart + myEnd
+                        line = parseInt(index[1], 10)
+                    if index[0] == 'diff-marker'
+                        if index[1] == '&#160' 
+                            diffType = 'Context'
+                            continue
+                        else if index[1] = '+'
+                            diffType = 'Add'
+                            continue
+                        else 
+                            diffType = '\\u2212'
+                            continue
+                    if index[0] == 'diff-context'
+                        diffContextLine = index[1]
+                        #console.log "context line #{line}: #{diffContextLine}"
+                    if index[0] == 'diff-deletedline'
+                        if modifyToggle is true
+                            #odifyToggle = false
+                            console.log "Deleting line at #{line + numLinesToAdd}"
+                            numTimesDeleted++
+                        else
+                            modifyToggle = true
+                        
+                        parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
+                        
+                        #parsedRevisions[revIndex][line +  numLinesToAdd] = "DELETED"
+                    if index[0] == 'diff-addedline'
+                        if modifyToggle is false
+                            #numTimesDeleted--
+                            console.log "Adding line at #{line + numLinesToAdd}"
+                            text = '<font color="green">' + index[1] + "</font>"
+                            parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                        else
+                            console.log "Modifying line at #{line + numLinesToAdd}"
+                            
+                            text = '<font color="orange">' + index[1] + "</font>"
+                            parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                            modifyToggle = false
+                            #parsedRevisions[revIndex][line +  numLinesToAdd] = text
 
 
 
+        revIndex = 0
         for revision in parsedRevisions
                 line = 0
-                for textLine in revision
-                    #console.log "line = #{line}"
-                    $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
-                    line++
+                console.log "revision.length = #{revision.length}"
+                if revIndex is baseRevision
+                    console.log "revision[0] = #{revision[0]}"
+                    for textLine in revision
 
-
+                        #console.log "line = #{line}"
+                        $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
+                        #console.log "line #{line}: #{textLine}"
+                        line++
+                revIndex++
 
 
 ###

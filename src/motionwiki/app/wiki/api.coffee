@@ -68,8 +68,8 @@ define ['jquery', 'lodash'], ($,_) ->
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
-                rvprop           : 'content'
-                rvlimit          : '2'
+                rvprop           : 'content|timestamp'
+                rvlimit          : '5'
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'text/x-wiki'
