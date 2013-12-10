@@ -77,7 +77,21 @@ define ['jquery', 'lodash'], ($,_) ->
                 # "_"              : randInt()
         }
 
-
+    parseToHTML: (inputText, [options]..., cb) ->
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: (jqXHR, textStatus) ->
+                # do our pre-processing (if any)
+                # console.log "ajax complete"
+                #console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+                cb(jqXHR, textStatus) if cb
+            data:
+                action           : 'parse'
+                format           : 'json'
+                text             : inputText
+                prop             : 'text'
+                rvcontentformat  : 'text/x-wiki'
+        }
 
 #    Querying for timestamps is so fast we could make the
 #    query before the second date is selected?

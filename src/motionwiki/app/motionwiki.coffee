@@ -19,7 +19,6 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     	console.log $rootScope
     ]
     angular.bootstrap(document.getElementById('motionwiki'),['motion_wiki'])
-    
 
     parsedRevisions = []
     diffsForRevisions = []
@@ -220,6 +219,23 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         line++
                 revIndex++
 
+    delimiter = randomDelimiterGenerator()
+    textToParse = ""
+
+    for revision in parsedWikiText
+        for line in revision
+            line += delimiter
+            textToParse.push line
+
+randomDelimiterGenerator = () ->
+        text = ""
+        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+        counter = 0
+        while counter < 8
+            text += possible.charAt(Math.floor(Math.random() * possible.length))
+
+        return text
 
 ###
     timeStampArray = []
