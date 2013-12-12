@@ -282,7 +282,9 @@ module.exports = (grunt) ->
                             #{contents}
                             """
 
-                    # generateSourceMaps:true
+                    generateSourceMaps:true
+                    preserveLicenseComments: false # if generateSouceMaps is true, this must be false
+
                     # More info: http://requirejs.org/docs/faq-advanced.html#rename
                     namespace: '<%= G.name.app %>Req'
                     skipDirOptimize: true
