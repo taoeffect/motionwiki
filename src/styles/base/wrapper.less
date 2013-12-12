@@ -1,12 +1,19 @@
 //EXAMPLE - PLEASE DELETE THIS FILE ONCE EVERYONE UNDERSTANDS WHAT IS GOING ON WITH GRUNT/LESS
-body{
-	background: #FF00000;
-}
-
 .mw_wrapper {
 	
 	#motionwiki, #motionwiki *{
 		@import "../generic/normalize";
+		@import (less)"../vendor/bootstrap/bootstrap.css";
+		@import "../vendor/bootstrap_datepicker/datepicker";
 	}
 	
+}
+
+.datepicker{
+	@import (less)"../vendor/bootstrap/bootstrap.css";
+	@import "../vendor/bootstrap_datepicker/datepicker";
+}
+	
+.dropdown-menu{
+	@import (less)"../vendor/bootstrap/bootstrap.css";
 }

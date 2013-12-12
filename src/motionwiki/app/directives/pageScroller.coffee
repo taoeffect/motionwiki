@@ -3,7 +3,7 @@
 define ['require', 'jquery'], (require, $)->
 
 	angular.module('mw_directives').directive 'mwPageScroller', [ ->
-		templateUrl: '/templates/directives/pageScroller.html'
+		templateUrl: '/includes/templates/directives/pageScroller.html'
 		restrict: 'E'
 		link: (scope, element, attrs)->
 			$("#ButtonForMap").click -> #lets assume you gave the button for the map the div id= ButtonForMap

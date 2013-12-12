@@ -1,4 +1,4 @@
-define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers'], (require, _, $, JSON, api)->
+define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'bootstrap_datepicker', 'controllers'], (require, _, $, JSON, api)->
 
     _.mixin toJSON: JSON.stringify
 
@@ -446,4 +446,3 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         timeStampArray = timeStampArray[counter...timeStampArray.length]
 
     ###
-
