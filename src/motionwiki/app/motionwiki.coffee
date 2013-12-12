@@ -41,6 +41,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         # Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         console.log "DONE!"
 
+        #takes page title as input, generates the diffArray for the last 5 revisions of the corresponding page
+        #splits up the diffArray by line for each html element generated
         do ([data, textStatus, jqXHR]=r1) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
                 console.log "page.revisions.length = #{page.revisions.length}"
@@ -85,8 +87,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
                     counter++
         
+        #takes the title of the page as input, produces the body text of the wikipedia page at the current revision
+        #split up line by line in an array called parsedRevisions
         do ([data, textStatus, jqXHR]=r2) ->
-            # console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+
+            
             for pageNum, page of jqXHR.responseJSON.query.pages
                 # console.log "page: #{_(page).toJSON()}"
 
@@ -102,27 +107,25 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
                     wikiText = revision["*"]
 
-                    api.parseToHTML wikiText (jqXHR, textStatus) ->
+                    
 
 
-                        console.log "jqXHR = #{jqXHR}"
-                        #wikiText = revision["*"]
-                        wikiText = jqXHR.text["*"]
+                    #wikiText = revision["*"]
 
 
-                    #wikiText = JSON.stringify(revision["*"], false, 100)
-                        position = 0
+                #wikiText = JSON.stringify(revision["*"], false, 100)
+                    position = 0
 
 
 
-                        while position > -1
-                            position = wikiText.indexOf("\n")
-                            myStart = wikiText.substring(0, position)
-                            parsedWikiText.push myStart
-                            myEnd = wikiText.substring(position+1, wikiText.length)
-                            wikiText = myEnd
-                            parsedWikiText = parsedWikiText
-                        parsedRevisions.push parsedWikiText
+                    while position > -1
+                        position = wikiText.indexOf("\n")
+                        myStart = wikiText.substring(0, position)
+                        parsedWikiText.push myStart
+                        myEnd = wikiText.substring(position+1, wikiText.length)
+                        wikiText = myEnd
+                        parsedWikiText = parsedWikiText
+                    parsedRevisions.push parsedWikiText
                 counter++
                 #console.log "counter = #{counter}"
             console.log "parsedRevisions.length = #{parsedRevisions.length}"
@@ -152,6 +155,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         revIndex = -1
         modifyToggle = false
 
+        #Wraps each added or deleted line in an animation tag for greensock (right now, just wrapped as html tags)
         #Goes through each diff text
         for revision in diffsForRevisions
             diffMarkerMod = 0
@@ -241,26 +245,33 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
 
 
+
+
         revIndex = 0
         for revision in parsedRevisions
                 line = 0
                 console.log "revision.length = #{revision.length}"
                 if revIndex is baseRevision
+                    html = ""
                     console.log "revision[0] = #{revision[0]}"
                     for textLine in revision
-
+                        html += textLine
                         #console.log "line = #{line}"
                         $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
                         #console.log "line #{line}: #{textLine}"
                         line++
+                    console.log "html = #{html}"
+                    api.parseToHTML html, (jqXHR) ->
+                        console.log "jqXHR = #{jqXHR}"
                 revIndex++
 
     
-
+        ###
         for revision in parsedWikiText
             for line in revision
                 line += delimiter
                 textToParse += line
+        ###
 
 randomDelimiterGenerator = () ->
         text = ""
