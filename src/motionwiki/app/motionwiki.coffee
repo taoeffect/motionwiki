@@ -27,6 +27,9 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
     baseRevision = 4
     # Need to change San_Francisco to whatever page user is on
+
+    delimiter = randomDelimiterGenerator()
+    textToParse = ""
     
     page = 'Florida'
     $.when(
@@ -46,7 +49,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     
                     #console.log "timestamp: #{revision.timestamp}, counter = #{counter}"
                     #$('<div>').html(revision.diff["*"]).appendTo('body > div')
-                    diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
+                    #diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
+                    diffHTML = revision.diff["*"]
                     
                     position = 0
                     workingstring = ""
@@ -57,12 +61,14 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     diffArray = []
                     if counter is baseRevision
                         $('<div>').html(diffHTML).appendTo('body > div')
+   
                     $($(diffHTML).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
                         
                         if $(@).prop('tagName') == "SPAN"
-                           console.log "#{$(@).text()}"
+                           #console.log "#{$(@).text()}"
                            
                            #myDiff.push
+                        #Add all of the entries for each diff block, separated by tag
                         else
                             myDiff = [$(@).prop('class'), $(@).text(), revision.timestamp]
                             myDiff[0] = [$(@).prop('tagName')] + ":"  + myDiff[0]
@@ -96,18 +102,32 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
                     wikiText = revision["*"]
 
-                #wikiText = JSON.stringify(revision["*"], false, 100)
-                    position = 0
-                    while position > -1
-                        position = wikiText.indexOf("\n")
-                        myStart = wikiText.substring(0, position)
-                        parsedWikiText.push myStart
-                        myEnd = wikiText.substring(position+1, wikiText.length)
-                        wikiText = myEnd
-                    parsedRevisions.push parsedWikiText
+                    api.parseToHTML wikiText (jqXHR, textStatus) ->
+
+
+                        console.log "jqXHR = #{jqXHR}"
+                        #wikiText = revision["*"]
+                        wikiText = jqXHR.text["*"]
+
+
+                    #wikiText = JSON.stringify(revision["*"], false, 100)
+                        position = 0
+
+
+
+                        while position > -1
+                            position = wikiText.indexOf("\n")
+                            myStart = wikiText.substring(0, position)
+                            parsedWikiText.push myStart
+                            myEnd = wikiText.substring(position+1, wikiText.length)
+                            wikiText = myEnd
+                            parsedWikiText = parsedWikiText
+                        parsedRevisions.push parsedWikiText
                 counter++
                 #console.log "counter = #{counter}"
             console.log "parsedRevisions.length = #{parsedRevisions.length}"
+
+
 
             # for revision in parsedRevisions
             #     line = 0
@@ -118,6 +138,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             #         _wordcount += textLine.split(" ").length
             #         line++
         
+        console.log "after callback block"
         line = 0
         diffType = ""
         diffContextLine = ""
@@ -131,6 +152,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         revIndex = -1
         modifyToggle = false
 
+        #Goes through each diff text
         for revision in diffsForRevisions
             diffMarkerMod = 0
             deletedAddLineToggle = false
@@ -141,8 +163,10 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             console.log "!revision.length = #{revision.length}"
             console.log "parsedRevisions[#{revIndex}].length = #{parsedRevisions[revIndex].length}"
             numTimesDeleted = 0
+            #if our current revision diff text is equal to our baseRevision (the revision we are currently viewing animations for)
             if revIndex is baseRevision
                 console.log "nextRev timestamp: #{revision[0][2]}"
+                #for each row in our array of diffs
                 for index in revision
                     
                     tagIndex = 0
@@ -150,10 +174,13 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     tag = index[0].substring(0, tagIndex)
                     index[0] = index[0].substring(tagIndex+1, index[0].length)
 
+                    #if we are inside the diff block
                     if getDiffLineNo is true
                         if tag is 'TR'
+                            #get to the correct line
                             numLinesToAdd++
 
+                    #get starting line number for diff
                     if index[0] == 'diff-lineno'
                         getDiffLineNo = true
                         index[1] = index[1].substring(5, index[1].indexOf(':'))
@@ -165,36 +192,45 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             myEnd = index[1].substring(position+1, index[1].length)
                             index[1] = myStart + myEnd
                         line = parseInt(index[1], 10)
+
+                    #useless
                     if index[0] == 'diff-marker'
                         if index[1] == '&#160' 
                             diffType = 'Context'
-                            continue
+                            
                         else if index[1] = '+'
                             diffType = 'Add'
-                            continue
+                            
                         else 
                             diffType = '\\u2212'
-                            continue
+                            
+                    #useless
                     if index[0] == 'diff-context'
                         diffContextLine = index[1]
                         #console.log "context line #{line}: #{diffContextLine}"
+                    #if we are deleting a line
                     if index[0] == 'diff-deletedline'
+                        #if it is not an inline modification
                         if modifyToggle is true
                             #odifyToggle = false
                             console.log "Deleting line at #{line + numLinesToAdd}"
                             numTimesDeleted++
+
                         else
                             modifyToggle = true
                         
+                        #delete line
                         parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
                         
-                        #parsedRevisions[revIndex][line +  numLinesToAdd] = "DELETED"
+                    #If modifyToggle is true, we know the last action to happen was a deletion.
                     if index[0] == 'diff-addedline'
+                        #if it is not an inline modification
                         if modifyToggle is false
                             #numTimesDeleted--
                             console.log "Adding line at #{line + numLinesToAdd}"
                             text = '<font color="green">' + index[1] + "</font>"
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
+                        #if it is an inline modification
                         else
                             console.log "Modifying line at #{line + numLinesToAdd}"
                             
@@ -219,13 +255,12 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         line++
                 revIndex++
 
-    delimiter = randomDelimiterGenerator()
-    textToParse = ""
+    
 
-    for revision in parsedWikiText
-        for line in revision
-            line += delimiter
-            textToParse.push line
+        for revision in parsedWikiText
+            for line in revision
+                line += delimiter
+                textToParse += line
 
 randomDelimiterGenerator = () ->
         text = ""
@@ -234,9 +269,8 @@ randomDelimiterGenerator = () ->
         counter = 0
         while counter++ < 8
             text += possible.charAt(Math.floor(Math.random() * possible.length))
-
+            counter++
         return text
-
 ###
     timeStampArray = []
 
