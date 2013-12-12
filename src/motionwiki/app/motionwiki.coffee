@@ -3,9 +3,9 @@ define ['require', 'jquery', 'JSON', 'wiki/api', 'directives', 'bootstrap_datepi
   $('<div class="mw_wrapper motionwiki">').appendTo('body > div')
   $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main motionwiki" >').appendTo('.mw_wrapper')
   $('<mw-timeline class="motionwiki">').appendTo('div#motionwiki')
-
+  
   angular.module('motion_wiki', ['mw_directives','mw_controllers']).run [ '$rootScope' , ($rootScope)->
-  	console.log $rootScope 
+    console.log $rootScope 
   ]
   angular.bootstrap(document.getElementById('motionwiki'),['motion_wiki'])
 

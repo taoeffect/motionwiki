@@ -268,6 +268,7 @@ module.exports = (grunt) ->
                         JSON                 : 'empty:'
                         angular_strap        : 'empty:'
                         bootstrap_datepicker : 'empty:'
+                        nouislider           : 'empty:'
 
                     keepBuildDir: false
 

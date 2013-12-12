@@ -12,6 +12,7 @@ requirejs.config {
         JSON: "//cdnjs.cloudflare.com/ajax/libs/json3/3.2.5/json3.min"
         angular_strap: "//cdnjs.cloudflare.com/ajax/libs/angular-strap/0.7.4/angular-strap.min"
         bootstrap_datepicker: "//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min"
+        nouislider: "//cdnjs.cloudflare.com/ajax/libs/noUiSlider/5.0.0/jquery.nouislider.min"
     
     # http://requirejs.org/docs/api.html#config-shim
     shim: 
@@ -29,6 +30,7 @@ requirejs.config {
         bootstrap_datepicker: deps:["jquery"], exports: "$.fn.datepicker"
         lodash: exports: "_" 
         JSON: exports: "JSON"
+        nouislider: deps:["jquery"], exports: "$.fn.noUiSlider"
         #angular_strap: exports: "$strap"
 } # end config
 
