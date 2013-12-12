@@ -21,6 +21,11 @@ define ['require', 'jquery'], (require, $)->
           slider.val (value - 1)
 
 
+      $('body').keyup (e) ->
+          alert "Play!!" if e.keyCode is 80     #p for pause/play
+          alert "Forward!" if e.keyCode is 37   #left arrow
+          alert "backward!!" if e.keyCode is 39 #right arrow
+
       scope.play = ->
         scope.active = !scope.active
         if scope.active is true

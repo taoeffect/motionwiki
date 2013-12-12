@@ -2,31 +2,139 @@
 
 define ['jquery', 'lodash'], ($,_) ->
     # just an example. this will return an object.
+    # TEST FLAGS AND WRAPPERS TO PREVENT MULTIPLE AJAX CALLBACKS
+
+    newQueryCall = true
+
+    # randInt = (min=10, max=10000000) -> Math.floor(Math.random() * (max - min + 1) + min)
+
+    setNewQueryCallFalse: ->
+        newQueryCall = false
+
+    setNewQueryCallTrue: ->
+        newQueryCall = true
+
     defaults =
         num : 5
         ajax: 
             url: 'https://en.wikipedia.org/w/api.php'
             dataType: 'jsonp'
-
-    @merge = (o={}, def=defaults, rest...)-> _.defaults o, def, rest...
+            # cache: true
 
     # haven't tested 'compare'... it probably doesn't work
-    compare: (title, [options]..., cb) =>
-        options = @merge(options)
-        $.ajax @merge options.ajax, complete: cb, data:
-            action   : 'compare'
-            fromtitle: title
-            fromrev  : 1
-            torev    : 2
-    query: (titleOrTitles, [options]..., cb) =>
+    compare: (revid1, revid2, [options]..., cb) ->
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: cb
+            data:
+                action   : 'compare'
+                fromid   : revid1
+                toid     : revid2
+        }
+    query: (titleOrTitles, prop, [options]..., cb) ->
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
-        options = @merge(options)
-        $.ajax @merge options.ajax, complete: cb, data:
-            action           : 'query'
-            prop             : 'revisions'
-            format           : 'json'
-            rvprop           : 'ids|timestamp'
-            rvlimit          : options.num
-            # rvtoken          : 'rollback'
-            rvcontentformat  : 'application/json'
-            titles           : titleOrTitles
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: (jqXHR, textStatus)->
+                # do our pre-processing (if any)
+                # console.log "ajax complete"
+                #console.log "api.query: #{_(jqXHR).toJSON()}"
+                cb(jqXHR, textStatus) if cb
+            data:
+                action           : 'query'
+                prop             :  prop
+                format           : 'json'
+                rvlimit          : options.num
+                rvprop           : 'ids|timestamp'
+                # rvprop           : 'ids|timestamp|content'
+                # rvexpandtemplates: true
+                # rvtoken          : 'rollback'
+                rvcontentformat  : 'application/json'
+                rvdiffto         : 'next'
+                titles           : titleOrTitles
+                # "_"              : randInt()
+        }
+
+    getWikiTextContent: (titleOrTitles, prop, [options]..., cb) ->
+        titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: (jqXHR, textStatus)->
+                # do our pre-processing (if any)
+                # console.log "ajax complete"
+                #console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+                cb(jqXHR, textStatus) if cb
+            data:
+                action           : 'query'
+                prop             : prop
+                format           : 'json'
+                rvprop           : 'content|timestamp'
+                rvlimit          : '5'
+                # rvexpandtemplates: true
+                # rvtoken          : 'rollback'
+                rvcontentformat  : 'text/x-wiki'
+                titles           : titleOrTitles
+                # "_"              : randInt()
+        }
+
+    parseToHTML: (inputText, [options]..., cb) ->
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: (jqXHR, textStatus) ->
+                # do our pre-processing (if any)
+                # console.log "ajax complete"
+                #console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+                cb(jqXHR, textStatus) if cb
+            data:
+                action           : 'parse'
+                format           : 'json'
+                text             : inputText
+                prop             : 'text'
+                rvcontentformat  : 'text/x-wiki'
+        }
+
+#    Querying for timestamps is so fast we could make the
+#    query before the second date is selected?
+#    Also, since 500 timestamps is the maximum, we could black 
+#    out dates on the calendar past the last timestamp in the range?
+    queryRevisionsInDateRangeUsingStartDate: (titleOrTitles,prop, [options]..., cb) ->
+        titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: (jqXHR, textStatus) ->
+                # do our pre-processing (if any)
+                cb(jqXHR, textStatus)
+            data:
+                action           : 'query'
+                prop             : prop
+                format           : 'json'
+                rvprop           : 'timestamp|size'
+                rvlimit          : "500"
+                rvstart          : datepicker1.date
+                rvdir            : 'newer'
+                # rvexpandtemplates: true
+                # rvtoken          : 'rollback'
+                rvcontentformat  : 'text/x-wiki'
+                titles           : titleOrTitles
+        }
+
+    queryRevisionsInDateRangeUsingEndingDate: (titleOrTitles,prop, [options]..., cb) ->
+        titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
+        options = $.extend {}, defaults, options or {}
+        $.ajax $.extend {}, options.ajax, {
+            complete: (jqXHR, textStatus) ->
+                # do our pre-processing (if any)
+                cb(jqXHR, textStatus)
+            data:
+                action           : 'query'
+                prop             : prop
+                format           : 'json'
+                rvprop           : 'timestamp|size'
+                rvlimit          : "500"
+                rvstart          : datepicker2.date
+                rvdir            : 'newer'
+                # rvexpandtemplates: true
+                # rvtoken          : 'rollback'
+                rvcontentformat  : 'text/x-wiki'
+                titles           : titleOrTitles
+        }
