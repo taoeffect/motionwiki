@@ -15,12 +15,15 @@ define ['require', 'jquery'], (require, $)->
       console.log slider
 
       slider.noUiSlider
-        range: [20,80]
-        start: 40
+        range: [1,10]
+        start: 1
+        step: 1
         handles: 1
         serialization:
           resolution: 1
           to: input
+
+          
 
       input.keydown (e)->
         value = parseInt slider.val()
