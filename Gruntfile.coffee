@@ -171,7 +171,7 @@ module.exports = (grunt) ->
             motionwiki:
                 options:
                     join: true # concat before compiling (instead of after)
-                    # sourceMap: true # not much point if we're later minifying?
+                    sourceMap: true
                 files: [
                     dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee'
                    ,
