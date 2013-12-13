@@ -52,11 +52,9 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 console.log "page.revisions.length = #{page.revisions.length}"
                 console.log "page: #{_(page).stringify()}"
                 for revision in page.revisions
-<<<<<<< HEAD
                    # console.log "revisions: #{revision.diff["*"]}"
                     diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
                     #diffsForRevisions = "<table id='wikiTable'>" + revision.diff["*"] + "</table>"
-=======
                    console.log "revisions: #{revision.diff["*"]}"
                    # diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
                    # diffsForRevisions.push $('<table>').html(revision.diff["*"]) #.children()
