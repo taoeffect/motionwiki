@@ -1,6 +1,8 @@
 define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'Animation', 'bootstrap_datepicker'], (require, _, $, JSON, api, directives, controllers, animate)->
 
     _.mixin stringify: JSON.stringify
+    String::replaceAll = (s1, s2, i="")->
+        @.replace(new RegExp(s1.replace(/([\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, (c)->"\\" + c), "g"+i), s2)
 
     $('<div class="mw_wrapper motionwiki">').appendTo('body > div')
     $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main mw_main--wrapper motionwiki" >').appendTo('.mw_wrapper')
@@ -57,15 +59,16 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         do ([data, textStatus, jqXHR]=r2) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
                 for revision in page.revisions
-                    wikiText = revision["*"].replace(/[\n]/g, delimiter).substring(0, 5000)
+                    wikiText = revision["*"].replaceAll("\n", " #{delimiter}\n ").substring(0, 5000)
 
                 # send this wikitext back
                 api.parseToHTML wikiText, (jqXHR, textStatus)->
                     wikiHTML = jqXHR.responseJSON.parse.text["*"]
                     console.log "got back parsed html:\n#{wikiHTML}"
                     counter = 1
-                    htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<div><b>LINE #{counter++}:</b> #{line}</div>").join('')
-                    $("<div>").html(htmlLines).appendTo('body')
+                    htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<b>LINE #{counter++}:</b> #{line}").join('')
+                    $('#mw-content-text').html(htmlLines) # replace wiki
+                    # $("<div>").html(htmlLines).appendTo('body')
 
 
 
