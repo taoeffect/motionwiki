@@ -3,7 +3,7 @@
 define ['require', 'jquery', '../bootstrap-datepicker'], (require, $)->
 
     angular.module('mw_directives').directive 'mwDatepicker', [ ->
-        templateUrl: '/includes/templates/directives/datepicker.html'
+        templateUrl: '<%= G.mode().includes %>/templates/directives/datepicker.html'
         restrict: 'A'
         link: (scope, element, attrs)->
             console.log "datepicker"

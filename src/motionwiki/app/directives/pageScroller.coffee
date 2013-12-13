@@ -3,7 +3,7 @@
 define ['require', 'jquery'], (require, $)->
 
 	angular.module('mw_directives').directive 'mwPageScroller', [ ->
-		templateUrl: '/includes/templates/directives/pageScroller.html'
+		templateUrl: '<%= G.mode().includes %>/templates/directives/pageScroller.html'
 		restrict: 'A'
 		link: (scope, element, attrs)->
 			$("#ButtonForMap").click -> #lets assume you gave the button for the map the div id= ButtonForMap
@@ -18,7 +18,7 @@ define ['require', 'jquery'], (require, $)->
 						$("#MAP").remove()  
 					#$("#MOVEIT").css "margin-left": 185
 					$mapSource = $("<script>")
-					$mapSource.attr "src", "/includes/js/miniPageNav.js"
+					$mapSource.attr "src", "<%= G.mode().includes %>/js/miniPageNav.js"
 					$("body").append $mapSource
 					$(this).val "OFF"
 			

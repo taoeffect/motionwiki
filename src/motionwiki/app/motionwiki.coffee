@@ -70,7 +70,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
 
     timeStampArray = []
-
+###
     # If user input is start date
     # Gets timestamps and byte counts for 500 revisions after start date
     api.queryRevisionsinDateRangeUsingStartDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
@@ -105,5 +105,5 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
         timeStampArray = timeStampArray[counter...timeStampArray.length]
 
-    ###
+###
 

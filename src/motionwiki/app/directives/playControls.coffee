@@ -3,7 +3,7 @@
 define ['require', 'jquery'], (require, $)->
 
   angular.module('mw_directives').directive 'mwPlayControls', [ ->
-    templateUrl: '/includes/templates/directives/playControls.html'
+    templateUrl: '<%= G.mode().includes %>/templates/directives/playControls.html'
     restrict: 'A'
     link: (scope, element, attrs)->
       console.log "play controls directive"
