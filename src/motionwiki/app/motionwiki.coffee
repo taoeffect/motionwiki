@@ -49,13 +49,15 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         #splits up the diffArray by line for each html element generated
         do ([data, textStatus, jqXHR]=r1) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
-                console.log "page.revisions.length = #{page.revisions.length}"
-                console.log "page: #{_(page).stringify()}"
+                # console.log "page.revisions.length = #{page.revisions.length}"
+                # console.log "page: #{_(page).stringify()}"
                 for revision in page.revisions
-                   console.log "revisions: #{revision.diff["*"]}"
-                   # diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
-                   # diffsForRevisions.push $('<table>').html(revision.diff["*"]) #.children()
-                   diffsForRevisions.push revision.diff["*"]
+                    # console.log "revisions: #{revision.diff["*"]}"
+                    # diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
+                    # diffsForRevisions.push $('<table>').html(revision.diff["*"]) #.children()
+                    if revision.diff["*"] isnt ""
+                        # console.log "pushing: '#{revision.diff["*"]}'"
+                        diffsForRevisions.push revision.diff["*"]
 
                 ###
                     diffArray = []
