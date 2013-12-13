@@ -4,13 +4,14 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
     firstAnimation = true
     speedGradient = 6
     animateList = []
+    addedLine = false
 
     doDeleteStuff = (jQueryObject) ->
         #jQueryObject.each (index, el) ->
         #    scrollToView(el)
         #    window.scrollTo(el.offsetTop, el.offsetTop - 200)
-        if (animateList.length == 0)
-            console.log "jquery.parent().next() = #{jQueryObject.parent().next().text()}"
+        #if (animateList.length == 0)
+        #    console.log "jquery.parent().next() = #{jQueryObject.parent().next().text()}"
             #jQueryObject.parent().next().append("<motionwikiDone id='motionwikiDone'>Motionwiki Diffs Done!</motionwikiDone>")
         deleteParent(jQueryObject)
         
@@ -19,7 +20,15 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
 
     doAddStuff = (jQueryObject) ->
         console.log "modification done"
-        if (animateList.length == 0)
+        if addedLine is true
+            addedLine = false
+            console.log "jQueryOvject.prop() = #{jQueryObject.prop('id')}"
+             #jQueryObject.parent().get(0)
+            console.log "jQueryOvject.text() = #{jQueryObject.parent().html()}"
+            $('#' + jQueryObject.prop("id")).text(" ")
+            $('#' + jQueryObject.prop("id")).parent().wrap("<br> </br>")
+            #$('#' + jQueryObject.prop("id")).wrap("<div></div>")
+        #if (animateList.length == 0)
            # jQueryObject.parent().next().append("<motionwikiDone id='motionwikiDone'>Motionwiki Diffs Done!</motionwikiDone>")
         #scrollToView(jQueryObject)
         _animate()
@@ -73,6 +82,8 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
                 if lineText == ""
                     console.log "modify = #{"<span id='" + line.substring(1, line.length)  + "'>"  +  "ADDED LINE" + "</span>"}"
                     jQueryObject.parent().html("<span id='" + line.substring(1, line.length)  + "'>"  +  "ADDED LINE" + "</span>")
+                    #jQueryObject = jQueryObject.parent()
+                    addedLine = true
                 
                 TweenMax.from line, 2,
                     x: -500

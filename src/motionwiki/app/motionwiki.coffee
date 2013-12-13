@@ -26,7 +26,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     animations = []
     counter = 0
     console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
-    baseRevision = 3
+    baseRevision = 4
     # Need to change San_Francisco to whatever page user is on
 
     delimiter = randomDelimiterGenerator()
