@@ -3,40 +3,43 @@
 define ['require', 'jquery'], (require, $)->
 
 	angular.module('mw_directives').directive 'mwPageScroller', [ ->
-		templateUrl: '/templates/directives/pageScroller.html'
-		restrict: 'E'
+		templateUrl: '<%= G.mode().includes %>/templates/directives/pageScroller.html'
+		restrict: 'A'
 		link: (scope, element, attrs)->
-			# $mapSource = $("<script>")
-			# $mapSource.attr "src", "/includes/js/miniPageNav.js"
-			# $("body").append $mapSource
 			$("#ButtonForMap").click -> #lets assume you gave the button for the map the div id= ButtonForMap
 				if $(this).val() is "OFF"
 					$(this).val "ON"
 					#$("#MOVEIT").css "margin-left": 0
 					$("#MAP").slideUp "slow",->
 					#$("#MAP").remove() 
-					$("#mw-panel").css opacity: 1
+					if('#mw-panel').lenth
+						$("#mw-panel").css visibility: visible
 					
 				else
 					if $("#MAP").length
 						$("#MAP").remove()  
 					#$("#MOVEIT").css "margin-left": 185
 					$mapSource = $("<script>")
-					$mapSource.attr "src", "/includes/js/miniPageNav.js"
+					$mapSource.attr "src", "<%= G.mode().includes %>/js/miniPageNav.js"
 					$("body").append $mapSource
-					$("#mw-panel").css opacity: 0
+					if('#mw-panel').length
+						$("#mw-panel").css visibility: hidden
 					$(this).val "OFF"
+			
+			$ ->
+				popoverHtml = """
+					<div class="btn-group">
+						<button class="btn btn-primary">15s</button>
+						<button class="btn btn-primary">30s</button>
+						<button class="btn btn-primary">45s</button>
+					</div>
+				"""
 
-
-			(($) -> #i'm working on a reload function that should be called eveytime an animation happens. not done yet
-				$.fn.reloadMap = ->
-					if $("#MAP").length
-						$("#MAP").remove()  
-					$mapSource = $("<script>")
-					$mapSource.attr "src", "/includes/js/miniPageNav.js"
-					$("body").append $mapSource
-			) jQuery
-    				
+				$('#timeButton').popover
+					trigger: 'click'
+					html: true
+					placement: 'bottom',
+					content: popoverHtml
 				
 
 			
