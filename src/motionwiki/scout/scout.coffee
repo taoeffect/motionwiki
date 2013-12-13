@@ -9,7 +9,8 @@ require ['require', 'jquery', 'angular'], (require, $, angular)->
                             "margin-left": 100
                             "margin-top": 145
                         else
-                            "margin-left": 215
+                            "margin-left": 0
                             "margin-top": 145
+                            # "margin-left": 215
                 )
         )

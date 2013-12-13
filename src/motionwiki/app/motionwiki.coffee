@@ -50,10 +50,20 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         do ([data, textStatus, jqXHR]=r1) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
                 console.log "page.revisions.length = #{page.revisions.length}"
+                console.log "page: #{_(page).stringify()}"
                 for revision in page.revisions
+<<<<<<< HEAD
                    # console.log "revisions: #{revision.diff["*"]}"
-                    #diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
-                    diffsForRevisions = "<table id='wikiTable'>" + revision.diff["*"] + "</table>"
+                    diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
+                    #diffsForRevisions = "<table id='wikiTable'>" + revision.diff["*"] + "</table>"
+=======
+                   console.log "revisions: #{revision.diff["*"]}"
+                   # diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
+                   # diffsForRevisions.push $('<table>').html(revision.diff["*"]) #.children()
+                   diffsForRevisions.push revision.diff["*"]
+
+                ###
+>>>>>>> psgruntfilefix
                     diffArray = []
                     #if counter is baseRevision
                         #$('<div>').html(diffHTML).appendTo('body > div')
@@ -113,12 +123,15 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     # counter = 1
                     # htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<b>LINE #{counter++}:</b> #{line}").join('')
                     # replace wiki
-                    console.log "got back parsed html:\n#{wikiHTML}"
+                    # console.log "got back parsed html:\n#{wikiHTML}"
                     wikiHTML = wikiHTML.replace(/MOTIONWIKILINE([a-z]+)(\d+)\"/g, '"')
                     wikiHTML = wikiHTML.replace(/_MOTIONWIKILINE([a-z]+)(\d+)/g, '_')
                     wikiHTML = wikiHTML.replace(/MOTIONWIKILINE([a-z]+)(\d+)/g, "<span class=\"motionwiki-line-$1\" id=\"mwline-$2\"><!--Line: $2--></span>")
                     # wikiHTML = wikiHTML.replaceAll("MOTIONWIKILINE", "poop $2")
                     $('#mw-content-text').html(wikiHTML)
+                    console.log "HERE: #{diffsForRevisions[0]}"
+                    # diffsForRevisions[0].children().each ->
+                    #     console.log $(@).html()
                     # .find('.motionwiki-linestart,.motionwiki-lineend').each ->
                     #     $this = $(@)
                     #     if $this.hasClass('motionwiki-linestart')
