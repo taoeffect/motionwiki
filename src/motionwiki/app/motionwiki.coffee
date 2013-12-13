@@ -91,16 +91,35 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 for revision in page.revisions
                     # TODO: use delimiters to specify the line start and the line end
                     #       ex: <span class="linestart"></span> <span class="lineend"></span>
-                    wikiText = revision["*"].replaceAll("\n", " #{delimiter}\n ").substring(0, 5000)
+                    counter = 0
+                    # wikiText = revision["*"].replace(/(^.*?$)/g, "<span id=\"mw-line-#{counter++}\" class=\"motionwiki-line\">$1</span>").substring(0, 5000)
+                    # wikiText = _(revision["*"].split('\n')).map((x)-> "MOTIONWIKILINEstart#{++counter}\n#{x}\nMOTIONWIKILINEend#{counter}").join('\n').substring(0, 5000)
+                    wikiText = _(revision["*"].split('\n')).map((x)->
+                        if x.indexOf('==') is 0
+                            "#{x}\nMOTIONWIKILINEend#{++counter}"
+                        else
+                            "#{x} MOTIONWIKILINEend#{++counter}"
+
+                    ).join('\n').substring(0, 5000)
+                    console.log "asking for this to be translated: #{wikiText}"
 
                 # send this wikitext back
                 api.parseToHTML wikiText, (jqXHR, textStatus)->
                     wikiHTML = jqXHR.responseJSON.parse.text["*"]
                     console.log "got back parsed html:\n#{wikiHTML}"
-                    counter = 1
-                    htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<b>LINE #{counter++}:</b> #{line}").join('')
-                    $('#mw-content-text').html(htmlLines) # replace wiki
-                    # $("<div>").html(htmlLines).appendTo('body')
+                    # counter = 1
+                    # htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<b>LINE #{counter++}:</b> #{line}").join('')
+                    # replace wiki
+                    wikiHTML = wikiHTML.replace(/MOTIONWIKILINE([a-z]+)(\d+)/g, "<span class=\"motionwiki-line-$1\" id=\"mwline-$2\">Line: $2</span>")
+                    # wikiHTML = wikiHTML.replaceAll("MOTIONWIKILINE", "poop $2")
+                    $('#mw-content-text').html(wikiHTML)
+                    # .find('.motionwiki-linestart,.motionwiki-lineend').each ->
+                    #     $this = $(@)
+                    #     if $this.hasClass('motionwiki-linestart')
+                    #         $this.html("<b style=\"color:green\">BEGIN-#{$this.prop('id')}</b>")
+                    #     else
+                    #         $this.html("<b style=\"color:red\">END-#{$this.prop('id')}</b>")
+                    # # $("<div>").html(htmlLines).appendTo('body')
 
             ###
                     console.log "counter = #{counter}"
@@ -181,7 +200,6 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         revisionNumber = -1
         revIndex = -1
         modifyToggle = false
-            ###
 
         #Wraps each added or deleted line in an animation tag for greensock (right now, just wrapped as html tags)
         #Goes through each diff text
@@ -356,7 +374,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     
 
 
-                    ###DO ANIMATIONS HERE###
+                    ## DO ANIMATIONS HERE
                     if doAnimation is true
                         greensockAnimationId = "#" + greensockAnimationArg + uniqueTagIdentifier
                         if wasDelete is true
@@ -388,42 +406,35 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
                     console.log "after callback"
                     uniqueTagIdentifier++
-                    ###
-                    if doDelete
-                        parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
+                    # if doDelete
+                    #     parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
 
-                    uniqueTagIdentifier++
-                    ###
+                    # uniqueTagIdentifier++
 
-        ###
         revIndex = 0
-        for revision in parsedRevisions
-                line = 0
-                console.log "revision.length = #{revision.length}"
-                if revIndex is baseRevision
-                    html = ""
-                    console.log "revision[0] = #{revision[0]}"
-                    for textLine in revision
-                        html += textLine
-                        #console.log "line = #{line}"
-                        $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
-                        #console.log "line #{line}: #{textLine}"
-                        line++
-                    #console.log "html = #{html}"
-                    #api.parseToHTML html, (jqXHR) ->
-                    #    console.log "jqXHR = #{jqXHR}"
-                revIndex++
+        # for revision in parsedRevisions
+        #         line = 0
+        #         console.log "revision.length = #{revision.length}"
+        #         if revIndex is baseRevision
+        #             html = ""
+        #             console.log "revision[0] = #{revision[0]}"
+        #             for textLine in revision
+        #                 html += textLine
+        #                 #console.log "line = #{line}"
+        #                 $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
+        #                 #console.log "line #{line}: #{textLine}"
+        #                 line++
+        #             #console.log "html = #{html}"
+        #             #api.parseToHTML html, (jqXHR) ->
+        #             #    console.log "jqXHR = #{jqXHR}"
+        #         revIndex++
 
-        ###
 
     
-        ###
-        for revision in parsedWikiText
-            for line in revision
-                line += delimiter
-                textToParse += line
-        ###
-
+        # for revision in parsedWikiText
+        #     for line in revision
+        #         line += delimiter
+        #         textToParse += line
 
     timeStampArray = []
     # If user input is start date
@@ -460,4 +471,5 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
         timeStampArray = timeStampArray[counter...timeStampArray.length]
 
+            ###
 
