@@ -52,8 +52,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     
                     #console.log "timestamp: #{revision.timestamp}, counter = #{counter}"
                     #$('<div>').html(revision.diff["*"]).appendTo('body > div')
-                    #diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
-                    diffHTML = revision.diff["*"]
+                    diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
+                    #diffHTML = revision.diff["*"]
                     
                     position = 0
                     workingstring = ""
@@ -75,6 +75,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         else
                             myDiff = [$(@).prop('class'), $(@).text(), revision.timestamp]
                             myDiff[0] = [$(@).prop('tagName')] + ":"  + myDiff[0]
+                            console.log "Adding tag: #{$(@).prop('tagName')}"
                             diffArray.push myDiff
                         #console.log "diffsForREvisions.length = #{diffsForRevisions.length}"
                         
@@ -213,6 +214,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         if tag is 'TR'
                             #get to the correct line
                             numLinesToAdd++
+                            console.log "numLinesToAdd = #{numLinesToAdd}"
 
                     #get starting line number for diff
                     if index[0] == 'diff-lineno'
@@ -257,11 +259,12 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
                         jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
 
-                        greensockAnimationTag = '<span id = "motionwikiDeletion' + uniqueTagIdentifier.toString + '">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
+                        greensockAnimationTag = '<span id = "motionwikiDeletion' + uniqueTagIdentifier + '">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
                         parsedRevisions[revIndex][line + numLinesToAdd] = greensockAnimationTag
-                        greensockAnimationArg = 'motionwikiDeletion' + uniqueTagIdentifier.toString
+                        greensockAnimationArg = 'motionwikiDeletion' + uniqueTagIdentifier
                         finalline = line + numLinesToAdd
                         finalline = finalline
+                        console.log "line = #{line}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
                         $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                         doAnimation = true
                         doDelete = true
@@ -274,24 +277,26 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             #numTimesDeleted--
                             console.log "Adding line at #{line + numLinesToAdd}"
                             jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
-                            text = '<div id ="motionwikiAddition' + uniqueTagIdentifier.toString + '">' + index[1] + "</div>"
-                            greensockAnimationArg = 'motionwikiAddition' + uniqueTagIdentifier.toString
+                            text = '<div id ="motionwikiAddition' + uniqueTagIdentifier + '">' + index[1] + "</div>"
+                            greensockAnimationArg = 'motionwikiAddition' + uniqueTagIdentifier
                             greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
                             finalline = line + numLinesToAdd
                             finalline = finalline
+                            console.log "motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
                             $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                             doAnimation = true
                         #if it is an inline modification
                         else
                             console.log "Modifying line at #{line + numLinesToAdd}"
                             jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
-                            text = '<span id="motionwikiModification' + uniqueTagIdentifier.toString + '">' + index[1] + "</span>"
-                            greensockAnimationArg = 'motionwikiModification' + uniqueTagIdentifier.toString
+                            text = '<span id="motionwikiModification' + uniqueTagIdentifier + '">' + index[1] + "</span>"
+                            greensockAnimationArg = 'motionwikiModification' + uniqueTagIdentifier
                             greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
                             finalline = line + numLinesToAdd
                             finalline = finalline
+                            console.log "line = #{line}, numLinesToAdd = #{numLinesToAdd}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
                             $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                             modifyToggle = false
                             doAnimation = true
@@ -303,7 +308,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     ###DO ANIMATIONS HERE###
                     if doAnimation is true
                         greensockAnimationId = "#" + greensockAnimationArg
-                        #animate.animate greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1)
+                        animate.animate greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1)
                         console.log "greensockAnimationTag = #{greensockAnimationTag}"
 
                     if doDelete is true

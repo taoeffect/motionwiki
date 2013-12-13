@@ -1,5 +1,5 @@
-define [], () ->
-  animate = (line, type) -> #line is the tag of what will be animated, type is addition or deletion
+define ['greensock'], (TweenLite)->
+  animate: (line, type) -> #line is the tag of what will be animated, type is addition or deletion
     if type is "motionwikiAddition"
       TweenLite.from line, 2,
         x: -500
