@@ -13,7 +13,7 @@ define ['require', 'jquery'], (require, $)->
 					$("#MAP").slideUp "slow",->
 					#$("#MAP").remove() 
 					if('#mw-panel').lenth
-						$("#mw-panel").css visibility: visible
+						$("#mw-panel").css visibility: "visible"
 					
 				else
 					if $("#MAP").length
@@ -23,7 +23,7 @@ define ['require', 'jquery'], (require, $)->
 					$mapSource.attr "src", "<%= G.mode().includes %>/js/miniPageNav.js"
 					$("body").append $mapSource
 					if('#mw-panel').length
-						$("#mw-panel").css visibility: hidden
+						$("#mw-panel").css visibility: "hidden"
 					$(this).val "OFF"
 			
 			$ ->
