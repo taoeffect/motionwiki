@@ -28,6 +28,7 @@ requirejs.config {
         bootstrap: deps: ["jquery"], exports: "$.fn.popover"
         lodash: exports: "_" 
         JSON: exports: "JSON"
+        greensock: exports: "TweenMax"
 } # end config
 
 # these wil be inlined! do not inline anything that depends on
