@@ -6,5 +6,7 @@ define ['require', 'jquery'], (require, $)->
 		'$scope',
 		($scope)->
 			$scope.datepicker1 = {date: new Date()};
-			$scope.datepicker2 = {date: new Date()}; 
+			$scope.datepicker2 = {date: new Date()};
+
+			$('.mw_datepicker').datepicker() 
 	]

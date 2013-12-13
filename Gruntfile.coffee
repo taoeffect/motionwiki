@@ -32,13 +32,17 @@ module.exports = (grunt) ->
             d: 'node_modules'
             t: 'shell:npm_install' # task
         bower:
-            f: ['requirejs/require.js', "requirejs-domready/domReady.js", "html5shiv-dist/html5shiv.js"]
+            f: ['requirejs/require.js', "requirejs-domready/domReady.js", "html5shiv-dist/html5shiv.js", "require-css/css.js","require-css/css-builder.js","require-css/normalize.js"]
             d: '<%= G.in.d.libs %>'
             t: 'bowerful'
             rjs: (f)->
                 p = path.join G.out.d.build, path.basename(_.find(deps.bower.f,(p)->str.include p, f))
                 # grunt.log.writeln "!!!-> #{p.cyan}"
                 "<%= modulePath('#{p}') %>"
+        css:
+            f: ["<%= G.in.f.css %>"]
+            d: '<%= G.mode().outDir %>'
+            t: "copy:components"
 
     G = # this newline is necessary to make the whole thing an object... :-\
         cert: do (_='fake')-> (t)-> return 'chrome.pem' if t is 'link'; "chrome.#{_= t || _}.pem"
@@ -71,6 +75,7 @@ module.exports = (grunt) ->
             f:
                 scout:  '<%= G.out.d.build %>/<%= G.name.scout %>.js'
                 app:    '<%= G.out.d.build %>/<%= G.name.app %>.js'
+                css:    '<%= G.mode().outDir'
         in:
             d:
                 src:    'src'
@@ -79,6 +84,8 @@ module.exports = (grunt) ->
                 app:    '<%= G.in.d.src %>/<%= G.name.app %>/app'
                 scout:  '<%= G.in.d.src %>/<%= G.name.app %>/scout'
                 styles: '<%= G.in.d.src %>/styles'
+            f:
+                css : '<%= G.out.d.www %>/includes/css/motionwiki.css'
 
     # initConfig!
     # ===========
@@ -124,6 +131,9 @@ module.exports = (grunt) ->
                     cwd:     deps.bower.d
                     src:     deps.bower.f
                     dest:    '<%= G.out.d.build %>/'
+                ,
+                    dest:    '<%= G.out.d.build %>/<%= path.basename(G.in.f.css) %>'
+                    src:    '<%= G.in.f.css %>'
                 ]
 
         rename:
@@ -205,7 +215,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:motionwiki', 'coffee:scout', 'requirejs']
             less:
                 files: ['<%= G.in.d.styles %>/**/*.less']
-                tasks: ['less:development']
+                tasks: ['less:development', 'compile']
 
         clean:
             dist:  ["<%= G.out.d.dist  %>/*"]
@@ -240,7 +250,7 @@ module.exports = (grunt) ->
                         name: '<%= G.name.scout %>'
                         # Since "require" is a reserved dependency name, create a
                         # "requireLib" dependency and map it to the require.js file.
-                        include: ['requireLib', 'domReady', 'html5shiv']
+                        include: ['requireLib', 'domReady', 'html5shiv', 'css']
                         # unfortunately, we have to override this value because if we don't,
                         # the extension banner that's added by onModuleBundleComplete won't be at the top
                         override: preserveLicenseComments: false
@@ -257,12 +267,15 @@ module.exports = (grunt) ->
                         requireLib           : deps.bower.rjs('requirejs')
                         domReady             : deps.bower.rjs('domReady')
                         html5shiv            : deps.bower.rjs('html5shiv')
+                        css                  : deps.bower.rjs('css')
                         jquery               : 'empty:'
                         angular              : 'empty:'
                         bootstrap            : 'empty:'
                         lodash               : 'empty:'
                         JSON                 : 'empty:'
                         TweenMax            : 'empty:'
+                        bootstrap_datepicker : 'empty:'
+                        nouislider           : 'empty:'
 
                     keepBuildDir: false
 
