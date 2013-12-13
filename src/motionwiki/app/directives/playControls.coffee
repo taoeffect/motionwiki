@@ -8,7 +8,13 @@ define ['require', 'jquery'], (require, $)->
     link: (scope, element, attrs)->
       console.log "play controls directive"
 
-
+      scope.play = ->
+              alert "Play!!"
+              fn.reload();
+      scope.forward = ->
+              alert "Forward!"
+      scope.backward = ->
+              alert "backward!!"
 
   ]
 
