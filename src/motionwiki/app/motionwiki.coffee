@@ -1,4 +1,4 @@
-define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'animate'], (require, _, $, JSON, api, animate)->
+define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'animate'], (require, _, $, JSON, api, directives, controllers, animate)->
 
     _.mixin toJSON: JSON.stringify
 
@@ -330,7 +330,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
                         #console.log "line #{line}: #{textLine}"
                         line++
-                    #console.log "html = #{html}"
+                    console.log "html = #{html}"
                     #api.parseToHTML html, (jqXHR) ->
                     #    console.log "jqXHR = #{jqXHR}"
                 revIndex++
