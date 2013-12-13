@@ -170,13 +170,15 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             #if our current revision diff text is equal to our baseRevision (the revision we are currently viewing animations for)
             if revIndex is baseRevision
                 console.log "nextRev timestamp: #{revision[0][2]}"
+                uniqueTagIdentifier = 0
                 #for each row in our array of diffs
                 for index in revision
-                    
+                    doDelete = false
                     tagIndex = 0
                     tagIndex = index[0].indexOf(':')
                     tag = index[0].substring(0, tagIndex)
                     index[0] = index[0].substring(tagIndex+1, index[0].length)
+                    greensockAnimationTag = ""
 
                     #if we are inside the diff block
                     if getDiffLineNo is true
@@ -224,7 +226,9 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             modifyToggle = true
                         
                         #delete line
-                        parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
+                        greensockAnimationTag = '<span id = "motionwikiDeletion">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
+                        doDelete = true
+                        
                         
                     #If modifyToggle is true, we know the last action to happen was a deletion.
                     if index[0] == 'diff-addedline'
@@ -232,19 +236,27 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         if modifyToggle is false
                             #numTimesDeleted--
                             console.log "Adding line at #{line + numLinesToAdd}"
-                            text = '<font color="green">' + index[1] + "</font>"
+                            text = '<div id ="motionwikiAddition">' + index[1] + "</div>"
+                            greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
                         #if it is an inline modification
                         else
                             console.log "Modifying line at #{line + numLinesToAdd}"
                             
-                            text = '<font color="orange">' + index[1] + "</font>"
+                            text = '<span id="motionwikiModification">' + index[1] + "</span>"
+                            greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
                             modifyToggle = false
                             #parsedRevisions[revIndex][line +  numLinesToAdd] = text
 
 
+                    ###DO ANIMATIONS HERE###
+                    console.log "greensockAnimationTag = #{greensockAnimationTag}"
 
+                    if doDelete is true
+                        parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
+
+                    uniqueTagIdentifier++
 
 
         revIndex = 0
@@ -260,9 +272,9 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
                         #console.log "line #{line}: #{textLine}"
                         line++
-                    console.log "html = #{html}"
-                    api.parseToHTML html, (jqXHR) ->
-                        console.log "jqXHR = #{jqXHR}"
+                    #console.log "html = #{html}"
+                    #api.parseToHTML html, (jqXHR) ->
+                    #    console.log "jqXHR = #{jqXHR}"
                 revIndex++
 
     
