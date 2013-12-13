@@ -21,6 +21,7 @@ define ['require', 'jquery'], (require, $)->
 					$mapSource.attr "src", "/includes/js/miniPageNav.js"
 					$("body").append $mapSource
 					$(this).val "OFF"
+			
 			$ ->
 				popoverHtml = """
 					<div class="btn-group">
