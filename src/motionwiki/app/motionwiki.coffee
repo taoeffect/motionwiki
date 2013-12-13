@@ -26,7 +26,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     animations = []
     counter = 0
     console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
-    baseRevision = 4
+    baseRevision = 3
     # Need to change San_Francisco to whatever page user is on
 
     delimiter = randomDelimiterGenerator()
@@ -62,8 +62,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #console.log "ok"
 
                     diffArray = []
-                    if counter is baseRevision
-                        $('<div>').html(diffHTML).appendTo('body > div')
+                    #if counter is baseRevision
+                        #$('<div>').html(diffHTML).appendTo('body > div')
    
                     $($(diffHTML).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
                         
@@ -156,7 +156,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         html += textLine
                         #console.log "line = #{line}"
                         textLine = '<motionwiki line="' + line + '">' + textLine + '</motionwiki>'
-                        $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
+                        $('<div>').html(textLine).appendTo('body > div')
                         #console.log "line #{line}: #{textLine}"
                         line++
                     #console.log "html = #{html}"
@@ -192,14 +192,21 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             console.log "!revision.length = #{revision.length}"
             console.log "parsedRevisions[#{revIndex}].length = #{parsedRevisions[revIndex].length}"
             numTimesDeleted = 0
+            pureDelete = false
+            lastGreensockAnimationTag = ""
+            lastGreensockAnimationArg = ""
+            lastline = 0
+            lastUniqueTagIdentifier = 
             #if our current revision diff text is equal to our baseRevision (the revision we are currently viewing animations for)
             if revIndex is baseRevision
                 console.log "nextRev timestamp: #{revision[0][2]}"
                 uniqueTagIdentifier = 0
                 jQueryText = ""
 
+
                 #for each row in our array of diffs
                 for index in revision
+                    _continue = true
                     doDelete = false
                     tagIndex = 0
                     tagIndex = index[0].indexOf(':')
@@ -208,6 +215,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     greensockAnimationTag = ""
                     greensockAnimationArg = ""
                     doAnimation = false
+                    wasDelete = false
+                    
 
                     #if we are inside the diff block
                     if getDiffLineNo is true
@@ -248,25 +257,57 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     if index[0] == 'diff-deletedline'
                         #if it is not an inline modification
                         if modifyToggle is true
+                            if pureDelete is true
+                                pureDelete = false
+                                console.log "PureDeleting line at #{lastline}"
+                                numTimesDeleted++
+                                greensockAnimationTag = lastGreensockAnimationTag
+                                parsedRevisions[revIndex][lastline] = greensockAnimationTag
+                                greensockAnimationArg = 'motionwikiDeletion'
+                                finalline = lastline
+                                console.log "line = #{finalline}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
+                                $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
+                                greensockAnimationId = "#" + greensockAnimationArg + lastUniqueTagIdentifier
+                                console.log "uniqueTagIdentifier = #{lastUniqueTagIdentifier}"
+                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id=' + greensockAnimationArg + lastUniqueTagIdentifier + "]"), true, () ->
+
+
+                                    )
+                                console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
+
+                                uniqueTagIdentifier++
+
+
+
+                                lastGreensockAnimationTag = ""
+                                lastGreensockAnimationArg = ""
+                                lastline = 0
+
                             #odifyToggle = false
                             console.log "Deleting line at #{line + numLinesToAdd}"
                             numTimesDeleted++
+                            greensockAnimationTag = '<span id = "motionwikiDeletion' + uniqueTagIdentifier + '">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
+                            parsedRevisions[revIndex][line + numLinesToAdd] = greensockAnimationTag
+                            greensockAnimationArg = 'motionwikiDeletion'
+                            finalline = line + numLinesToAdd
+                            finalline = finalline
+                            console.log "line = #{line}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
+                            $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
+                            doAnimation = true
+                            wasDelete = true
 
                         else
                             modifyToggle = true
+                            pureDelete = true
                         
                         #delete line
 
-                        jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
+                        #jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
 
-                        greensockAnimationTag = '<span id = "motionwikiDeletion' + uniqueTagIdentifier + '">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
-                        parsedRevisions[revIndex][line + numLinesToAdd] = greensockAnimationTag
-                        greensockAnimationArg = 'motionwikiDeletion'
-                        finalline = line + numLinesToAdd
-                        finalline = finalline
-                        console.log "line = #{line}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
-                        $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
-                        doAnimation = true
+                        lastGreensockAnimationTag = '<span id = "motionwikiDeletion' + uniqueTagIdentifier + '">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
+                        lastline = line + numLinesToAdd
+                        lastUniqueTagIdentifier = uniqueTagIdentifier
+                        lastGreensockAnimationArg = 'motionwikiDeletion'
                         doDelete = true
                         
                         
@@ -277,7 +318,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             #numTimesDeleted--
                             console.log "Adding line at #{line + numLinesToAdd}"
                             jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
-                            text = '<div id ="motionwikiAddition' + uniqueTagIdentifier + '">' + index[1] + "</div>"
+                            text = '<span id ="motionwikiAddition' + uniqueTagIdentifier + '">' + index[1] + "</span>"
                             greensockAnimationArg = 'motionwikiAddition'
                             greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
@@ -297,6 +338,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             finalline = line + numLinesToAdd
                             finalline = finalline
                             console.log "line = #{line}, numLinesToAdd = #{numLinesToAdd}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
+                            console.log "typeof $() = #{typeof($("motionwiki[line=" + finalline + "]"))}"
                             $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                             modifyToggle = false
                             doAnimation = true
@@ -306,15 +348,40 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
 
                     ###DO ANIMATIONS HERE###
-                    if doAnimation
-                        greensockAnimationId = "#" + greensockAnimationArg
-                        animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1))
-                        console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
+                    if doAnimation is true
+                        greensockAnimationId = "#" + greensockAnimationArg + uniqueTagIdentifier
+                        if wasDelete is true
+                            _continue = false
+                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id=' + greensockAnimationArg + lastUniqueTagIdentifier + "]"), true, () ->
+                                console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
+                                if doDelete
+                                    parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
 
+                                
+                                _continue = true
+                                )
+                        else
+                            console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}, uniqueTagIdentifier = #{uniqueTagIdentifier}"
+                            console.log "$() = #{typeof($('span[id=' + greensockAnimationArg + uniqueTagIdentifier + "]"))}"
+                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id=' + greensockAnimationArg + uniqueTagIdentifier + "]"), false, () ->
+                                console.log "animation callback"
+                                if doDelete
+                                    parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
+
+                                
+                                _continue = true
+                                console.log "_continue = true"
+                                )
+                    console.log "After animations"
+
+                    console.log "after callback"
+                    uniqueTagIdentifier++
+                    ###
                     if doDelete
                         parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
 
                     uniqueTagIdentifier++
+                    ###
 
 
         revIndex = 0
