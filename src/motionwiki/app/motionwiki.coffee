@@ -1,4 +1,4 @@
-define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'animate'], (require, _, $, JSON, api, directives, controllers, animate)->
+define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'TweenMax'], (require, _, $, JSON, api, directives, controllers, animate)->
 
     _.mixin toJSON: JSON.stringify
 
@@ -206,7 +206,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     tag = index[0].substring(0, tagIndex)
                     index[0] = index[0].substring(tagIndex+1, index[0].length)
                     greensockAnimationTag = ""
-                    greenSockAnimationArg = ""
+                    greensockAnimationArg = ""
                     doAnimation = false
 
                     #if we are inside the diff block
@@ -261,7 +261,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
                         greensockAnimationTag = '<span id = "motionwikiDeletion' + uniqueTagIdentifier + '">' + parsedRevisions[revIndex][line + numLinesToAdd] + '</span>'
                         parsedRevisions[revIndex][line + numLinesToAdd] = greensockAnimationTag
-                        greensockAnimationArg = 'motionwikiDeletion' + uniqueTagIdentifier
+                        greensockAnimationArg = 'motionwikiDeletion'
                         finalline = line + numLinesToAdd
                         finalline = finalline
                         console.log "line = #{line}, motionwiki[line=#{finalline}] = #{$("motionwiki[line=" + finalline + "]").text()}"
@@ -278,7 +278,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             console.log "Adding line at #{line + numLinesToAdd}"
                             jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
                             text = '<div id ="motionwikiAddition' + uniqueTagIdentifier + '">' + index[1] + "</div>"
-                            greensockAnimationArg = 'motionwikiAddition' + uniqueTagIdentifier
+                            greensockAnimationArg = 'motionwikiAddition'
                             greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
                             finalline = line + numLinesToAdd
@@ -291,7 +291,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             console.log "Modifying line at #{line + numLinesToAdd}"
                             jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
                             text = '<span id="motionwikiModification' + uniqueTagIdentifier + '">' + index[1] + "</span>"
-                            greensockAnimationArg = 'motionwikiModification' + uniqueTagIdentifier
+                            greensockAnimationArg = 'motionwikiModification'
                             greensockAnimationTag = text
                             parsedRevisions[revIndex].splice(line + numLinesToAdd, 0, text)
                             finalline = line + numLinesToAdd
@@ -308,8 +308,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     ###DO ANIMATIONS HERE###
                     if doAnimation is true
                         greensockAnimationId = "#" + greensockAnimationArg
-                        animate.animate greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1)
-                        console.log "greensockAnimationTag = #{greensockAnimationTag}"
+                        animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1))
+                        console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
 
                     if doDelete is true
                         parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
@@ -330,7 +330,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         $('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
                         #console.log "line #{line}: #{textLine}"
                         line++
-                    console.log "html = #{html}"
+                    #console.log "html = #{html}"
                     #api.parseToHTML html, (jqXHR) ->
                     #    console.log "jqXHR = #{jqXHR}"
                 revIndex++
