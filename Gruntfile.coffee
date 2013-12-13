@@ -212,7 +212,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:motionwiki', 'coffee:scout', 'requirejs']
             less:
                 files: ['<%= G.in.d.styles %>/**/*.less']
-                tasks: ['less:development']
+                tasks: ['less:development', 'compile']
 
         clean:
             dist:  ["<%= G.out.d.dist  %>/*"]

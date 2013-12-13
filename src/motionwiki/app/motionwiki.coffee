@@ -3,8 +3,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     _.mixin toJSON: JSON.stringify
 
     $('<div class="mw_wrapper motionwiki">').appendTo('body > div')
-    $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main motionwiki" >').appendTo('.mw_wrapper')
-    $('<mw-timeline class="motionwiki">').appendTo('div#motionwiki')
+    $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main mw_main--wrapper motionwiki" >').appendTo('.mw_wrapper')
+    $('<mw-timeline class="motionwiki mw_main--inner">').appendTo('div#motionwiki')
 
     angular.module('motion_wiki', ['mw_directives','mw_controllers']).run [ '$rootScope' , ($rootScope)->
     	console.log $rootScope

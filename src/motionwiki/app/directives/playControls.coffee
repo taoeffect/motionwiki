@@ -23,8 +23,8 @@ define ['require', 'jquery'], (require, $)->
 
       $('body').keyup (e) ->
           alert "Play!!" if e.keyCode is 80     #p for pause/play
-          alert "Forward!" if e.keyCode is 37   #left arrow
-          alert "backward!!" if e.keyCode is 39 #right arrow
+          alert "Backward!" if e.keyCode is 37   #left arrow
+          alert "Forward!!" if e.keyCode is 39 #right arrow
 
       scope.play = ->
         scope.active = !scope.active

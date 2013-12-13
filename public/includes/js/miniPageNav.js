@@ -2576,7 +2576,7 @@ html2canvas = function( elements, opts ) {
         svgRendering: false, // use svg powered rendering where available (FF11+)
         iframeDefault: "default",
         ignoreElements: "IFRAME|OBJECT|PARAM",
-        ignoreClass: "mw_wrapper",        
+        ignoreClass: "mw_wrapper motionwiki",        
         useOverflow: true,
         letterRendering: false,
 
@@ -2950,9 +2950,9 @@ function extendJQuery($){
             $container.css({// mini map position 
                 display:'none',
                 position: 'fixed',
-                zIndex : 9999,
+                zIndex : 999,
                 left: '0px',
-                top: '184px',
+                top: '145px',
                 bottom: '0px',
                 borderRadius: '2px',
                 border: '4px solid rgba(0,0,0,0.3)',

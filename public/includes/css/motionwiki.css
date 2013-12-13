@@ -7104,31 +7104,37 @@
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
 }
-.mw_playcontrols {
+.mw_main--inner .mw_playcontrols {
   float: left;
   background: rgba(0, 0, 0, 0.5);
   width: 15%;
   text-align: center;
-  padding: 40px 0;
+  padding: 15px 0;
 }
-.motionwiki_timeline {
+.mw_page-scroller {
+  margin: 10px 0;
+  margin-bottom: 0;
+}
+.mw_main--inner .motionwiki_timeline {
   width: 85%;
-  padding: 70px 0;
+  padding: 65px 0;
+  margin-bottom: -15px !important;
   float: left;
 }
-.motionwiki_timeline .datepicker-container {
+.mw_main--inner .motionwiki_timeline .datepicker-container {
   width: 10%;
   float: left;
   text-align: center;
 }
-.motionwiki_timeline .slider-container {
+.mw_main--inner .motionwiki_timeline .slider-container {
   width: 80%;
   float: left;
   margin-top: 5px;
 }
-.motionwiki_timeline .timeline-temporary {
+.mw_main--inner .motionwiki_timeline .timeline-temporary {
   width: 80%;
   float: left;
   height: 10px;
@@ -7142,6 +7148,7 @@
   font-size: 2em;
   color: rgba(255, 255, 255, 0.7);
   transition: color 0.5s linear;
+  margin: 10px 0;
 }
 .playcontrols-buttons--group span {
   cursor: pointer;
@@ -7907,9 +7914,6 @@
 .datepicker:before {
   content: '';
   display: inline-block;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-bottom: 7px solid #ccc;
   border-bottom-color: rgba(0, 0, 0, 0.2);
   position: absolute;
   top: -7px;
@@ -7918,9 +7922,6 @@
 .datepicker:after {
   content: '';
   display: inline-block;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid #ffffff;
   position: absolute;
   top: -6px;
   left: 7px;

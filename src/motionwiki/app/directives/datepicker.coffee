@@ -15,8 +15,13 @@ define ['require', 'jquery', '../bootstrap-datepicker'], (require, $)->
 
             $('#datepicker1 button').datepicker().on "changeDate", (ev)->
             	alert ev.date
+            .datepicker('place')
+
             $('#datepicker2 button').datepicker().on "changeDate", (ev)->
             	alert ev.date
+            $('#datepicker2 button').datepicker().on "show",(ev)->
+                console.log "place this button"
+                $(this).datepicker('place')
         
     ]
 

@@ -7,8 +7,7 @@ define ['require', 'jquery'], (require, $)->
         restrict: 'E'
         link: (scope, element, attrs)->
             console.log "timeline directive"
-
-
+        
             slider = $('#sample-change-keypress')
             input = $('#input-with-keypress')
 
