@@ -5,7 +5,11 @@ require ['require', 'jquery', 'angular'], (require, $, angular)->
         .appendTo('body')
         .click(-> require ['motionwiki', 'bootstrap','css!motionwiki','nouislider'],
             $('body').wrapInner $("<div id=\"MOVEIT\"/>").css(
-                    "margin-left": 215
-                    "margin-top": 145
+            		if('#mw-panel').lenth
+                    	"margin-left": 100
+                    	"margin-top": 145
+                    else
+                    	"margin-left": 215
+                    	"margin-top": 145
                 )
         )
