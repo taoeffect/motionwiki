@@ -1,6 +1,6 @@
 define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'Animation'], (require, _, $, JSON, api, directives, controllers, animate)->
 
-    _.mixin toJSON: JSON.stringify
+    _.mixin stringify: JSON.stringify
 
     $('<div class="mw_wrapper">').appendTo('body > div')
     
@@ -29,13 +29,23 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     baseRevision = 4
     # Need to change San_Francisco to whatever page user is on
 
+    randomDelimiterGenerator = () ->
+        text = "ASDLIFJ"
+        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+        counter = 0
+        while counter++ < 8
+            text += possible.charAt(Math.floor(Math.random() * possible.length))
+            counter++
+        return text
+
     delimiter = randomDelimiterGenerator()
     textToParse = ""
     
-    page = 'Florida'
+    page = 'Constitution Party of Georgia'
     $.when(
         api.query(page, 'revisions'),
-        api.getWikiTextContent(page, 'revisions')
+        api.getWikiTextContent(page, 'revisions', num:1, undefined)
     ).done (r1, r2) ->
         # http://api.jquery.com/jQuery.when/
         #   a1 and a2 are arguments resolved for the page1 and page2 ajax requests, respectively.
@@ -47,104 +57,30 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         do ([data, textStatus, jqXHR]=r1) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
                 console.log "page.revisions.length = #{page.revisions.length}"
-                counter = 0
                 for revision in page.revisions
-                    
-                    #console.log "timestamp: #{revision.timestamp}, counter = #{counter}"
-                    #$('<div>').html(revision.diff["*"]).appendTo('body > div')
-                    diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
-                    #diffHTML = revision.diff["*"]
-                    
-                    position = 0
-                    workingstring = ""
-                    numTR = 0
-                    table = $("diffTable")
-                    #console.log "ok"
+                   # console.log "revisions: #{revision.diff["*"]}"
+                   diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
 
-                    diffArray = []
-                    if counter is baseRevision
-                        $('<div>').html(diffHTML).appendTo('body > div')
-   
-                    $($(diffHTML).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
-                        
-                        if $(@).prop('tagName') == "SPAN"
-                           #console.log "#{$(@).text()}"
-                           
-                           #myDiff.push
-                        #Add all of the entries for each diff block, separated by tag
-                        else
-                            myDiff = [$(@).prop('class'), $(@).text(), revision.timestamp]
-                            myDiff[0] = [$(@).prop('tagName')] + ":"  + myDiff[0]
-                            console.log "Adding tag: #{$(@).prop('tagName')}"
-                            diffArray.push myDiff
-                        #console.log "diffsForREvisions.length = #{diffsForRevisions.length}"
-                        
-                        #diffsForRevisions[counter].push myDiff
-
-                        
-                        #console.log "myDiff = #{myDiff}"
-                        
-                        #Gives us the diff for every revision being evaluated in DESCENDING TIME ORDER
-                    diffsForRevisions.push diffArray
-                    #console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
-                    counter++
-        
         #takes the title of the page as input, produces the body text of the wikipedia page at the current revision
         #split up line by line in an array called parsedRevisions
         do ([data, textStatus, jqXHR]=r2) ->
-
-            
             for pageNum, page of jqXHR.responseJSON.query.pages
-                # console.log "page: #{_(page).toJSON()}"
-
-                counter = 0
                 for revision in page.revisions
-                    console.log "counter = #{counter}"
-                    #console.log "jqXHR: #{JSON.stringify(revision, 100, false)}"
-                    
-                    console.log "timestamp = #{revision.timestamp}"
-                    parsedWikiText = []
-                    parsedWikiText.push "0-based accessor fix, ignore"
-                    #$('<div>').html(revision["*"]).appendTo('body > div')
-                    #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
-                    wikiText = revision["*"]
+                    wikiText = revision["*"].replace(/[\n]/g, delimiter).substring(0, 5000)
 
-                    
-
-
-                    #wikiText = revision["*"]
-
-
-                #wikiText = JSON.stringify(revision["*"], false, 100)
-                    position = 0
+                # send this wikitext back
+                api.parseToHTML wikiText, (jqXHR, textStatus)->
+                    wikiHTML = jqXHR.responseJSON.parse.text["*"]
+                    console.log "got back parsed html:\n#{wikiHTML}"
+                    counter = 1
+                    htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<div><b>LINE #{counter++}:</b> #{line}</div>").join('')
+                    $("<div>").html(htmlLines).appendTo('body')
 
 
 
-                    while position > -1
-                        position = wikiText.indexOf("\n")
-                        myStart = wikiText.substring(0, position)
-                        parsedWikiText.push myStart
-                        myEnd = wikiText.substring(position+1, wikiText.length)
-                        wikiText = myEnd
-                        parsedWikiText = parsedWikiText
-                    parsedRevisions.push parsedWikiText
-                counter++
-                #console.log "counter = #{counter}"
-            console.log "parsedRevisions.length = #{parsedRevisions.length}"
 
 
-
-            # for revision in parsedRevisions
-            #     line = 0
-            #     _wordcount = 0
-            #     for textLine in revision
-            #         #console.log "line = #{line}"
-            #         #$('<div>').html("line #{line}: #{textLine}").appendTo('body > div')
-            #         _wordcount += textLine.split(" ").length
-            #         line++
-        
-
-
+###
         revIndex = 0
         for revision in parsedRevisions
                 line = 0
@@ -305,7 +241,6 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     
 
 
-                    ###DO ANIMATIONS HERE###
                     if doAnimation
                         greensockAnimationId = "#" + greensockAnimationArg
                         animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1))
@@ -336,22 +271,12 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 revIndex++
 
     
-        ###
-        for revision in parsedWikiText
-            for line in revision
-                line += delimiter
-                textToParse += line
+        # for revision in parsedWikiText
+        #     for line in revision
+        #         line += delimiter
+        #         textToParse += line
         ###
 
-randomDelimiterGenerator = () ->
-        text = ""
-        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
-        counter = 0
-        while counter++ < 8
-            text += possible.charAt(Math.floor(Math.random() * possible.length))
-            counter++
-        return text
 ###
     timeStampArray = []
 

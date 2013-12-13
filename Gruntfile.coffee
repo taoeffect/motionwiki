@@ -48,13 +48,16 @@ module.exports = (grunt) ->
         debug:
             baseURL:    '/includes/js/mw'
             outDir:     '<%= G.out.d.dist %>/debug'
+            jsonType:   'jsonp'
         release:
             baseURL:    '<%= G.debug.baseURL %>' # same as debug! (for symlink:www)
             outDir:     '<%= G.out.d.dist %>/release'
+            jsonType:   'jsonp'
         deploy:
             # baseURL:    'https://d132jtbdykgh41.cloudfront.net/motionwiki/includes/js/mw'
             baseURL:    'https://taoeffect.s3.amazonaws.com/js' # TODO: Update AWS to add above dirs and remove this!
             outDir:     '<%= G.out.d.dist %>/deploy'
+            jsonType:   'json'
         name:
             scout:      'scout'
             config:     'config'

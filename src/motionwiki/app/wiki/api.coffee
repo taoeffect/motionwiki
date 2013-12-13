@@ -18,8 +18,10 @@ define ['jquery', 'lodash'], ($,_) ->
         num : 5
         ajax: 
             url: 'https://en.wikipedia.org/w/api.php'
-            dataType: 'jsonp'
+            dataType: '<%= G.mode().jsonType %>'
             # cache: true
+
+    console.log "Using json type: #{defaults.ajax.dataType}"
 
     # haven't tested 'compare'... it probably doesn't work
     compare: (revid1, revid2, [options]..., cb) ->
@@ -38,7 +40,7 @@ define ['jquery', 'lodash'], ($,_) ->
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
                 # console.log "ajax complete"
-                #console.log "api.query: #{_(jqXHR).toJSON()}"
+                #console.log "api.query: #{_(jqXHR).stringify()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
@@ -58,18 +60,19 @@ define ['jquery', 'lodash'], ($,_) ->
     getWikiTextContent: (titleOrTitles, prop, [options]..., cb) ->
         titleOrTitles = titleOrTitles.join('|') if typeof titleOrTitles != 'string'
         options = $.extend {}, defaults, options or {}
+        console.log "getWikiTextContent options: " + _(options).stringify()
         $.ajax $.extend {}, options.ajax, {
             complete: (jqXHR, textStatus)->
                 # do our pre-processing (if any)
                 # console.log "ajax complete"
-                #console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+                #console.log "api.queryWikiTextContent: #{_(jqXHR).stringify()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'query'
                 prop             : prop
                 format           : 'json'
                 rvprop           : 'content|timestamp'
-                rvlimit          : '5'
+                rvlimit          : options.num
                 # rvexpandtemplates: true
                 # rvtoken          : 'rollback'
                 rvcontentformat  : 'text/x-wiki'
@@ -80,10 +83,11 @@ define ['jquery', 'lodash'], ($,_) ->
     parseToHTML: (inputText, [options]..., cb) ->
         options = $.extend {}, defaults, options or {}
         $.ajax $.extend {}, options.ajax, {
+            type: 'POST'
             complete: (jqXHR, textStatus) ->
                 # do our pre-processing (if any)
                 # console.log "ajax complete"
-                #console.log "api.queryWikiTextContent: #{_(jqXHR).toJSON()}"
+                #console.log "api.queryWikiTextContent: #{_(jqXHR).stringify()}"
                 cb(jqXHR, textStatus) if cb
             data:
                 action           : 'parse'
