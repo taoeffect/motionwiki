@@ -33,6 +33,14 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
         #scrollToView(jQueryObject)
         _animate()
 
+    doModifyStuff = (jQueryObject) ->
+        console.log "modification done"
+            #$('#' + jQueryObject.prop("id")).wrap("<div></div>")
+        #if (animateList.length == 0)
+           # jQueryObject.parent().next().append("<motionwikiDone id='motionwikiDone'>Motionwiki Diffs Done!</motionwikiDone>")
+        scrollToView(jQueryObject)
+        _animate()
+
     deleteParent = (jQueryObject) ->
         jQueryObject.parent().remove()
 
@@ -58,11 +66,11 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
         if animateList.length > 0
             animation = animateList[0]
             animateList.splice(0, 1)
-            doAnimate2(animation[0], animation[1], animation[2], animation[3], null)
+            doAnimate2(animation[0], animation[1], animation[2], animation[3], animation[4], null)
             
         else
 
-    doAnimate2 = (line, type, jQueryObject, pureDelete, cb) ->
+    doAnimate2 = (line, type, jQueryObject, pureDelete, oldtext, cb) ->
 
         console.log "animateList.length = #{animateList.length}"
 
@@ -128,28 +136,58 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
 
 
             when "motionwikiModification"
+                console.log "span = #{"<span id='motionwikiDeletion" + line.substring(23, line.length) + ">"}"
+                $(line).parent().append("<span id='motionwikiDeletion" + line.substring(23, line.length) + "'>" + oldtext + "</span>")
                 console.log "doing motionwikiModification, line = #{line}, text = #{jQueryObject.parent().text()}"
-                scrollToView(jQueryObject)
+                deleteLine = "#" + "motionwikiDeletion" + line.substring(23, line.length)
+                #doAnimate2(deleteLine, "motionwikiDeletion", $("#" + "motionwikiDeletion" + line.substring(23, line.length)), false, "")
+                scrollToView($(deleteLine))
+                TweenMax.to deleteLine, 2,
+                {
+                    color: "#90240d"
+                    backgroundColor: "#e32e07"
+                    delay: 1/speedGradient
+                }
+
+                TweenMax.to deleteLine, 3,
+                {
+                    autoAlpha: 0
+                    x: 50
+                    delay: 3.2/speedGradient
+                }
+
                 TweenMax.to line, 3,
                 {
                     color: "#000000"
                     backgroundColor: "#ffed04"
                     delay: 0/speedGradient
-                    onComplete: doAddStuff,
+                    onComplete: doModifyStuff,
                     onCompleteParams: [jQueryObject]
                 }
+
+
+
+            when "motionwikiModification2"
+                TweenMax.to line, 3,
+                    {
+                        color: "#000000"
+                        backgroundColor: "#ffed04"
+                        delay: 0/speedGradient
+                        onComplete: doAddStuff,
+                        onCompleteParams: [jQueryObject]
+                    }
                 
 
-    doAnimate: (line, type, jQueryObject, pureDelete, cb) ->
+    doAnimate: (line, type, jQueryObject, pureDelete, oldtext, cb) ->
         if animateList.length == 0
             console.log "animateList == 0"
-            el = [line, type, jQueryObject, pureDelete]
+            el = [line, type, jQueryObject, pureDelete, oldtext]
             animateList.push el
             if firstAnimation is true
                 _animate()
         else
             console.log "animateList++"
-            animateList.push [line, type, jQueryObject, pureDelete]
+            animateList.push [line, type, jQueryObject, pureDelete, oldtext]
 
         
 
