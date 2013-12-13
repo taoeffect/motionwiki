@@ -5,8 +5,8 @@ require ['require', 'jquery', 'angular'], (require, $, angular)->
 		.appendTo('body > div')
 		.click(-> require ['motionwiki', 'bootstrap','css!motionwiki','nouislider'],
 			$('body').wrapInner $("<div id=\"MOVEIT\"/>").css(
-					"margin-left": 185
-					"margin-top": 175
+					"margin-left": 215
+					"margin-top": 185
 				)
 		)
 

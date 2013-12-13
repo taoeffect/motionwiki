@@ -2,18 +2,10 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
     _.mixin toJSON: JSON.stringify
 
-    $('<div class="mw_wrapper">').appendTo('body > div')
-    
-    $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main" >').appendTo('.mw_wrapper')
-    $('<mw-timeline>').appendTo('div#motionwiki')
-    $('<mw-history-grapher>').appendTo('div#motionwiki')
-    $('<mw-play-controls>').appendTo('div#motionwiki')
+    $('<div class="mw_wrapper motionwiki">').appendTo('body > div')
+    $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main motionwiki" >').appendTo('.mw_wrapper')
+    $('<mw-timeline class="motionwiki">').appendTo('div#motionwiki')
 
-    # TODO: __DO NOT__ put paths in here like this! This is not portable!
-    #       Should use templates to be filled in by Gruntfile for debug/release/deploy
-    #       CSS should not be loaded like this either, use require-css!
-    #       
-    # TODO: /templates should be in /includes!
     angular.module('motion_wiki', ['mw_directives','mw_controllers']).run [ '$rootScope' , ($rootScope)->
     	console.log $rootScope
     ]
@@ -276,3 +268,4 @@ randomDelimiterGenerator = () ->
         timeStampArray = timeStampArray[counter...timeStampArray.length]
 
     ###
+
