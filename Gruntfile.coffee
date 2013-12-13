@@ -171,17 +171,20 @@ module.exports = (grunt) ->
             motionwiki:
                 options:
                     join: true # concat before compiling (instead of after)
-                    # sourceMap: true # not much point if we're later minifying?
-                files: [
-                    dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee'
-                   ,
-                    expand: true
-                    src   : ['**/*.coffee']
-                    cwd   : '<%= G.in.d.app %>'
-                    dest  : '<%= G.out.d.build %>'
-                    ext   : '.js'
-                ]
+                    sourceMap: true
+                expand: true
+                src   : ['**/*.coffee']
+                cwd   : '<%= G.in.d.app %>'
+                dest  : '<%= G.out.d.build %>'
+                ext   : '.js'
+
+            scout:
+                options:
+                    join: true # concat before compiling (instead of after)
+                    sourceMap: true
+                files : [dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee']
         }
+
         less: {
             development: 
                 options: 
@@ -196,7 +199,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:playground', 'execute:playground']
             coffee:
                 files: ['<%= G.in.d.src %>/**/*.coffee']
-                tasks: ['coffee:motionwiki', 'requirejs']
+                tasks: ['coffee:motionwiki', 'coffee:scout', 'requirejs']
             less:
                 files: ['<%= G.in.d.styles %>/**/*.less']
                 tasks: ['less:development']
@@ -283,7 +286,9 @@ module.exports = (grunt) ->
                             #{contents}
                             """
 
-                    # generateSourceMaps:true
+                    generateSourceMaps:true
+                    preserveLicenseComments: false # if generateSouceMaps is true, this must be false
+
                     # More info: http://requirejs.org/docs/faq-advanced.html#rename
                     namespace: '<%= G.name.app %>Req'
                     skipDirOptimize: true

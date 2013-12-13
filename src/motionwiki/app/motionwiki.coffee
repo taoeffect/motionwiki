@@ -348,7 +348,7 @@ randomDelimiterGenerator = () ->
         possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
         counter = 0
-        while counter < 8
+        while counter++ < 8
             text += possible.charAt(Math.floor(Math.random() * possible.length))
             counter++
         return text
