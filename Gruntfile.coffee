@@ -172,16 +172,19 @@ module.exports = (grunt) ->
                 options:
                     join: true # concat before compiling (instead of after)
                     sourceMap: true
-                files: [
-                    dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee'
-                   ,
-                    expand: true
-                    src   : ['**/*.coffee']
-                    cwd   : '<%= G.in.d.app %>'
-                    dest  : '<%= G.out.d.build %>'
-                    ext   : '.js'
-                ]
+                expand: true
+                src   : ['**/*.coffee']
+                cwd   : '<%= G.in.d.app %>'
+                dest  : '<%= G.out.d.build %>'
+                ext   : '.js'
+
+            scout:
+                options:
+                    join: true # concat before compiling (instead of after)
+                    sourceMap: true
+                files : [dest: '<%= G.out.f.scout %>', src: '<%= G.in.d.scout %>/**/*.coffee']
         }
+
         less: {
             development: 
                 options: 
@@ -196,7 +199,7 @@ module.exports = (grunt) ->
                 tasks: ['coffee:playground', 'execute:playground']
             coffee:
                 files: ['<%= G.in.d.src %>/**/*.coffee']
-                tasks: ['coffee:motionwiki', 'requirejs']
+                tasks: ['coffee:motionwiki', 'coffee:scout', 'requirejs']
             less:
                 files: ['<%= G.in.d.styles %>/**/*.less']
                 tasks: ['less:development']
