@@ -10,7 +10,7 @@ requirejs.config {
         bootstrap: "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min"
         lodash: "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.1.0/lodash.min"
         JSON: "//cdnjs.cloudflare.com/ajax/libs/json3/3.2.5/json3.min"
-        TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/1.11.2/TweenMax.min"
+        TweenMax: "//cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min"
     
     # http://requirejs.org/docs/api.html#config-shim
     shim: 

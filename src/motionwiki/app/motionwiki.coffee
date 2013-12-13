@@ -1,4 +1,4 @@
-define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'TweenMax'], (require, _, $, JSON, api, directives, controllers, animate)->
+define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'Animation'], (require, _, $, JSON, api, directives, controllers, animate)->
 
     _.mixin toJSON: JSON.stringify
 
@@ -306,12 +306,12 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
 
                     ###DO ANIMATIONS HERE###
-                    if doAnimation is true
+                    if doAnimation
                         greensockAnimationId = "#" + greensockAnimationArg
                         animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length - 1))
                         console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
 
-                    if doDelete is true
+                    if doDelete
                         parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
 
                     uniqueTagIdentifier++
