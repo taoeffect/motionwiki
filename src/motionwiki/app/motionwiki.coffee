@@ -59,6 +59,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         do ([data, textStatus, jqXHR]=r2) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
                 for revision in page.revisions
+                    # TODO: use delimiters to specify the line start and the line end
+                    #       ex: <span class="linestart"></span> <span class="lineend"></span>
                     wikiText = revision["*"].replaceAll("\n", " #{delimiter}\n ").substring(0, 5000)
 
                 # send this wikitext back
