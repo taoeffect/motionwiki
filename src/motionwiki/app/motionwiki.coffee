@@ -196,11 +196,12 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             lastGreensockAnimationTag = ""
             lastGreensockAnimationArg = ""
             lastline = 0
-            lastUniqueTagIdentifier = 
+            lastUniqueTagIdentifier = 0
+            uniqueTagIdentifier = 0
             #if our current revision diff text is equal to our baseRevision (the revision we are currently viewing animations for)
             if revIndex is baseRevision
                 console.log "nextRev timestamp: #{revision[0][2]}"
-                uniqueTagIdentifier = 0
+                #uniqueTagIdentifier = 0
                 jQueryText = ""
                 oldtext = ""
 
@@ -270,7 +271,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                                 $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                                 greensockAnimationId = "#" + greensockAnimationArg + lastUniqueTagIdentifier
                                 console.log "uniqueTagIdentifier = #{lastUniqueTagIdentifier}"
-                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), true, oldtext)
+                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), true, oldtext, line + numLinesToAdd)
                                 console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
 
                                 uniqueTagIdentifier++
@@ -358,7 +359,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         if wasDelete is true
                             _continue = false
                             console.log "2oldtext = #{oldtext}"
-                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), false, oldtext, () ->
+                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), false, oldtext, line + numLinesToAdd,() ->
                                 console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
                                 if doDelete
                                     parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
@@ -371,7 +372,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             console.log "2oldtext = #{oldtext}"
                             console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}, uniqueTagIdentifier = #{uniqueTagIdentifier}"
                             console.log "$() = #{typeof($('span[id=' + greensockAnimationArg + uniqueTagIdentifier + "]"))}"
-                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id="' + greensockAnimationArg + uniqueTagIdentifier + '"]'), false, oldtext, () ->
+                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id="' + greensockAnimationArg + uniqueTagIdentifier + '"]'), false, oldtext, line + numLinesToAdd, () ->
                                 console.log "animation callback"
                                 if doDelete
                                     parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
@@ -391,7 +392,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     uniqueTagIdentifier++
                     ###
 
-
+        ###
         revIndex = 0
         for revision in parsedRevisions
                 line = 0
@@ -409,6 +410,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #api.parseToHTML html, (jqXHR) ->
                     #    console.log "jqXHR = #{jqXHR}"
                 revIndex++
+
+        ###
 
     
         ###

@@ -50,13 +50,13 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
             #     el.scrollIntoView()
             #     window.scrollTo(el.offsetTop, el.offsetTop - 200)
             jQueryObject.get(0).scrollIntoView()
-            window.scrollTo(jQueryObject.get(0).offsetTop, jQueryObject.get(0).offsetTop - 200)
+            window.scrollTo(jQueryObject.get(0).offsetTop, jQueryObject.get(0).offsetTop - window.innerHeight/3)
             #jQueryObject.scrollIntoView()
             #window.scrollTo(jQueryObject.offsetTop, jQueryObject.offsetTop - 200)
         else
             console.log "jQueryObject.get(0) = #{jQueryObject.get(0)}"
             jQueryObject.get(0).scrollIntoView()
-            window.scrollTo(jQueryObject.get(0).offsetTop, jQueryObject.get(0).offsetTop - 200)
+            window.scrollTo(jQueryObject.get(0).offsetTop, jQueryObject.get(0).offsetTop - window.innerHeight/3)
 
 
     
@@ -66,11 +66,11 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
         if animateList.length > 0
             animation = animateList[0]
             animateList.splice(0, 1)
-            doAnimate2(animation[0], animation[1], animation[2], animation[3], animation[4], null)
+            doAnimate2(animation[0], animation[1], animation[2], animation[3], animation[4], animation[5], null)
             
         else
 
-    doAnimate2 = (line, type, jQueryObject, pureDelete, oldtext, cb) ->
+    doAnimate2 = (line, type, jQueryObject, pureDelete, oldtext, lineNum, cb) ->
 
         console.log "animateList.length = #{animateList.length}"
 
@@ -92,6 +92,7 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
                     jQueryObject.parent().html("<span id='" + line.substring(1, line.length)  + "'>"  +  "ADDED LINE" + "</span>")
                     #jQueryObject = jQueryObject.parent()
                     addedLine = true
+                jQueryObject.wrap("<motionwiki line='" + lineNum + "'></motionwiki>")
                 
                 TweenMax.from line, 2,
                     x: -500
@@ -115,6 +116,7 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
 
             when "motionwikiDeletion"
                 console.log "doing motionwikiDeletion"
+                jQueryObject.wrap("<motionwiki line='" + lineNum + "'></motionwiki>")
                 scrollToView(jQueryObject)
                 TweenMax.to line, 2,
                 {
@@ -141,6 +143,7 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
                 console.log "doing motionwikiModification, line = #{line}, text = #{jQueryObject.parent().text()}"
                 deleteLine = "#" + "motionwikiDeletion" + line.substring(23, line.length)
                 #doAnimate2(deleteLine, "motionwikiDeletion", $("#" + "motionwikiDeletion" + line.substring(23, line.length)), false, "")
+                jQueryObject.wrap("<motionwiki line='" + lineNum + "'></motionwiki>")
                 scrollToView($(deleteLine))
                 TweenMax.to deleteLine, 2,
                 {
@@ -178,16 +181,16 @@ define ['TweenMax', 'jquery'], (TweenMax, $)->
                     }
                 
 
-    doAnimate: (line, type, jQueryObject, pureDelete, oldtext, cb) ->
+    doAnimate: (line, type, jQueryObject, pureDelete, oldtext, lineNum, cb) ->
         if animateList.length == 0
             console.log "animateList == 0"
-            el = [line, type, jQueryObject, pureDelete, oldtext]
+            el = [line, type, jQueryObject, pureDelete, oldtext, lineNum]
             animateList.push el
             if firstAnimation is true
                 _animate()
         else
             console.log "animateList++"
-            animateList.push [line, type, jQueryObject, pureDelete, oldtext]
+            animateList.push [line, type, jQueryObject, pureDelete, oldtext, lineNum]
 
         
 
