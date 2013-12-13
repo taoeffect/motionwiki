@@ -12,6 +12,8 @@ define ['require', 'jquery'], (require, $)->
 					#$("#MOVEIT").css "margin-left": 0
 					$("#MAP").slideUp "slow",->
 					#$("#MAP").remove() 
+					if('#mw-panel').lenth
+						$("#mw-panel").css visibility: visible
 					
 				else
 					if $("#MAP").length
@@ -20,6 +22,8 @@ define ['require', 'jquery'], (require, $)->
 					$mapSource = $("<script>")
 					$mapSource.attr "src", "<%= G.mode().includes %>/js/miniPageNav.js"
 					$("body").append $mapSource
+					if('#mw-panel').length
+						$("#mw-panel").css visibility: hidden
 					$(this).val "OFF"
 			
 			$ ->
