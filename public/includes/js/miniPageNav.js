@@ -29,7 +29,7 @@ html2canvas;
 
 
 function h2clog(a){
-	return;
+    return;
     if (_html2canvas.logging && window.console && window.console.log) {
         window.console.log(a);
     }
@@ -1952,7 +1952,7 @@ _html2canvas.Parse = function ( images, options ) {
     function parseElement (el, stack) {
 
         // skip hidden elements and their children
-        if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden" && el.className !== "mw_wrapper" ) {
+        if (getCSS(el, 'display') !== "none" && getCSS(el, 'visibility') !== "hidden" && el.className !== "mw_wrapper" && el.className !== "mw_wrapper motionwiki" ) {
 
             stack = renderElement(el, stack) || stack;
 
@@ -2576,7 +2576,7 @@ html2canvas = function( elements, opts ) {
         svgRendering: false, // use svg powered rendering where available (FF11+)
         iframeDefault: "default",
         ignoreElements: "IFRAME|OBJECT|PARAM",
-        ignoreClass: "mw_wrapper",        
+        ignoreClass: "mw_wrapper motionwiki",        
         useOverflow: true,
         letterRendering: false,
 
@@ -2586,18 +2586,18 @@ html2canvas = function( elements, opts ) {
         width: null,
         height: null,
         taintTest: true, // do a taint test with all images before applying to canvas
-		renderer: "Canvas"
+        renderer: "Canvas"
     }, renderer;
 
     options = _html2canvas.Util.Extend(opts, options);
 
-	if (typeof options.renderer === "string" && _html2canvas.Renderer[options.renderer] !== undefined) {
-		options._renderer = _html2canvas.Renderer[options.renderer]( options );
-	} else if (typeof options.renderer === "function") {
-		options._renderer = options.renderer( options );
-	} else {
-		throw("Unknown renderer");
-	}
+    if (typeof options.renderer === "string" && _html2canvas.Renderer[options.renderer] !== undefined) {
+        options._renderer = _html2canvas.Renderer[options.renderer]( options );
+    } else if (typeof options.renderer === "function") {
+        options._renderer = options.renderer( options );
+    } else {
+        throw("Unknown renderer");
+    }
 
     _html2canvas.logging = options.logging;
     options.complete = function( images ) {
@@ -2896,118 +2896,118 @@ window.html2canvas = html2canvas;
 function extendJQuery($){
     $.fn.html2canvas = function(options) {
         var html2obj,
-			$message = null,
-			timeoutTimer = false;
-		
-		options = options || {};
+            $message = null,
+            timeoutTimer = false;
+        
+        options = options || {};
 
         options.onrendered = options.onrendered || function( canvas ) {
             var $canvas = $(canvas),
-				$handler = $('<div>'),
-				$container = $('<div>');
+                $handler = $('<div>'),
+                $container = $('<div>');
 
-            //$container.addId("MAP");				
-			function updateScroll(dd){
-				var handlerHeight = this.clientHeight,
-					handlerContainerHeight = this.parentNode.clientHeight - handlerHeight,
-					handlerOffsetTop = this.offsetTop,
-					windowMaxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight, // same as window.scrollMaxY for wider browsers support
-					ratio = windowMaxScroll / handlerContainerHeight;
-				
-				window.scrollTo(0, handlerOffsetTop * ratio );
-			}
-			
-			$handler.addClass('canvasPaneHandler').appendTo($container).css({
+            //$container.addId("MAP");              
+            function updateScroll(dd){
+                var handlerHeight = this.clientHeight,
+                    handlerContainerHeight = this.parentNode.clientHeight - handlerHeight,
+                    handlerOffsetTop = this.offsetTop,
+                    windowMaxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight, // same as window.scrollMaxY for wider browsers support
+                    ratio = windowMaxScroll / handlerContainerHeight;
+                
+                window.scrollTo(0, handlerOffsetTop * ratio );
+            }
+            
+            $handler.addClass('canvasPaneHandler').appendTo($container).css({
                 position: 'absolute',
-            	cursor : 'move',
-				background: 'rgb(80,100,130)',
-				opacity: 0.4,
-				borderRight:'5px solid #000',
-				borderLeft:'5px solid #000',
-				borderRadius:'5px',
-				left: '-5px',
-				width: '100%',
-				height: '50px'
+                cursor : 'move',
+                background: 'rgb(80,100,130)',
+                opacity: 0.4,
+                borderRight:'5px solid #000',
+                borderLeft:'5px solid #000',
+                borderRadius:'5px',
+                left: '-5px',
+                width: '100%',
+                height: '50px'
             })
-			.drag("start",function( ev, dd ){
-				dd.limit = {
-					top	   : 0,
-					bottom : this.parentNode.clientHeight - this.clientHeight
-				}
-				this.style.opacity = 0.25; // the drag opacity
-			})
-			.drag("end",function( ev, dd ){
-				this.style.opacity = 0.4;
-			})
-			.drag(function( ev, dd ){
-				dd.offsetY -= window.scrollY;
-				dd.offsetY = ev.clientY - this.clientHeight/2 - this.parentNode.offsetTop;
+            .drag("start",function( ev, dd ){
+                dd.limit = {
+                    top    : 0,
+                    bottom : this.parentNode.clientHeight - this.clientHeight
+                }
+                this.style.opacity = 0.25; // the drag opacity
+            })
+            .drag("end",function( ev, dd ){
+                this.style.opacity = 0.4;
+            })
+            .drag(function( ev, dd ){
+                dd.offsetY -= window.scrollY;
+                dd.offsetY = ev.clientY - this.clientHeight/2 - this.parentNode.offsetTop;
 
-				this.style.top =  Math.min( dd.limit.bottom, Math.max( dd.limit.top, dd.offsetY ) ) + 'px';
-				updateScroll.call(this, dd);
-			},{ relative:true }); 
-			
-			$container.css({// mini map position 
-				display:'none',
+                this.style.top =  Math.min( dd.limit.bottom, Math.max( dd.limit.top, dd.offsetY ) ) + 'px';
+                updateScroll.call(this, dd);
+            },{ relative:true }); 
+            
+            $container.css({// mini map position 
+                display:'none',
                 position: 'fixed',
-				zIndex : 9999,
+                zIndex : 999,
                 left: '0px',
-                top: '140px',
+                top: '145px',
                 bottom: '0px',
-				borderRadius: '2px',
-				border: '4px solid rgba(0,0,0,0.3)',
-				boxShadow: '0 0 20px -9px #000',
-				background : $('body').css('background'),
+                borderRadius: '2px',
+                border: '4px solid rgba(0,0,0,0.3)',
+                boxShadow: '0 0 20px -9px #000',
+                background : $('body').css('background'),
                 
             })
-			/*.drag('start',function( ev, dd ){
-				this.style.right = 'auto';
-			})
-			.drag(function( ev, dd ){
-				dd.offsetY = ev.clientY - this.clientHeight/2 - this.parentNode.offsetTop;
-				this.style.top = dd.offsetY + 'px';
-				this.style.left = dd.offsetX + 'px';
-			})*/
-			
+            /*.drag('start',function( ev, dd ){
+                this.style.right = 'auto';
+            })
+            .drag(function( ev, dd ){
+                dd.offsetY = ev.clientY - this.clientHeight/2 - this.parentNode.offsetTop;
+                this.style.top = dd.offsetY + 'px';
+                this.style.left = dd.offsetX + 'px';
+            })*/
+            
             $canvas.css({
-                width: '172px',//pichu
-				verticalAlign : 'top',
-				borderRadius: '5px',
-				maxHeight: '92%',
+                width: '208.5px',//pichu
+                verticalAlign : 'top',
+                borderRadius: '5px',
+                maxHeight: '92%',
                 
             }).appendTo($container);
-			
+            
             $container.attr("id","MAP");
             $handler.attr("id", "MAPSCROLL");
 
-           	$container.appendTo(document.body);
+            $container.appendTo(document.body);
             $("#MAP").slideDown( "slow", function() {
                 // Animation complete.
             });
             $("#MAPSCROLL").slideDown( "slow", function() {
                  // Animation complete.
             });
-			// update drag handler on window scroll
-			$(window)
-				.on('scroll.dragHandler', function() {
-					var scrollTop = window.scrollY || window.pageYOffset || document.body.scrollTop,
-						windowMaxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight,
-						ratio = scrollTop / windowMaxScroll,
-						handlerContainerHeight = $handler[0].parentNode.clientHeight - $handler[0].clientHeight;
+            // update drag handler on window scroll
+            $(window)
+                .on('scroll.dragHandler', function() {
+                    var scrollTop = window.scrollY || window.pageYOffset || document.body.scrollTop,
+                        windowMaxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight,
+                        ratio = scrollTop / windowMaxScroll,
+                        handlerContainerHeight = $handler[0].parentNode.clientHeight - $handler[0].clientHeight;
 
-					$handler[0].style.top = ratio * handlerContainerHeight + 'px';
-				})
-				.on('resize.dragHandler', function(){
-					var ratio = document.documentElement.clientHeight / document.documentElement.scrollHeight;
+                    $handler[0].style.top = ratio * handlerContainerHeight + 'px';
+                })
+                .on('resize.dragHandler', function(){
+                    var ratio = document.documentElement.clientHeight / document.documentElement.scrollHeight;
 
-					if( ratio < 1 )
-						$container.show();
-					else
-						$container.hide();
+                    if( ratio < 1 )
+                        $container.show();
+                    else
+                        $container.hide();
 
-					$handler[0].style.height = ratio * $handler[0].parentNode.clientHeight + 'px' + 1;
-				}).trigger('resize.dragHandler');
-			
+                    $handler[0].style.height = ratio * $handler[0].parentNode.clientHeight + 'px' + 1;
+                }).trigger('resize.dragHandler');
+            
             // test if canvas is read-able
             try {
                 $canvas[0].toDataURL();
@@ -3021,12 +3021,12 @@ function extendJQuery($){
 
         html2obj = html2canvas(this, options);
     };
-	
-	// jquery.event.drag - v 2.2
-	// Copyright (c) 2010 Three Dub Media - http://threedubmedia.com
-	// REQUIRES: jquery 1.7.x
+    
+    // jquery.event.drag - v 2.2
+    // Copyright (c) 2010 Three Dub Media - http://threedubmedia.com
+    // REQUIRES: jquery 1.7.x
 
-	(function(f){f.fn.drag=function(b,a,c){var d="string"==typeof b?b:"",h=f.isFunction(b)?b:f.isFunction(a)?a:null;0!==d.indexOf("drag")&&(d="drag"+d);c=(b==h?a:c)||{};return h?this.bind(d,c,h):this.trigger(d)};var h=f.event,g=h.special,c=g.drag={defaults:{which:1,distance:0,not:":input",handle:null,relative:!1,drop:!0,click:!1},datakey:"dragdata",noBubble:!0,add:function(b){var a=f.data(this,c.datakey),e=b.data||{};a.related+=1;f.each(c.defaults,function(b){void 0!==e[b]&&(a[b]=e[b])})},remove:function(){f.data(this, c.datakey).related-=1},setup:function(){if(!f.data(this,c.datakey)){var b=f.extend({related:0},c.defaults);f.data(this,c.datakey,b);h.add(this,"touchstart mousedown",c.init,b);this.attachEvent&&this.attachEvent("ondragstart",c.dontstart)}},teardown:function(){(f.data(this,c.datakey)||{}).related||(f.removeData(this,c.datakey),h.remove(this,"touchstart mousedown",c.init),c.textselect(!0),this.detachEvent&&this.detachEvent("ondragstart",c.dontstart))},init:function(b){if(!c.touched){var a=b.data,e; if(!(0!=b.which&&0<a.which&&b.which!=a.which)&&!f(b.target).is(a.not)&&(!a.handle||f(b.target).closest(a.handle,b.currentTarget).length))if(c.touched="touchstart"==b.type?this:null,a.propagates=1,a.mousedown=this,a.interactions=[c.interaction(this,a)],a.target=b.target,a.pageX=b.pageX,a.pageY=b.pageY,a.dragging=null,e=c.hijack(b,"draginit",a),a.propagates){if((e=c.flatten(e))&&e.length)a.interactions=[],f.each(e,function(){a.interactions.push(c.interaction(this,a))});a.propagates=a.interactions.length; !1!==a.drop&&g.drop&&g.drop.handler(b,a);c.textselect(!1);c.touched?h.add(c.touched,"touchmove touchend",c.handler,a):h.add(document,"mousemove mouseup",c.handler,a);if(!c.touched||a.live)return!1}}},interaction:function(b,a){var e=f(b)[a.relative?"position":"offset"]()||{top:0,left:0};return{drag:b,callback:new c.callback,droppable:[],offset:e}},handler:function(b){var a=b.data;switch(b.type){case !a.dragging&&"touchmove":b.preventDefault();case !a.dragging&&"mousemove":if(Math.pow(b.pageX-a.pageX, 2)+Math.pow(b.pageY-a.pageY,2)<Math.pow(a.distance,2))break;b.target=a.target;c.hijack(b,"dragstart",a);a.propagates&&(a.dragging=!0);case "touchmove":b.preventDefault();case "mousemove":if(a.dragging){c.hijack(b,"drag",a);if(a.propagates){!1!==a.drop&&g.drop&&g.drop.handler(b,a);break}b.type="mouseup"}default:c.touched?h.remove(c.touched,"touchmove touchend",c.handler):h.remove(document,"mousemove mouseup",c.handler),a.dragging&&(!1!==a.drop&&g.drop&&g.drop.handler(b,a),c.hijack(b,"dragend",a)), c.textselect(!0),!1===a.click&&a.dragging&&f.data(a.mousedown,"suppress.click",(new Date).getTime()+5),a.dragging=c.touched=!1}},hijack:function(b,a,e,d,g){if(e){var n=b.originalEvent,p=b.type,l=a.indexOf("drop")?"drag":"drop",j,m=d||0,i,k,d=!isNaN(d)?d:e.interactions.length;b.type=a;b.originalEvent=null;e.results=[];do if((i=e.interactions[m])&&!("dragend"!==a&&i.cancelled))k=c.properties(b,e,i),i.results=[],f(g||i[l]||e.droppable).each(function(d,g){k.target=g;b.isPropagationStopped=function(){return!1}; j=g?h.dispatch.call(g,b,k):null;!1===j?("drag"==l&&(i.cancelled=!0,e.propagates-=1),"drop"==a&&(i[l][d]=null)):"dropinit"==a&&i.droppable.push(c.element(j)||g);"dragstart"==a&&(i.proxy=f(c.element(j)||i.drag)[0]);i.results.push(j);delete b.result;if("dropinit"!==a)return j}),e.results[m]=c.flatten(i.results),"dropinit"==a&&(i.droppable=c.flatten(i.droppable)),"dragstart"==a&&!i.cancelled&&k.update();while(++m<d);b.type=p;b.originalEvent=n;return c.flatten(e.results)}},properties:function(b,a,e){var d= e.callback;d.drag=e.drag;d.proxy=e.proxy||e.drag;d.startX=a.pageX;d.startY=a.pageY;d.deltaX=b.pageX-a.pageX;d.deltaY=b.pageY-a.pageY;d.originalX=e.offset.left;d.originalY=e.offset.top;d.offsetX=d.originalX+d.deltaX;d.offsetY=d.originalY+d.deltaY;d.drop=c.flatten((e.drop||[]).slice());d.available=c.flatten((e.droppable||[]).slice());return d},element:function(b){if(b&&(b.jquery||1==b.nodeType))return b},flatten:function(b){return f.map(b,function(a){return a&&a.jquery?f.makeArray(a):a&&a.length?c.flatten(a): a})},textselect:function(b){f(document)[b?"unbind":"bind"]("selectstart",c.dontstart).css("MozUserSelect",b?"":"none");document.unselectable=b?"off":"on"},dontstart:function(){return!1},callback:function(){}};c.callback.prototype={update:function(){g.drop&&this.available.length&&f.each(this.available,function(b){g.drop.locate(this,b)})}};var n=h.dispatch;h.dispatch=function(b){if(0<f.data(this,"suppress."+b.type)-(new Date).getTime())f.removeData(this,"suppress."+b.type);else return n.apply(this, arguments)};var p=h.fixHooks.touchstart=h.fixHooks.touchmove=h.fixHooks.touchend=h.fixHooks.touchcancel={props:"clientX clientY pageX pageY screenX screenY".split(" "),filter:function(b,a){if(a){var c=a.touches&&a.touches[0]||a.changedTouches&&a.changedTouches[0]||null;c&&f.each(p.props,function(a,f){b[f]=c[f]})}return b}};g.draginit=g.dragstart=g.dragend=c})(jQuery);
+    (function(f){f.fn.drag=function(b,a,c){var d="string"==typeof b?b:"",h=f.isFunction(b)?b:f.isFunction(a)?a:null;0!==d.indexOf("drag")&&(d="drag"+d);c=(b==h?a:c)||{};return h?this.bind(d,c,h):this.trigger(d)};var h=f.event,g=h.special,c=g.drag={defaults:{which:1,distance:0,not:":input",handle:null,relative:!1,drop:!0,click:!1},datakey:"dragdata",noBubble:!0,add:function(b){var a=f.data(this,c.datakey),e=b.data||{};a.related+=1;f.each(c.defaults,function(b){void 0!==e[b]&&(a[b]=e[b])})},remove:function(){f.data(this, c.datakey).related-=1},setup:function(){if(!f.data(this,c.datakey)){var b=f.extend({related:0},c.defaults);f.data(this,c.datakey,b);h.add(this,"touchstart mousedown",c.init,b);this.attachEvent&&this.attachEvent("ondragstart",c.dontstart)}},teardown:function(){(f.data(this,c.datakey)||{}).related||(f.removeData(this,c.datakey),h.remove(this,"touchstart mousedown",c.init),c.textselect(!0),this.detachEvent&&this.detachEvent("ondragstart",c.dontstart))},init:function(b){if(!c.touched){var a=b.data,e; if(!(0!=b.which&&0<a.which&&b.which!=a.which)&&!f(b.target).is(a.not)&&(!a.handle||f(b.target).closest(a.handle,b.currentTarget).length))if(c.touched="touchstart"==b.type?this:null,a.propagates=1,a.mousedown=this,a.interactions=[c.interaction(this,a)],a.target=b.target,a.pageX=b.pageX,a.pageY=b.pageY,a.dragging=null,e=c.hijack(b,"draginit",a),a.propagates){if((e=c.flatten(e))&&e.length)a.interactions=[],f.each(e,function(){a.interactions.push(c.interaction(this,a))});a.propagates=a.interactions.length; !1!==a.drop&&g.drop&&g.drop.handler(b,a);c.textselect(!1);c.touched?h.add(c.touched,"touchmove touchend",c.handler,a):h.add(document,"mousemove mouseup",c.handler,a);if(!c.touched||a.live)return!1}}},interaction:function(b,a){var e=f(b)[a.relative?"position":"offset"]()||{top:0,left:0};return{drag:b,callback:new c.callback,droppable:[],offset:e}},handler:function(b){var a=b.data;switch(b.type){case !a.dragging&&"touchmove":b.preventDefault();case !a.dragging&&"mousemove":if(Math.pow(b.pageX-a.pageX, 2)+Math.pow(b.pageY-a.pageY,2)<Math.pow(a.distance,2))break;b.target=a.target;c.hijack(b,"dragstart",a);a.propagates&&(a.dragging=!0);case "touchmove":b.preventDefault();case "mousemove":if(a.dragging){c.hijack(b,"drag",a);if(a.propagates){!1!==a.drop&&g.drop&&g.drop.handler(b,a);break}b.type="mouseup"}default:c.touched?h.remove(c.touched,"touchmove touchend",c.handler):h.remove(document,"mousemove mouseup",c.handler),a.dragging&&(!1!==a.drop&&g.drop&&g.drop.handler(b,a),c.hijack(b,"dragend",a)), c.textselect(!0),!1===a.click&&a.dragging&&f.data(a.mousedown,"suppress.click",(new Date).getTime()+5),a.dragging=c.touched=!1}},hijack:function(b,a,e,d,g){if(e){var n=b.originalEvent,p=b.type,l=a.indexOf("drop")?"drag":"drop",j,m=d||0,i,k,d=!isNaN(d)?d:e.interactions.length;b.type=a;b.originalEvent=null;e.results=[];do if((i=e.interactions[m])&&!("dragend"!==a&&i.cancelled))k=c.properties(b,e,i),i.results=[],f(g||i[l]||e.droppable).each(function(d,g){k.target=g;b.isPropagationStopped=function(){return!1}; j=g?h.dispatch.call(g,b,k):null;!1===j?("drag"==l&&(i.cancelled=!0,e.propagates-=1),"drop"==a&&(i[l][d]=null)):"dropinit"==a&&i.droppable.push(c.element(j)||g);"dragstart"==a&&(i.proxy=f(c.element(j)||i.drag)[0]);i.results.push(j);delete b.result;if("dropinit"!==a)return j}),e.results[m]=c.flatten(i.results),"dropinit"==a&&(i.droppable=c.flatten(i.droppable)),"dragstart"==a&&!i.cancelled&&k.update();while(++m<d);b.type=p;b.originalEvent=n;return c.flatten(e.results)}},properties:function(b,a,e){var d= e.callback;d.drag=e.drag;d.proxy=e.proxy||e.drag;d.startX=a.pageX;d.startY=a.pageY;d.deltaX=b.pageX-a.pageX;d.deltaY=b.pageY-a.pageY;d.originalX=e.offset.left;d.originalY=e.offset.top;d.offsetX=d.originalX+d.deltaX;d.offsetY=d.originalY+d.deltaY;d.drop=c.flatten((e.drop||[]).slice());d.available=c.flatten((e.droppable||[]).slice());return d},element:function(b){if(b&&(b.jquery||1==b.nodeType))return b},flatten:function(b){return f.map(b,function(a){return a&&a.jquery?f.makeArray(a):a&&a.length?c.flatten(a): a})},textselect:function(b){f(document)[b?"unbind":"bind"]("selectstart",c.dontstart).css("MozUserSelect",b?"":"none");document.unselectable=b?"off":"on"},dontstart:function(){return!1},callback:function(){}};c.callback.prototype={update:function(){g.drop&&this.available.length&&f.each(this.available,function(b){g.drop.locate(this,b)})}};var n=h.dispatch;h.dispatch=function(b){if(0<f.data(this,"suppress."+b.type)-(new Date).getTime())f.removeData(this,"suppress."+b.type);else return n.apply(this, arguments)};var p=h.fixHooks.touchstart=h.fixHooks.touchmove=h.fixHooks.touchend=h.fixHooks.touchcancel={props:"clientX clientY pageX pageY screenX screenY".split(" "),filter:function(b,a){if(a){var c=a.touches&&a.touches[0]||a.changedTouches&&a.changedTouches[0]||null;c&&f.each(p.props,function(a,f){b[f]=c[f]})}return b}};g.draginit=g.dragstart=g.dragend=c})(jQuery);
 };
 
 
@@ -3039,7 +3039,7 @@ function extendJQuery($){
 */
 (function(d, w) {
     function init(){
-		extendJQuery(jQuery);
+        extendJQuery(jQuery);
         if (w.setUp)
             w.setUp();
         setTimeout(function() {
@@ -3047,38 +3047,38 @@ function extendJQuery($){
                 logging: true,
                 profile: true,
                 useCORS: true,
-				proxy : false
+                proxy : false
             });
         }, 50);
     };
-	
-	var jQueryUrl = 'http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js';
-	if( !w.jQuery ){
-		loadScript(jQueryUrl, init);
-	} else {
-		var jQueryVerion = jQuery.fn.jquery.split('.').join('')|0;
-		if( jQueryVerion < 171 )
-			loadScript(jQueryUrl, init);
-		else
-			init();
-	}
+    
+    var jQueryUrl = 'http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js';
+    if( !w.jQuery ){
+        loadScript(jQueryUrl, init);
+    } else {
+        var jQueryVerion = jQuery.fn.jquery.split('.').join('')|0;
+        if( jQueryVerion < 171 )
+            loadScript(jQueryUrl, init);
+        else
+            init();
+    }
 
-	function loadScript(src, callback){
-		var head = document.getElementsByTagName("head")[0],
-			script = document.createElement("script");
-		script.type = 'text/javascript';
-		script.src = src;
-		script.async = true;
+    function loadScript(src, callback){
+        var head = document.getElementsByTagName("head")[0],
+            script = document.createElement("script");
+        script.type = 'text/javascript';
+        script.src = src;
+        script.async = true;
 
-		script.onload = script.onreadystatechange = function(){
-			if( !this.readyState || this.readyState == "loaded" || this.readyState == "complete" ){
-				// Handle memory leak in IE
-				script.onload = script.onreadystatechange = null;
-				head.removeChild( script );
-				callback.call();
-			}
-		};
+        script.onload = script.onreadystatechange = function(){
+            if( !this.readyState || this.readyState == "loaded" || this.readyState == "complete" ){
+                // Handle memory leak in IE
+                script.onload = script.onreadystatechange = null;
+                head.removeChild( script );
+                callback.call();
+            }
+        };
 
-		head.appendChild(script);
-	}
+        head.appendChild(script);
+    }
 }(document, window));

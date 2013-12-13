@@ -1,20 +1,13 @@
-define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'Animation'], (require, _, $, JSON, api, directives, controllers, animate)->
+define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'controllers', 'Animation', 'bootstrap_datepicker'], (require, _, $, JSON, api, directives, controllers, animate)->
 
-    _.mixin toJSON: JSON.stringify
+    _.mixin stringify: JSON.stringify
+    String::replaceAll = (s1, s2, i="")->
+        @.replace(new RegExp(s1.replace(/([\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, (c)->"\\" + c), "g"+i), s2)
 
-    $('<div class="mw_wrapper">').appendTo('body > div')
-    
-    $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main" >').appendTo('.mw_wrapper')
-    $('<mw-timeline>').appendTo('div#motionwiki')
-    $('<mw-history-grapher>').appendTo('div#motionwiki')
-    $('<mw-play-controls>').appendTo('div#motionwiki')
+    $('<div class="mw_wrapper motionwiki">').appendTo('body > div')
+    $('<div ng-app="motion_wiki" ng-controller="AppCtrl" id="motionwiki" class="mw_main mw_main--wrapper motionwiki" >').appendTo('.mw_wrapper')
+    $('<mw-timeline class="motionwiki mw_main--inner">').appendTo('div#motionwiki')
 
-    # TODO: __DO NOT__ put paths in here like this! This is not portable!
-    #       Should use templates to be filled in by Gruntfile for debug/release/deploy
-    #       CSS should not be loaded like this either, use require-css!
-    #       
-    # TODO: /templates should be in /includes!
-    $('<link rel="stylesheet" href="/includes/css/motionwiki.css">').appendTo('body')
     angular.module('motion_wiki', ['mw_directives','mw_controllers']).run [ '$rootScope' , ($rootScope)->
     	console.log $rootScope
     ]
@@ -29,13 +22,23 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
     baseRevision = 4
     # Need to change San_Francisco to whatever page user is on
 
+    randomDelimiterGenerator = () ->
+        text = "ASDLIFJ"
+        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+        counter = 0
+        while counter++ < 8
+            text += possible.charAt(Math.floor(Math.random() * possible.length))
+            counter++
+        return text
+
     delimiter = randomDelimiterGenerator()
     textToParse = ""
     
-    page = 'Florida'
+    page = 'Constitution Party of Georgia'
     $.when(
         api.query(page, 'revisions'),
-        api.getWikiTextContent(page, 'revisions')
+        api.getWikiTextContent(page, 'revisions', num:1, undefined)
     ).done (r1, r2) ->
         # http://api.jquery.com/jQuery.when/
         #   a1 and a2 are arguments resolved for the page1 and page2 ajax requests, respectively.
@@ -47,20 +50,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         do ([data, textStatus, jqXHR]=r1) ->
             for pageNum, page of jqXHR.responseJSON.query.pages
                 console.log "page.revisions.length = #{page.revisions.length}"
-                counter = 0
                 for revision in page.revisions
-                    
-                    #console.log "timestamp: #{revision.timestamp}, counter = #{counter}"
-                    #$('<div>').html(revision.diff["*"]).appendTo('body > div')
-                    diffHTML = "<table id='diffTable'>" + revision.diff["*"] + "<\\table>"
-                    #diffHTML = revision.diff["*"]
-                    
-                    position = 0
-                    workingstring = ""
-                    numTR = 0
-                    table = $("diffTable")
-                    #console.log "ok"
+                   # console.log "revisions: #{revision.diff["*"]}"
+                   diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
 
+                ###
                     diffArray = []
                     #if counter is baseRevision
                         #$('<div>').html(diffHTML).appendTo('body > div')
@@ -88,17 +82,27 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     diffsForRevisions.push diffArray
                     #console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
                     counter++
-        
+                ###
+
         #takes the title of the page as input, produces the body text of the wikipedia page at the current revision
         #split up line by line in an array called parsedRevisions
         do ([data, textStatus, jqXHR]=r2) ->
-
-            
             for pageNum, page of jqXHR.responseJSON.query.pages
-                # console.log "page: #{_(page).toJSON()}"
-
-                counter = 0
                 for revision in page.revisions
+                    # TODO: use delimiters to specify the line start and the line end
+                    #       ex: <span class="linestart"></span> <span class="lineend"></span>
+                    wikiText = revision["*"].replaceAll("\n", " #{delimiter}\n ").substring(0, 5000)
+
+                # send this wikitext back
+                api.parseToHTML wikiText, (jqXHR, textStatus)->
+                    wikiHTML = jqXHR.responseJSON.parse.text["*"]
+                    console.log "got back parsed html:\n#{wikiHTML}"
+                    counter = 1
+                    htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<b>LINE #{counter++}:</b> #{line}").join('')
+                    $('#mw-content-text').html(htmlLines) # replace wiki
+                    # $("<div>").html(htmlLines).appendTo('body')
+
+            ###
                     console.log "counter = #{counter}"
                     #console.log "jqXHR: #{JSON.stringify(revision, 100, false)}"
                     
@@ -177,8 +181,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
         revisionNumber = -1
         revIndex = -1
         modifyToggle = false
-
-        
+            ###
 
         #Wraps each added or deleted line in an animation tag for greensock (right now, just wrapped as html tags)
         #Goes through each diff text
@@ -421,18 +424,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 textToParse += line
         ###
 
-randomDelimiterGenerator = () ->
-        text = ""
-        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
-        counter = 0
-        while counter++ < 8
-            text += possible.charAt(Math.floor(Math.random() * possible.length))
-            counter++
-        return text
-###
     timeStampArray = []
-
     # If user input is start date
     # Gets timestamps and byte counts for 500 revisions after start date
     api.queryRevisionsinDateRangeUsingStartDate 'San_Francisco', 'revisions', (jqXHR, textStatus)->
@@ -467,5 +460,4 @@ randomDelimiterGenerator = () ->
 
         timeStampArray = timeStampArray[counter...timeStampArray.length]
 
-    ###
 
