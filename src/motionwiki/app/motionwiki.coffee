@@ -96,21 +96,23 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     # wikiText = _(revision["*"].split('\n')).map((x)-> "MOTIONWIKILINEstart#{++counter}\n#{x}\nMOTIONWIKILINEend#{counter}").join('\n').substring(0, 5000)
                     wikiText = _(revision["*"].split('\n')).map((x)->
                         if x.indexOf('==') is 0
-                            "#{x}\nMOTIONWIKILINEend#{++counter}"
+                            "==#{x.substring(2,x.length-2)}MOTIONWIKILINEend#{++counter}=="
                         else
-                            "#{x} MOTIONWIKILINEend#{++counter}"
+                            "#{x} MOTIONWIKILINEend#{++counter} "
 
                     ).join('\n').substring(0, 5000)
-                    console.log "asking for this to be translated: #{wikiText}"
+                    # console.log "asking for this to be translated: #{wikiText}"
 
                 # send this wikitext back
                 api.parseToHTML wikiText, (jqXHR, textStatus)->
                     wikiHTML = jqXHR.responseJSON.parse.text["*"]
-                    console.log "got back parsed html:\n#{wikiHTML}"
                     # counter = 1
                     # htmlLines = _(wikiHTML.split(delimiter)).map((line)-> "<b>LINE #{counter++}:</b> #{line}").join('')
                     # replace wiki
-                    wikiHTML = wikiHTML.replace(/MOTIONWIKILINE([a-z]+)(\d+)/g, "<span class=\"motionwiki-line-$1\" id=\"mwline-$2\">Line: $2</span>")
+                    console.log "got back parsed html:\n#{wikiHTML}"
+                    wikiHTML = wikiHTML.replace(/MOTIONWIKILINE([a-z]+)(\d+)\"/g, '"')
+                    wikiHTML = wikiHTML.replace(/_MOTIONWIKILINE([a-z]+)(\d+)/g, '_')
+                    wikiHTML = wikiHTML.replace(/MOTIONWIKILINE([a-z]+)(\d+)/g, "<span class=\"motionwiki-line-$1\" id=\"mwline-$2\"><!--Line: $2--></span>")
                     # wikiHTML = wikiHTML.replaceAll("MOTIONWIKILINE", "poop $2")
                     $('#mw-content-text').html(wikiHTML)
                     # .find('.motionwiki-linestart,.motionwiki-lineend').each ->
