@@ -269,9 +269,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                                 $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                                 greensockAnimationId = "#" + greensockAnimationArg + lastUniqueTagIdentifier
                                 console.log "uniqueTagIdentifier = #{lastUniqueTagIdentifier}"
-                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), true, () ->
-
-                                    )
+                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), true)
                                 console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
 
                                 uniqueTagIdentifier++
@@ -317,6 +315,10 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                             #numTimesDeleted--
                             console.log "Adding line at #{line + numLinesToAdd}"
                             jQueryText = parsedRevisions[revIndex][line + numLinesToAdd]
+                            addedLineText = ""
+                            if index[1] == ""
+                                addedLineText = "(ADDED LINE)"
+
                             text = '<span id ="motionwikiAddition' + uniqueTagIdentifier + '">' + index[1] + "</span>"
                             greensockAnimationArg = 'motionwikiAddition'
                             greensockAnimationTag = text
