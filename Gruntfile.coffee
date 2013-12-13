@@ -259,6 +259,7 @@ module.exports = (grunt) ->
                         bootstrap            : 'empty:'
                         lodash               : 'empty:'
                         JSON                 : 'empty:'
+                        greensock            : 'empty:'
 
                     keepBuildDir: false
 
