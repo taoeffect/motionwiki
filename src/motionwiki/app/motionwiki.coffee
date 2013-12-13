@@ -52,14 +52,13 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                 console.log "page.revisions.length = #{page.revisions.length}"
                 for revision in page.revisions
                    # console.log "revisions: #{revision.diff["*"]}"
-                   diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
-
-                ###
+                    #diffsForRevisions.push $('<table>').html(revision.diff["*"]).children()
+                    diffsForRevisions = "<table id='wikiTable'>" + revision.diff["*"] + "</table>"
                     diffArray = []
                     #if counter is baseRevision
                         #$('<div>').html(diffHTML).appendTo('body > div')
    
-                    $($(diffHTML).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
+                    $($(diffsForRevisions).find("tr, span, .diff-addedline, .diffchange, .diff-context, .diff-deletedline, .diff-empty, .diff-lineno, .diff-marker, .diffchange diffchange-inline")).each (index) ->
                         
                         if $(@).prop('tagName') == "SPAN"
                            #console.log "#{$(@).text()}"
@@ -79,10 +78,10 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         #console.log "myDiff = #{myDiff}"
                         
                         #Gives us the diff for every revision being evaluated in DESCENDING TIME ORDER
-                    diffsForRevisions.push diffArray
+                    #diffsForRevisions.push diffArray
                     #console.log "diffsForRevisions.length = #{diffsForRevisions.length}"
                     counter++
-                ###
+                
 
         #takes the title of the page as input, produces the body text of the wikipedia page at the current revision
         #split up line by line in an array called parsedRevisions
@@ -102,6 +101,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
 
                     ).join('\n').substring(0, 5000)
                     # console.log "asking for this to be translated: #{wikiText}"
+                    parsedWikiText = []
+                    parsedWikiText.push "0-based accessor fix, ignore"
+                    #$('<div>').html(revision["*"]).appendTo('body > div')
+                    #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
+                    wikiText = revision["*"]
 
                 # send this wikitext back
                 api.parseToHTML wikiText, (jqXHR, textStatus)->
@@ -123,16 +127,12 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #         $this.html("<b style=\"color:red\">END-#{$this.prop('id')}</b>")
                     # # $("<div>").html(htmlLines).appendTo('body')
 
-            ###
+        
                     console.log "counter = #{counter}"
                     #console.log "jqXHR: #{JSON.stringify(revision, 100, false)}"
                     
                     console.log "timestamp = #{revision.timestamp}"
-                    parsedWikiText = []
-                    parsedWikiText.push "0-based accessor fix, ignore"
-                    #$('<div>').html(revision["*"]).appendTo('body > div')
-                    #$('<div>').html(JSON.stringify(revision["*"], false, 100)).appendTo('body > div')
-                    wikiText = revision["*"]
+                
 
                     
 
@@ -140,20 +140,22 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                     #wikiText = revision["*"]
 
 
+
+
                 #wikiText = JSON.stringify(revision["*"], false, 100)
-                    position = 0
+                position = 0
 
 
 
-                    while position > -1
-                        position = wikiText.indexOf("\n")
-                        myStart = wikiText.substring(0, position)
-                        parsedWikiText.push myStart
-                        myEnd = wikiText.substring(position+1, wikiText.length)
-                        wikiText = myEnd
-                        parsedWikiText = parsedWikiText
-                    parsedRevisions.push parsedWikiText
-                counter++
+                while position > -1
+                    position = wikiText.indexOf("\n")
+                    myStart = wikiText.substring(0, position)
+                    parsedWikiText.push myStart
+                    myEnd = wikiText.substring(position+1, wikiText.length)
+                    wikiText = myEnd
+                    parsedWikiText = parsedWikiText
+                parsedRevisions.push parsedWikiText
+            counter++
                 #console.log "counter = #{counter}"
             console.log "parsedRevisions.length = #{parsedRevisions.length}"
 
@@ -212,8 +214,8 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
             getDiffLineNo = false
             numLinesToAdd = -1
             revIndex++
-            console.log "!revision.length = #{revision.length}"
-            console.log "parsedRevisions[#{revIndex}].length = #{parsedRevisions[revIndex].length}"
+            #console.log "!revision.length = #{revision.length}"
+            #console.log "parsedRevisions[#{revIndex}].length = #{parsedRevisions[revIndex].length}"
             numTimesDeleted = 0
             pureDelete = false
             lastGreensockAnimationTag = ""
