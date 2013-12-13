@@ -269,8 +269,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                                 $("motionwiki[line=" + finalline + "]").replaceWith(greensockAnimationTag)
                                 greensockAnimationId = "#" + greensockAnimationArg + lastUniqueTagIdentifier
                                 console.log "uniqueTagIdentifier = #{lastUniqueTagIdentifier}"
-                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id=' + greensockAnimationArg + lastUniqueTagIdentifier + "]"), true, () ->
-
+                                animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ), $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), true, () ->
 
                                     )
                                 console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
@@ -352,7 +351,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                         greensockAnimationId = "#" + greensockAnimationArg + uniqueTagIdentifier
                         if wasDelete is true
                             _continue = false
-                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id=' + greensockAnimationArg + lastUniqueTagIdentifier + "]"), true, () ->
+                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id="' + greensockAnimationArg + lastUniqueTagIdentifier + '"]'), false, () ->
                                 console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}"
                                 if doDelete
                                     parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
@@ -360,10 +359,11 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                                 
                                 _continue = true
                                 )
+                            console.log "After animations"
                         else
                             console.log "greensockAnimationId = #{greensockAnimationId}, greensockAnimationArg = #{greensockAnimationArg}, uniqueTagIdentifier = #{uniqueTagIdentifier}"
                             console.log "$() = #{typeof($('span[id=' + greensockAnimationArg + uniqueTagIdentifier + "]"))}"
-                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id=' + greensockAnimationArg + uniqueTagIdentifier + "]"), false, () ->
+                            animate.doAnimate(greensockAnimationId, greensockAnimationArg.substring(0, greensockAnimationArg.length ),  $('span[id="' + greensockAnimationArg + uniqueTagIdentifier + '"]'), false, () ->
                                 console.log "animation callback"
                                 if doDelete
                                     parsedRevisions[revIndex].splice(line + numLinesToAdd - numTimesDeleted, 1)
@@ -372,7 +372,7 @@ define ['require', 'lodash', 'jquery', 'JSON', 'wiki/api', 'directives', 'contro
                                 _continue = true
                                 console.log "_continue = true"
                                 )
-                    console.log "After animations"
+                            console.log "After animations"
 
                     console.log "after callback"
                     uniqueTagIdentifier++

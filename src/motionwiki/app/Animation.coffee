@@ -3,15 +3,40 @@ define ['TweenMax'], (TweenMax)->
 
     firstAnimation = true
 
+    doDeleteStuff = (jQueryObject) ->
+        jQueryObject.each (index, el) ->
+            scrollToView(el)
+            window.scrollTo(el.offsetTop, el.offsetTop - 200)
+        deleteParent(jQueryObject)
+
     deleteParent = (jQueryObject) ->
         jQueryObject.parent().remove()
 
-    doAnimate: (line, type, jQueryObject, pureDelete) ->
+    scrollToView = (jQueryObject) ->
         if firstAnimation is true
+            # jQueryObject.each (index, el) ->
+            #     el.scrollIntoView()
+            #     window.scrollTo(el.offsetTop, el.offsetTop - 200)
             jQueryObject.each (index, el) ->
                 el.scrollIntoView()
                 window.scrollTo(el.offsetTop, el.offsetTop - 200)
-            #firstAnimation = false
+                return false
+            #jQueryObject.scrollIntoView()
+            #window.scrollTo(jQueryObject.offsetTop, jQueryObject.offsetTop - 200)
+
+            
+
+    doAnimate: (line, type, jQueryObject, pureDelete, cb) ->
+
+
+
+        if firstAnimation is true
+            #jQueryObject.each (index, el) ->
+            ##el.scrollIntoView()
+                #scrollToView(el)
+                #window.scrollTo(el.offsetTop, el.offsetTop - 200)
+            scrollToView(jQueryObject)
+            firstAnimation = false
         switch type
             when "motionwikiAddition"
                 console.log "doing motionwikiAddition"
@@ -28,8 +53,12 @@ define ['TweenMax'], (TweenMax)->
                     delay: 1
 
                 TweenMax.to line, 1,
+                {
                     scaleY: 1
                     delay: 3
+                    #onComplete: scrollToView,
+                    #onCompleteParams: [jQueryObject]
+                }
 
             when "motionwikiDeletion"
                 console.log "doing motionwikiDeletion"
@@ -37,7 +66,7 @@ define ['TweenMax'], (TweenMax)->
                 {
                     color: "#90240d"
                     backgroundColor: "#e32e07"
-                    delay: 1 
+                    delay: 1
                 }
 
                 TweenMax.to line, 1,
@@ -45,7 +74,7 @@ define ['TweenMax'], (TweenMax)->
                     autoAlpha: 0
                     x: 50
                     delay: 3.2
-                    onComplete: deleteParent,
+                    onComplete: doDeleteStuff,
                     onCompleteParams: [jQueryObject]
                 }
                    
@@ -55,8 +84,12 @@ define ['TweenMax'], (TweenMax)->
             when "motionwikiModification"
                 console.log "doing motionwikiModification"
                 TweenMax.to line, 3,
+                {
                     color: "#000000"
                     backgroundColor: "#ffed04"
+                    #onComplete: scrollToView,
+                    #onCompleteParams: [jQueryObject]
+                }
                 console.log "modification done"
 
     
