@@ -32,4 +32,3 @@ define ['require', 'jquery'], (require, $)->
 
 			
 	]
-
